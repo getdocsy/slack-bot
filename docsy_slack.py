@@ -43,10 +43,20 @@ def action_button_click(body, ack, say, client, channel_id):
     messages = [(message['user'], message['text']) for message in thread if 'user' in message and 'text' in message]
     suggestion = ai.get_suggestion(messages)
     git.create_branch(file_content = suggestion)
-    git.create_pr("My first end-to-end test")
+    html_url = git.create_pr("My first end-to-end test")
 
-    say(
-        f"I opened a PR with that change. How does this look?",
+    url_block = {
+        "type": "section",
+        "text": {
+            "type": "mrkdwn",
+            "text": f"I opened a PR with that change. How does <{html_url}|this> look?"
+        }
+    }
+    
+    app.client.chat_postMessage(
+        channel=channel_id,
+        text="Placeholder",
+        blocks=[url_block],
         thread_ts=thread_ts
     )
 

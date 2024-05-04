@@ -64,7 +64,8 @@ def create_pr(title):
     repo = g.get_repo("felixzieger/congenial-computing-machine")
     if pr_exists(title):
         logging.info(f"PR '{title}' exists. Nothing to do")
-        return
+        pulls = repo.get_pulls()
+        return next(iter([pull.html_url for pull in pulls if pull.title == title]),None)
     
     body = '''
     SUMMARY
@@ -72,17 +73,18 @@ def create_pr(title):
     A small step for me, a big step for me
     '''
     
-    repo.create_pull(base="main", head="docsy", title=title, body=body)
+    pr = repo.create_pull(base="main", head="docsy", title=title, body=body)
     
     g.close()
     print(f"New PR '{title}' created and pushed successfully!")
+    return pr.html_url
 
 def main():
     if "GITHUB_TOKEN" not in os.environ: 
         raise EnvironmentError("GITHUB_TOKEN is missing")
     logging.basicConfig(level=logging.INFO)
     create_branch(file_content = suggestion)
-    create_pr(title = "My first PR using python")
+    print(create_pr(title = "My first end-to-end test"))
 
 if __name__ == '__main__':
     main()
