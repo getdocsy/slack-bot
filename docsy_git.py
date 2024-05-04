@@ -26,11 +26,10 @@ def create_branch(file_content, branch_name = "docsy", commit_message = "first c
 
         if branch_exists(branch_name):
             logging.info(f"Branch '{branch_name}' already exists. Checking out...")
-            raise NotImplementedError
+            repo.git.checkout(branch_name)
         else:
             logging.info(f"Branch '{branch_name}' doesn't exist yet. Creating...")
-            main_branch = repo.heads.main
-            branch = repo.create_head(branch_name, commit=main_branch.commit).checkout()
+            repo.git.checkout('-b', branch_name)
 
         file_path = os.path.join(repo_path, relative_file_path)
         with open(file_path, "w") as file:
@@ -40,7 +39,7 @@ def create_branch(file_content, branch_name = "docsy", commit_message = "first c
         repo.index.commit(commit_message)
 
         origin = repo.remote()
-        origin.push(branch)
+        origin.push()
 
         logging.info(f"Branch '{branch_name}' pushed successfully!")
 
