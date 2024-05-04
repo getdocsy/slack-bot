@@ -1,9 +1,15 @@
 import os
-import json
+
+import logging
+logger = logging.getLogger(__name__)
+
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
-
 app = App(token=os.environ.get("SLACK_BOT_TOKEN"))
+
+import docsy_ai as ai
+import docsy_git as git
+
 
 @app.message("thanks")
 def message_learned(message, say):
@@ -35,7 +41,10 @@ def action_button_click(body, ack, say, client, channel_id):
 
     thread = client.conversations_replies(channel = channel_id, ts = thread_ts).data['messages']
     messages = [(message['user'], message['text']) for message in thread if 'user' in message and 'text' in message]
-    
+    suggestion = ai.get_suggestion(messages)
+    git.create_branch(file_content = suggestion)
+    git.create_pr("My first end-to-end test")
+
     say(
         f"I opened a PR with that change. How does this look?",
         thread_ts=thread_ts
@@ -49,3 +58,6 @@ def handle_message_events(body, logger):
 # Start your app
 if __name__ == "__main__":
     SocketModeHandler(app, os.environ["SLACK_APP_TOKEN"]).start()
+    if "GITHUB_TOKEN" not in os.environ: 
+        raise EnvironmentError("GITHUB_TOKEN is missing")
+    logging.basicConfig(level=logging.INFO)

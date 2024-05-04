@@ -1,17 +1,7 @@
+import logging
+logger = logging.getLogger(__name__)
+
 from openai import OpenAI
-
-kraken_api_messages = [('U068ZT2R7DG', "Where do I find the Kraken API docs :grimacing: I tried finding them via [https://docs.meshcloud.io](https://docs.meshcloud.io/) but couldn't ..."),
-            ('U068ZT2R7DG', "https://kraken.dev.meshcloud.io/docs/index.html. It's a bit hidden there also exist a ticket for it https://app.clickup.com/t/86bwhj5m0"),
-            ('U068ZT2R7DG', 'thanks'), 
-            ('U068T9HGHAA', 'Hey there <@U068ZT2R7DG>! You learned something new today. Do you want me to come up with a Knowledge base entry for that?'), 
-            ('U068T9HGHAA', "All right, <@U068ZT2R7DG>. I'll get back to you with a suggestion")]
-
-target_format=     [
-        {"role": "user", "name": "Johanna", "content": "I want to eat Pizza. I like Pizza and haven't eaten it in a while."},
-        {"role": "user", "name": "Felix", "content": "That currywurst over there looks delicious. What did you just say? Sorry, I was thinking about currywurst."},
-        {"role": "user", "name": "Johanna", "content": "You never listen to me. This is so frustrating!"},
-        {"role": "user", "name": "Felix", "content": "What happned now again? I just said that the currywurst looks good."},
-      ]
 
 prompt =      [
         {"role": "system", "content": "You are my friendly AI coworker. " +
@@ -32,4 +22,15 @@ def get_suggestion(messages):
     client.chat.completions.create
     return completion.choices[0].message.content
 
-print(get_suggestion(kraken_api_messages))
+def main():
+    logging.basicConfig(level=logging.INFO)
+
+    kraken_api_messages = [('U068ZT2R7DG', "Where do I find the Kraken API docs :grimacing: I tried finding them via [https://docs.meshcloud.io](https://docs.meshcloud.io/) but couldn't ..."),
+                ('U068ZT2R7DG', "https://kraken.dev.meshcloud.io/docs/index.html. It's a bit hidden there also exist a ticket for it https://app.clickup.com/t/86bwhj5m0"),
+                ('U068ZT2R7DG', 'thanks'), 
+                ('U068T9HGHAA', 'Hey there <@U068ZT2R7DG>! You learned something new today. Do you want me to come up with a Knowledge base entry for that?'), 
+                ('U068T9HGHAA', "All right, <@U068ZT2R7DG>. I'll get back to you with a suggestion")]
+    print(get_suggestion(kraken_api_messages))
+
+if __name__ == '__main__':
+    main()
