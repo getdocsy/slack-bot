@@ -8,13 +8,15 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-suggestion = """
-## Where to Find Kraken API Documentation
+def fork_repo(source_repo = "Janos95/kdtree"):
+    auth = Auth.Token(os.environ.get("GITHUB_TOKEN"))
+    g = Github(auth=auth)
+    github_user = g.get_user()
+    repo = g.get_repo(source_repo)
+    fork = github_user.create_fork(repo).full_name
+    g.close()
+    return fork
 
-To access the Kraken API documentation, you can visit [https://kraken.dev.meshcloud.io/docs/index.html](https://kraken.dev.meshcloud.io/docs/index.html). The API documentation provides detailed information on how to interact with the Kraken service programmatically.
-
-If you encounter any issues or need further assistance, you can also submit a ticket at [https://app.clickup.com/t/86bwhj5m0](https://app.clickup.com/t/86bwhj5m0) for additional support.
-"""
 
 
 def create_branch(
@@ -56,6 +58,7 @@ def branch_exists(branch_name):
     g = Github(auth=auth)
     repo = g.get_repo("felixzieger/congenial-computing-machine")
     branches = [branch.name for branch in repo.get_branches()]
+    g.close()
     return branch_name in branches
 
 
@@ -96,8 +99,17 @@ def main():
     if "GITHUB_TOKEN" not in os.environ:
         raise EnvironmentError("GITHUB_TOKEN is missing")
     logging.basicConfig(level=logging.INFO)
-    create_branch(file_content=suggestion)
-    print(create_pr(title="My first end-to-end test"))
+
+    # suggestion = """
+    # ## Where to Find Kraken API Documentation
+    
+    # To access the Kraken API documentation, you can visit [https://kraken.dev.meshcloud.io/docs/index.html](https://kraken.dev.meshcloud.io/docs/index.html). The API documentation provides detailed information on how to interact with the Kraken service programmatically.
+    
+    # If you encounter any issues or need further assistance, you can also submit a ticket at [https://app.clickup.com/t/86bwhj5m0](https://app.clickup.com/t/86bwhj5m0) for additional support.
+    # """
+    # create_branch(file_content=suggestion)
+    # print(create_pr(title="My first end-to-end test"))
+    print(fork_repo())
 
 
 if __name__ == "__main__":
