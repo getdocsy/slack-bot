@@ -1,4 +1,5 @@
 import os
+import json
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
@@ -24,20 +25,20 @@ def message_learned(message, say):
     )
 
 @app.action("button_click")
-def action_button_click(body, ack, say):
-    thread_ts = body["container"]["thread_ts"]
+def action_button_click(body, ack, say, client, channel_id):
     ack()
-    
+    thread_ts = body["container"]["thread_ts"]
     say(
-        f"All right, <@{body['user']['username']}. I'll get back to you with a suggestion> ",
+        f"All right, @{body['user']['username']}. I'll get back to you with a suggestion",
         thread_ts=thread_ts
     )
 
-def make_suggestion(body, ack, say):
-    thread_ts = body["container"]["thread_ts"]
-    ack()
+    thread_messages = client.conversations_replies(channel = channel_id, ts = thread_ts).data
+    with open('data.json', 'w', encoding='utf-8') as f:
+        json.dump(thread_messages, f, ensure_ascii=False, indent=4)
+
     say(
-        f"All right, <@{body['user']['id']}. I'll get back to you with a suggestion> ",
+        f"I opened a PR with that change. How does this look?",
         thread_ts=thread_ts
     )
 
