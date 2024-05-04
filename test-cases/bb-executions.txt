@@ -1,0 +1,28 @@
+fzieger
+8 days ago
+I know that project user/group binding updates trigger new runs if for BB that have user permissions as an input.
+A question that came up today at IAV: What’s the principle behind triggering building block runs upon input changes?
+Is it “Everytime any input changes, a new run is triggered”? (will this hold for tags as well, once we add them?)
+If not, we need to make the distinction visible in the panel and we should show that a BB last ran with different inputs then the ones that it would run with now.
+And if yes: PEs have some automations that they don’t just want to roll out again, but do it consciously. How would this play together (e.g. Pawel from Berenberg said he has some automations for which he always reviews the tf plan before applying the changes vs some where everything goes through automatically)
+5 replies
+
+stomm
+8 days ago
+when we support tags, it is planned to also trigger a BB execution. So it will be consistent. In general, any change to determined inputs should trigger a run. Kind of somethign similar should also already apply to changed Building Block outputs another BB depends on. That should also trigger a new run of the child.
+
+stomm
+8 days ago
+And the insight into which inputs were given into which run can be seen for every run. So when you look into to the according runs you will see which inputs were given for that run and which outputs were provided in the end. So you get a clear insight into all executions and therefore all changes that were made to BBs.
+
+stomm
+8 days ago
+The "only part" where we don't trigger a BB execution automatically is, when you change something on the BB Definition while the version is in draft. In that case the BB operator needs to trigger them manually, as applying it automatically might not always be intended in that case. Making those changes (e.g. to static inputs) is not possible for released versions, so not relevant in the productive case.
+
+stomm
+8 days ago
+and about the tf plan part .... this is not completely thought through yet and currently not planned to be implemented soon afaik. But for me it would be that you can perhaps set a flag on your BB to confirm every execution (or only the first execution after creation or upgrading a BB).
+
+fzieger
+7 days ago
+Thanks! This helps a lot

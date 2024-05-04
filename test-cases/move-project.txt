@@ -1,0 +1,55 @@
+sradzhabov
+:speech_balloon:  3 months ago
+hi there, after migration of a project from one workspace to another, the project is still listed in the old workspace. User is confused. Will this always stay as is or it will be gone after certain period?
+image.png
+
+image.png
+
+10 replies
+
+stomm
+3 months ago
+This looks like the workspace projects view? If it still appears in there, then the project should still be assigned to that workspace in the DB: As migration is a manual process, perhaps something was forgotten when moving it?
+image.png
+
+image.png
+
+sradzhabov
+:speech_balloon:  3 months ago
+correct it is a workspace view. the projects appear twice in the new and the old workspace
+
+stomm
+3 months ago
+As far as I can see, we just a controller function, taht simply gets what is in the DB. Is it possible that the project si somehow duplicated in the DB now? Can you check for the according projectIdentifier or so in the DB and see if it appears twice. Perhaps it still exists for both workspaces
+
+kstarodubtsev
+3 months ago
+what is the meshstack name? also if you have access to the database run please:
+SELECT * from Workspace WHERE name = 'replace_to_my_workspace_name'
+
+sradzhabov
+:speech_balloon:  3 months ago
+thanks, will check the database by tomorrow the latest and come back with info here
+
+sradzhabov
+:speech_balloon:  3 months ago
+Here is some findings. For projects moved from one workspace to another, we have two entries in Project table
+image.png
+
+image.png
+
+sradzhabov
+:speech_balloon:  3 months ago
+Is it necessary to keep the old entry (id 23) ?
+
+sradzhabov
+:speech_balloon:  3 months ago
+or that is just forgotten?
+
+stomm
+3 months ago
+We don’t have a functionality to move it. Wo it must have been done manually. I never did that. But i assume the CUS guide for doing this mentions, that the project must be moved, not copied. I guess you have to delete the new one and move the old one over to the new workspace (edited)
+
+stomm
+3 months ago
+I proposed moving the existing project over to another workspace by changing the workspaceId on the project, as there are quite some foreign keys on the projectId. E.g. tenants are connected via the projectId, all user permissions, etc. So I am not sure why there are 2 separate projects with the same identifier. Perhaps someone also created it manually in the other workspace and hoped to be able to move the tenants over or similar? You have to check which tenants and user bindings exist on both projects to perhaps be able to decide which one is the correct one

@@ -1,0 +1,151 @@
+https://ca.slack-edge.com/T0SEARSV8-U016L318AF5-34bedd057fa4-48
+
+**fziegerfzieger**
+
+[2 months ago](https://meshcloud.slack.com/archives/CSLGLMN73/p1710351574514019)
+
+From todays release notes: “If a Building Block uses a “User Permissions” input, these permissions are now directly updated when permissions on the project change. Before that change, it was only updated when a tenant replication succeeded. Additionally, permissions and other automatically determined inputs are now updated to the latest state when a new Building Block run is executed.”Awesome change! One caveat: we no longer operate on the paradigm “building blocks only run again when when a user triggers another run manually”.[@jdburger](https://meshcloud.slack.com/team/UT52ULX4G) [@rmarcoci](https://meshcloud.slack.com/team/U05UHMR5SH4) That adding this input to your BB definition will cause replications that you haven’t triggered (which can be disruptive!) should be discoverable to someone who defines a BB.Maybe add a small note on the input to give a hint to the user that this input behaves differently?
+
+image.png
+
+!https://files.slack.com/files-tmb/T0SEARSV8-F06NYJYNBRD-587309156c/image_720.png
+
+10 replies
+
+---
+
+https://ca.slack-edge.com/T0SEARSV8-UT52ULX4G-995f8ff2207c-48
+
+**jdburgerjdburger**
+
+[2 months ago](https://meshcloud.slack.com/archives/CSLGLMN73/p1710403831612929?thread_ts=1710351574.514019&cid=CSLGLMN73)
+
+[@stomm](https://meshcloud.slack.com/team/U6GEX4H4M) as you built this, what do you think could be a nice solution?
+
+https://ca.slack-edge.com/T0SEARSV8-U6GEX4H4M-065d5d4b6c12-48
+
+**stommstomm**
+
+[2 months ago](https://meshcloud.slack.com/archives/CSLGLMN73/p1710404143206729?thread_ts=1710351574.514019&cid=CSLGLMN73)
+
+Hmm, we could either put this into the description in the dropdown, or we could show an info alert below the inputs, that tells the user, that this BB might be executed without explicitly running it, as users are being used and that can trigger a new execution of the BB. On teh other hand, that can also happen after every replication. In that case the uer or operator is not aware either, that the BB will be executed again (if any input changed). Hopefully soon, this will also happen when tags change, once we support tags as inputs. And I assume more will follow. So perhaps in the end the general assumption of not running a BB without explicitly clicking "run" does not fit that well anymore.
+
+https://ca.slack-edge.com/T0SEARSV8-UT52ULX4G-995f8ff2207c-48
+
+**jdburgerjdburger**
+
+[2 months ago](https://meshcloud.slack.com/archives/CSLGLMN73/p1710404305058659?thread_ts=1710351574.514019&cid=CSLGLMN73)
+
+Where is that assumption communicated / shared with the customer? And is it really that important as I thought that IaC is supposed to be idempotent
+
+https://ca.slack-edge.com/T0SEARSV8-U6GEX4H4M-065d5d4b6c12-48
+
+**stommstomm**
+
+[2 months ago](https://meshcloud.slack.com/archives/CSLGLMN73/p1710404405989429?thread_ts=1710351574.514019&cid=CSLGLMN73)
+
+I think idempotency is not relevant in taht case. It is not the same input we provide to the BB, but changed input. So it will need to apply a change.
+
+https://ca.slack-edge.com/T0SEARSV8-U6GEX4H4M-065d5d4b6c12-48
+
+**stommstomm**
+
+[2 months ago](https://meshcloud.slack.com/archives/CSLGLMN73/p1710404565384139?thread_ts=1710351574.514019&cid=CSLGLMN73)
+
+And I also don't think we have that assumption somewhere written down. I think the important part is, that operators are aware of how the system works. And yeah, perhaps we can somewhere improve around that. Especially the info on when the BB is run again and what might change for it (mainly inputs) is something tehy should now. Perhaps we should just add some general info text to the Inputs tab and mention in there, that meshStack will make sure the BB always gets the latest inputs from meshStack. E.g. if a new user gets assigned and the user permission input is used, meshStack will run the BB again with the new input.
+
+https://ca.slack-edge.com/T0SEARSV8-UT52ULX4G-995f8ff2207c-48
+
+**jdburgerjdburger**
+
+[2 months ago](https://meshcloud.slack.com/archives/CSLGLMN73/p1710404775364719?thread_ts=1710351574.514019&cid=CSLGLMN73)
+
+OK I think a general message at the top of the Inputs tab should be fine then. Or we add it to the `users` one specifically as we know that one might change
+
+https://ca.slack-edge.com/T0SEARSV8-U6GEX4H4M-065d5d4b6c12-48
+
+**stommstomm**
+
+[2 months ago](https://meshcloud.slack.com/archives/CSLGLMN73/p1710405118246789?thread_ts=1710351574.514019&cid=CSLGLMN73)
+
+But we then also have to add it to the meshTags (once we have it), to the Platform Tenant Id and to Static Inputs (if the BB is in Draft state, because then also changes to Static inputs are possible). But those changes would only be applied without direct awareness of the user if they trigger a replication of the related tenant. Or if they then change user permissions.
+
+https://ca.slack-edge.com/T0SEARSV8-U6GEX4H4M-065d5d4b6c12-48
+
+**stommstomm**
+
+[2 months ago](https://meshcloud.slack.com/archives/CSLGLMN73/p1710405144533469?thread_ts=1710351574.514019&cid=CSLGLMN73)
+
+With the nightly replication it basically means that any change will the latest be applied during nightly replication
+
+https://ca.slack-edge.com/T0SEARSV8-UT52ULX4G-995f8ff2207c-48
+
+**jdburgerjdburger**
+
+[2 months ago](https://meshcloud.slack.com/archives/CSLGLMN73/p1710405284808459?thread_ts=1710351574.514019&cid=CSLGLMN73)
+
+Alright so maybe better to go with a general message?
+
+https://ca.slack-edge.com/T0SEARSV8-U6GEX4H4M-065d5d4b6c12-48
+
+**stommstomm**
+
+[2 months ago](https://meshcloud.slack.com/archives/CSLGLMN73/p1710405299958379?thread_ts=1710351574.514019&cid=CSLGLMN73)
+
+imo, yes
+
+fzieger
+2 months ago
+From todays release notes: “If a Building Block uses a “User Permissions” input, these permissions are now directly updated when permissions on the project change. Before that change, it was only updated when a tenant replication succeeded. Additionally, permissions and other automatically determined inputs are now updated to the latest state when a new Building Block run is executed.”
+Awesome change! One caveat: we no longer operate on the paradigm “building blocks only run again when when a user triggers another run manually”.
+@jdburger
+
+@rmarcoci
+That adding this input to your BB definition will cause replications that you haven’t triggered (which can be disruptive!) should be discoverable to someone who defines a BB.
+Maybe add a small note on the input to give a hint to the user that this input behaves differently?
+image.png
+
+image.png
+
+10 replies
+
+jdburger
+2 months ago
+@stomm
+as you built this, what do you think could be a nice solution?
+
+stomm
+2 months ago
+Hmm, we could either put this into the description in the dropdown, or we could show an info alert below the inputs, that tells the user, that this BB might be executed without explicitly running it, as users are being used and that can trigger a new execution of the BB. On teh other hand, that can also happen after every replication. In that case the uer or operator is not aware either, that the BB will be executed again (if any input changed). Hopefully soon, this will also happen when tags change, once we support tags as inputs. And I assume more will follow. So perhaps in the end the general assumption of not running a BB without explicitly clicking "run" does not fit that well anymore.
+
+jdburger
+2 months ago
+Where is that assumption communicated / shared with the customer? And is it really that important as I thought that IaC is supposed to be idempotent
+
+stomm
+2 months ago
+I think idempotency is not relevant in taht case. It is not the same input we provide to the BB, but changed input. So it will need to apply a change.
+
+stomm
+2 months ago
+And I also don't think we have that assumption somewhere written down. I think the important part is, that operators are aware of how the system works. And yeah, perhaps we can somewhere improve around that. Especially the info on when the BB is run again and what might change for it (mainly inputs) is something tehy should now. Perhaps we should just add some general info text to the Inputs tab and mention in there, that meshStack will make sure the BB always gets the latest inputs from meshStack. E.g. if a new user gets assigned and the user permission input is used, meshStack will run the BB again with the new input.
+
+jdburger
+2 months ago
+OK I think a general message at the top of the Inputs tab should be fine then. Or we add it to the users one specifically as we know that one might change
+
+stomm
+2 months ago
+But we then also have to add it to the meshTags (once we have it), to the Platform Tenant Id and to Static Inputs (if the BB is in Draft state, because then also changes to Static inputs are possible). But those changes would only be applied without direct awareness of the user if they trigger a replication of the related tenant. Or if they then change user permissions.
+
+stomm
+2 months ago
+With the nightly replication it basically means that any change will the latest be applied during nightly replication
+
+jdburger
+2 months ago
+Alright so maybe better to go with a general message?
+
+stomm
+2 months ago
+imo, yes
