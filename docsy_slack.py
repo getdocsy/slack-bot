@@ -29,14 +29,13 @@ def action_button_click(body, ack, say, client, channel_id):
     ack()
     thread_ts = body["container"]["thread_ts"]
     say(
-        f"All right, @{body['user']['username']}. I'll get back to you with a suggestion",
+        f"All right, <@{body['user']['username']}>. I'll get back to you with a suggestion",
         thread_ts=thread_ts
     )
 
-    thread_messages = client.conversations_replies(channel = channel_id, ts = thread_ts).data
-    with open('data.json', 'w', encoding='utf-8') as f:
-        json.dump(thread_messages, f, ensure_ascii=False, indent=4)
-
+    thread = client.conversations_replies(channel = channel_id, ts = thread_ts).data['messages']
+    messages = [(message['user'], message['text']) for message in thread if 'user' in message and 'text' in message]
+    
     say(
         f"I opened a PR with that change. How does this look?",
         thread_ts=thread_ts
