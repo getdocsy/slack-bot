@@ -50,22 +50,29 @@ def branch_exists(branch_name):
     branches = [branch.name for branch in repo.get_branches()]
     return branch_name in branches
 
-def create_pr():
-
+def pr_exists(title):
     auth = Auth.Token(os.environ.get("GITHUB_TOKEN"))
     g = Github(auth=auth)
     repo = g.get_repo("felixzieger/congenial-computing-machine")
+    pulls = repo.get_pulls()
+    g.close()
+    return title in [pull.title for pull in pulls]
+
+def create_pr(title):
+    auth = Auth.Token(os.environ.get("GITHUB_TOKEN"))
+    g = Github(auth=auth)
+    repo = g.get_repo("felixzieger/congenial-computing-machine")
+    if pr_exists(title):
+        logging.info(f"PR '{title}' exists. Nothing to do")
+        return
     
-    title = "My first PR using python"
     body = '''
-    
     SUMMARY
     
     A small step for me, a big step for me
     '''
     
-    pr = repo.create_pull(base="main", head="docsy", title=title, body=body)
-    pr
+    repo.create_pull(base="main", head="docsy", title=title, body=body)
     
     g.close()
     print(f"New PR '{title}' created and pushed successfully!")
@@ -75,7 +82,7 @@ def main():
         raise EnvironmentError("GITHUB_TOKEN is missing")
     logging.basicConfig(level=logging.INFO)
     create_branch(file_content = suggestion)
-    # create_pr()
+    create_pr(title = "My first PR using python")
 
 if __name__ == '__main__':
     main()
