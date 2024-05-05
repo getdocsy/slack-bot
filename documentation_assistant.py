@@ -42,6 +42,7 @@ class DocumentationAssistant:
                 },
             ]
         )
+        logging.debug(prompt)
         completion = self.client.chat.completions.create(
             model="gpt-3.5-turbo", messages=prompt
         )
@@ -77,6 +78,7 @@ class DocumentationAssistant:
                 },
             ]
         )
+        logging.debug(prompt)
         completion = self.client.chat.completions.create(
             model="gpt-3.5-turbo", messages=prompt
         )
@@ -85,8 +87,11 @@ class DocumentationAssistant:
 
 if __name__ == "__main__":
     assistant = DocumentationAssistant()
+    logging.basicConfig(level=logging.DEBUG)
     messages = [
         ("Alice", "How do I activate my account?"),
         ("Bob", "Go to settings and click 'Activate Account'."),
     ]
-    print(assistant.get_suggestion(messages))
+    print(
+        assistant.get_file_path_suggestion(messages, ["README.md", "docs/account.md"])
+    )
