@@ -26,6 +26,12 @@ class GitHubManager:
             paths.append(os.path.relpath(path, self.repo_path))
         return paths
 
+    def get_file_content(self, relative_file_path):
+        file_path = os.path.join(self.repo_path, relative_file_path)
+        with open(file_path, "r") as file:
+            file_content = file.read()
+        return file_content
+
     def create_branch(
         self,
         relative_file_path,
@@ -56,12 +62,10 @@ class GitHubManager:
         return pr.html_url
 
     def _clone_repo(self):
-        with tempfile.TemporaryDirectory() as repo_path:
-            repo_url = (
-                f"https://{self.username}:{self.token}@github.com/{self.repo_name}"
-            )
-            repo = Repo.clone_from(repo_url, repo_path)
-            return repo, repo_path
+        repo_path = tempfile.mkdtemp() # TODO better handling of temp directories. This one would need to be cleaned up.
+        repo_url = f"https://{self.username}:{self.token}@github.com/{self.repo_name}"
+        repo = Repo.clone_from(repo_url, repo_path)
+        return repo, repo_path
 
     def _branch_exists(self, branch_name, repo):
         branches = [branch.name for branch in repo.get_branches()]
@@ -78,6 +82,12 @@ class GitHubManager:
 
 def main():
     logging.basicConfig(level=logging.INFO)
+    gitHubManager = GitHubManager(
+        "felixzieger/congenial-computing-machine",
+        "felixzieger",
+        os.environ.get("GITHUB_TOKEN"),
+    )
+    print(gitHubManager.get_file_content("README.md"))
 
 
 if __name__ == "__main__":

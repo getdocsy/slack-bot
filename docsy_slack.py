@@ -12,7 +12,8 @@ logger = logging.getLogger(__name__)
 
 
 app = App(token=os.environ.get("SLACK_BOT_TOKEN"))
-gitHubManager = git.GitHubManager("felixzieger/congenial-computing-machine","felixzieger",os.environ.get("GITHUB_TOKEN"))
+gitHubManager = GitHubManager("felixzieger/congenial-computing-machine","felixzieger",os.environ.get("GITHUB_TOKEN"))
+ai = DocumentationAssistant()
 
 
 @app.message("thanks")
@@ -55,21 +56,31 @@ def action_button_click(body, ack, say, client, channel_id):
         for message in thread
         if "user" in message and "text" in message
     ]
-    md_files = gitHubManager.list_md_files()
-    gitHubManager.create_branch(file_content=suggestion)
-    html_url = gitHubManager.create_pr("My first end-to-end test")
 
-    url_block = {
-        "type": "section",
-        "text": {
-            "type": "mrkdwn",
-            "text": f"I opened a PR with that change. How does <{html_url}|this> look?",
-        },
-    }
+    file_paths = gitHubManager.list_md_files()
+    file_path_suggestion = ai.get_file_path_suggestion(messages, file_paths)
 
-    app.client.chat_postMessage(
-        channel=channel_id, text="Placeholder", blocks=[url_block], thread_ts=thread_ts
-    )
+    logger.info(file_path_suggestion)
+
+    file_content = gitHubManager.get_file_content(file_path_suggestion)
+    file_content_suggestion = ai.get_file_content_suggestion(messages, file_path_suggestion, file_content)
+    
+    logger.info(file_content_suggestion)
+
+    # gitHubManager.create_branch(file_content=file_content_suggestion, relative_file_path = file_path_suggestion)
+    # html_url = gitHubManager.create_pr("My first end-to-end test")
+
+    # url_block = {
+    #     "type": "section",
+    #     "text": {
+    #         "type": "mrkdwn",
+    #         "text": f"I opened a PR with that change. How does <{html_url}|this> look?",
+    #     },
+    # }
+
+    # app.client.chat_postMessage(
+    #     channel=channel_id, text="Placeholder", blocks=[url_block], thread_ts=thread_ts
+    # )
 
 
 @app.event("message")
