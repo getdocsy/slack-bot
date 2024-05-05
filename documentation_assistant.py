@@ -11,33 +11,71 @@ class DocumentationAssistant:
             {
                 "role": "system",
                 "content": (
-                    "You are my friendly AI coworker. "
-                    "Your help our company by writing public documentation that answers the questions people have about our product. "
-                    "As input, you will receive chat conversations where someone asks a questions and someone answers the question and a markdown file that should answer the question but doesn't yet. "
-                    "Exclusively write about what is in the product today. Do not include anything about features that are not implemented yet. Use active voice and present tense."
+                    "You are a friendly AI coworker. "
+                    "Your help our company by improving our public documentation so it answers the questions people have about our product. "
+                    "As input, you will receive chat conversations where someone asks a questions and someone answers the question. "
                 ),
             },
         ]
+        self.writing_prompt = []
 
-    def get_suggestion(self, messages):
-        prompt = self.base_prompt + [
-            {"role": "user", "name": message[0], "content": message[1]}
-            for message in messages
-        ]
-        completion = self.client.chat.completions.create(
-            model="gpt-3.5-turbo", messages=prompt
-        )
-        return completion.choices[0].message.content
-
-    # Example of adding another method that might use a different prompt or settings
-    def get_advanced_suggestion(self, messages, extra_instructions):
+    def get_file_path_suggestion(self, messages, file_paths):
         prompt = (
             self.base_prompt
-            + [{"role": "system", "content": extra_instructions}]
             + [
                 {"role": "user", "name": message[0], "content": message[1]}
                 for message in messages
             ]
+            + [
+                {
+                    "role": "system",
+                    "content": "Here is the list of files of the public documentation for our product.",
+                },
+            ]
+            + [{"role": "system", "content": file_path} for file_path in file_paths]
+            + [
+                {
+                    "role": "system",
+                    "content": (
+                        "Pick exactly one file path from the above list where you think the question from the chat conversation should be answered. Only answer with the file path."
+                    ),
+                },
+            ],
+        )
+        completion = self.client.chat.completions.create(
+            model="gpt-3.5-turbo", messages=prompt
+        )
+        return completion.choices[0].message.content
+
+    def get_file_content_suggestion(self, messages, file_path, file_content):
+        prompt = (
+            self.base_prompt
+            + [
+                {"role": "user", "name": message[0], "content": message[1]}
+                for message in messages
+            ]
+            + [
+                {
+                    "role": "system",
+                    "content": f"We are expanding file {file_path} to now answer the question from the chat conversation above.",
+                },
+                {
+                    "role": "system",
+                    "content": "Here is how the file currently looks like.",
+                },
+                {
+                    "role": "system",
+                    "content": file_content,
+                },
+            ]
+            + [
+                {
+                    "role": "system",
+                    "content": (
+                        "Modify the above markdown file. Keep the edits as minimal as possible while still answering the question. We afterwards will open a Pull Request against the public docs and want only meaningful changes in our git history."
+                    ),
+                },
+            ],
         )
         completion = self.client.chat.completions.create(
             model="gpt-3.5-turbo", messages=prompt
@@ -45,7 +83,6 @@ class DocumentationAssistant:
         return completion.choices[0].message.content
 
 
-# Example usage
 if __name__ == "__main__":
     assistant = DocumentationAssistant()
     messages = [
@@ -53,8 +90,3 @@ if __name__ == "__main__":
         ("Bob", "Go to settings and click 'Activate Account'."),
     ]
     print(assistant.get_suggestion(messages))
-    print(
-        assistant.get_advanced_suggestion(
-            messages, "Include details on navigating the user interface."
-        )
-    )
