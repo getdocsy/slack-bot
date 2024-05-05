@@ -40,7 +40,7 @@ class DocumentationAssistant:
                         "Pick exactly one file path from the above list where you think the question from the chat conversation should be answered. Only answer with the file path."
                     ),
                 },
-            ],
+            ]
         )
         completion = self.client.chat.completions.create(
             model="gpt-3.5-turbo", messages=prompt
@@ -75,7 +75,7 @@ class DocumentationAssistant:
                         "Modify the above markdown file. Keep the edits as minimal as possible while still answering the question. We afterwards will open a Pull Request against the public docs and want only meaningful changes in our git history."
                     ),
                 },
-            ],
+            ]
         )
         completion = self.client.chat.completions.create(
             model="gpt-3.5-turbo", messages=prompt
