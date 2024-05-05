@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 app = App(token=os.environ.get("SLACK_BOT_TOKEN"))
+gitHubManager = git.GitHubManager("felixzieger/congenial-computing-machine","felixzieger",os.environ.get("GITHUB_TOKEN"))
 
 
 @app.message("thanks")
@@ -23,7 +24,7 @@ def message_learned(message, say):
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": f"Hey there <@{message['user']}>! Looks like you could answer your question. Do you want me to put this into the public docs?",
+                    "text": f"Hey there <@{message['user']}>! Looks like you learned something there. Should I create a PR against our public docs?",
                 },
                 "accessory": {
                     "type": "button",
@@ -32,7 +33,7 @@ def message_learned(message, say):
                 },
             }
         ],
-        text=f"Hey there <@{message['user']}>! You learned something new today. Do you want me to come up with a Knowledge base entry for that?",
+        text=f"Hey there <@{message['user']}>! Looks like you learned something there. Should I create a PR against our public docs?",
         thread_ts=thread_ts,
     )
 
@@ -55,8 +56,8 @@ def action_button_click(body, ack, say, client, channel_id):
         if "user" in message and "text" in message
     ]
     suggestion = ai.get_suggestion(messages)
-    git.create_branch(file_content=suggestion)
-    html_url = git.create_pr("My first end-to-end test")
+    gitHubManager.create_branch(file_content=suggestion)
+    html_url = gitHubManager.create_pr("My first end-to-end test")
 
     url_block = {
         "type": "section",
@@ -79,6 +80,4 @@ def handle_message_events(body, logger):
 # Start your app
 if __name__ == "__main__":
     SocketModeHandler(app, os.environ["SLACK_APP_TOKEN"]).start()
-    if "GITHUB_TOKEN" not in os.environ:
-        raise EnvironmentError("GITHUB_TOKEN is missing")
     logging.basicConfig(level=logging.INFO)
