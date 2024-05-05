@@ -5,7 +5,7 @@ from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
 import docsy_ai as ai
-import docsy_git as git
+from github_manager import GitHubManager
 
 
 logger = logging.getLogger(__name__)
