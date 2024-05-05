@@ -4,7 +4,7 @@ import logging
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
-import docsy_ai as ai
+from documentation_assistant import DocumentationAssistant
 from github_manager import GitHubManager
 
 
@@ -55,7 +55,7 @@ def action_button_click(body, ack, say, client, channel_id):
         for message in thread
         if "user" in message and "text" in message
     ]
-    suggestion = ai.get_suggestion(messages)
+    md_files = gitHubManager.list_md_files()
     gitHubManager.create_branch(file_content=suggestion)
     html_url = gitHubManager.create_pr("My first end-to-end test")
 
