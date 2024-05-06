@@ -40,29 +40,33 @@ class GitHubManager:
         commit_message="first commit",
     ):
         if self._branch_exists(branch_name):
+            logging.info(f"Branch '{branch_name}' exists. Checking out...")
             self.repo.git.checkout(branch_name)
         else:
+            logging.info(f"Branch '{branch_name}' doesn't exist. Creating...")
             self.repo.git.checkout("-b", branch_name)
         file_path = os.path.join(self.repo_path, relative_file_path)
         with open(file_path, "w") as file:
             file.write(file_content)
         self.repo.index.add([file_path])
         self.repo.index.commit(commit_message)
+
         origin = self.repo.remote()
-        origin.push()
+        origin.push(refspec=f'{branch_name}:{branch_name}')
         logging.info(f"Branch '{branch_name}' pushed successfully!")
 
-    def create_pr(self, title, body="A small step for me, a big step for me"):
+    def create_pr(self, branch_name, title, body):
         if self._pr_exists(title):
             logging.info(f"PR '{title}' exists. Nothing to do")
             return None
         pr = self.github_repo.create_pull(
-            base="main", head="docsy", title=title, body=body
+            base="main", head=branch_name, title=title, body=body
         )
         return pr.html_url
 
     def _clone_repo(self):
         repo_path = tempfile.mkdtemp()  # TODO better handling of temp directories. This one would need to be cleaned up.
+        logging.debug(f"Cloning repository to {repo_path}...")
         repo_url = f"https://{self.username}:{self.token}@github.com/{self.repo_name}"
         repo = Repo.clone_from(repo_url, repo_path)
         return repo, repo_path
@@ -86,8 +90,8 @@ def main():
         "felixzieger",
         os.environ.get("GITHUB_TOKEN"),
     )
-    print(gitHubManager.get_file_content("README.md"))
 
+    gitHubManager.create_branch("README.md", "Hi there", "testing_new_branches")
 
 if __name__ == "__main__":
     main()

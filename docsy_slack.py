@@ -10,9 +10,15 @@ from github_manager import GitHubManager
 
 logger = logging.getLogger(__name__)
 
+APP_NAME = "Docsy"
+ORGANIZATION_NAME = "Laufvogel Company"
 
 app = App(token=os.environ.get("SLACK_BOT_TOKEN"))
-gitHubManager = GitHubManager("felixzieger/congenial-computing-machine","felixzieger",os.environ.get("GITHUB_TOKEN"))
+gitHubManager = GitHubManager(
+    "felixzieger/congenial-computing-machine",
+    "felixzieger",
+    os.environ.get("GITHUB_TOKEN"),
+)
 ai = DocumentationAssistant()
 
 
@@ -63,13 +69,25 @@ def action_button_click(body, ack, say, client, channel_id):
     logger.info(f"file_path_suggestion: {file_path_suggestion}")
 
     file_content = gitHubManager.get_file_content(file_path_suggestion)
-    file_content_suggestion = ai.get_file_content_suggestion(messages, file_path_suggestion, file_content)
-    
-    logger.info(file_content_suggestion)
-    branch_name_suggestion = ai.get_branch_name_suggestion(file_content, file_content_suggestion)
+    file_content_suggestion = ai.get_file_content_suggestion(
+        messages, file_path_suggestion, file_content
+    )
 
-    gitHubManager.create_branch(file_content=file_content_suggestion, relative_file_path = file_path_suggestion, branch_name = branch_name_suggestion)
-    html_url = gitHubManager.create_pr("My first end-to-end test")
+    logger.info(file_content_suggestion)
+    branch_name_suggestion = ai.get_branch_name_suggestion(
+        file_content, file_content_suggestion
+    )
+
+    gitHubManager.create_branch(
+        file_content=file_content_suggestion,
+        relative_file_path=file_path_suggestion,
+        branch_name=branch_name_suggestion,
+    )
+    html_url = gitHubManager.create_pr(
+        branch_name_suggestion,
+        branch_name_suggestion,
+        f"I am {APP_NAME}. I am an AI coworker at {ORGANIZATION_NAME}. I creaetd this PR based on a discussion I observed. Please merge or close as you see fit!",
+    )
 
     url_block = {
         "type": "section",
