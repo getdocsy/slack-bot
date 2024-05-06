@@ -13,11 +13,11 @@ class GitHubManager:
         self.token = token
         self.auth = Auth.Token(self.token)
         self.github = Github(auth=self.auth)
+        self.github_repo = self.github.get_repo(self.repo_name)
         self.repo, self.repo_path = self._clone_repo()
 
     # def fork_repo(self, source_repo):
-    #     repo = self.github.get_repo(source_repo)
-    #     fork = self.github.get_user().create_fork(repo).full_name
+    #     fork = self.github.get_user().create_fork(self.github_repo).full_name
     #     return fork
 
     def list_md_files(self, subdir="meshcloud-docs/docs/"):
@@ -36,10 +36,10 @@ class GitHubManager:
         self,
         relative_file_path,
         file_content,
-        branch_name="docsy",
+        branch_name,
         commit_message="first commit",
     ):
-        if self._branch_exists(branch_name, self.repo):
+        if self._branch_exists(branch_name):
             self.repo.git.checkout(branch_name)
         else:
             self.repo.git.checkout("-b", branch_name)
@@ -56,24 +56,23 @@ class GitHubManager:
         if self._pr_exists(title):
             logging.info(f"PR '{title}' exists. Nothing to do")
             return None
-        pr = self.github.get_repo(self.repo_name).create_pull(
+        pr = self.github_repo.create_pull(
             base="main", head="docsy", title=title, body=body
         )
         return pr.html_url
 
     def _clone_repo(self):
-        repo_path = tempfile.mkdtemp() # TODO better handling of temp directories. This one would need to be cleaned up.
+        repo_path = tempfile.mkdtemp()  # TODO better handling of temp directories. This one would need to be cleaned up.
         repo_url = f"https://{self.username}:{self.token}@github.com/{self.repo_name}"
         repo = Repo.clone_from(repo_url, repo_path)
         return repo, repo_path
 
-    def _branch_exists(self, branch_name, repo):
-        branches = [branch.name for branch in repo.get_branches()]
+    def _branch_exists(self, branch_name):
+        branches = [branch.name for branch in self.github_repo.get_branches()]
         return branch_name in branches
 
     def _pr_exists(self, title):
-        repo = self.github.get_repo(self.repo_name)
-        pulls = repo.get_pulls()
+        pulls = self.github_repo.get_pulls()
         return title in [pull.title for pull in pulls]
 
     def close(self):
