@@ -60,27 +60,28 @@ def action_button_click(body, ack, say, client, channel_id):
     file_paths = gitHubManager.list_md_files()
     file_path_suggestion = ai.get_file_path_suggestion(messages, file_paths)
 
-    logger.info(file_path_suggestion)
+    logger.info(f"file_path_suggestion: {file_path_suggestion}")
 
     file_content = gitHubManager.get_file_content(file_path_suggestion)
     file_content_suggestion = ai.get_file_content_suggestion(messages, file_path_suggestion, file_content)
     
     logger.info(file_content_suggestion)
+    branch_name_suggestion = ai.get_branch_name_suggestion(file_content, file_content_suggestion)
 
-    # gitHubManager.create_branch(file_content=file_content_suggestion, relative_file_path = file_path_suggestion)
-    # html_url = gitHubManager.create_pr("My first end-to-end test")
+    gitHubManager.create_branch(file_content=file_content_suggestion, relative_file_path = file_path_suggestion, branch_name = branch_name_suggestion)
+    html_url = gitHubManager.create_pr("My first end-to-end test")
 
-    # url_block = {
-    #     "type": "section",
-    #     "text": {
-    #         "type": "mrkdwn",
-    #         "text": f"I opened a PR with that change. How does <{html_url}|this> look?",
-    #     },
-    # }
+    url_block = {
+        "type": "section",
+        "text": {
+            "type": "mrkdwn",
+            "text": f"I opened a PR with that change. How does <{html_url}|this> look?",
+        },
+    }
 
-    # app.client.chat_postMessage(
-    #     channel=channel_id, text="Placeholder", blocks=[url_block], thread_ts=thread_ts
-    # )
+    app.client.chat_postMessage(
+        channel=channel_id, text="Placeholder", blocks=[url_block], thread_ts=thread_ts
+    )
 
 
 @app.event("message")

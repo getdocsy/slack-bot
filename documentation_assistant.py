@@ -73,13 +73,43 @@ class DocumentationAssistant:
                     "role": "system",
                     "content": file_content,
                 },
-            ]
-            + [
                 {
                     "role": "system",
                     "content": (
                         "Modify the markdown file and give out the complete file again. Keep the edits as minimal as possible while still answering the question. We afterwards will open a Pull Request against the public docs and want only meaningful changes in our git history. Only answer with the markdown file."
                     ),
+                },
+            ]
+        )
+        return self._get_suggestion(prompt)
+
+    def get_branch_name_suggestion(self, file_content, file_content_suggestion):
+        prompt = (
+            self.base_prompt
+            + [
+                {
+                    "role": "system",
+                    "content": "Please suggest a branch name for the branch that will hold changes to the following file.",
+                },
+                {
+                    "role": "system",
+                    "content": "Here is how the file looked before the change.",
+                },
+                {
+                    "role": "system",
+                    "content": file_content,
+                },
+                {
+                    "role": "system",
+                    "content": "Here is how the file looks after the change.",
+                },
+                {
+                    "role": "system",
+                    "content": file_content_suggestion,
+                },
+                {
+                    "role": "system",
+                    "content": "Only answer with the suggested branch name. Only use lowercase letters and hyphens in the name.",
                 },
             ]
         )
