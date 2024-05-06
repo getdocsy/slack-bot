@@ -46,7 +46,12 @@ class DocumentationAssistant:
         completion = self.client.chat.completions.create(
             model="gpt-3.5-turbo", messages=prompt
         )
-        return completion.choices[0].message.content
+
+        file_path_suggestion = completion.choices[0].message.content
+        logging.debug(file_path_suggestion)
+        return file_path_suggestion
+
+
 
     def get_file_content_suggestion(self, messages, file_path, file_content):
         prompt = (
@@ -82,7 +87,10 @@ class DocumentationAssistant:
         completion = self.client.chat.completions.create(
             model="gpt-3.5-turbo", messages=prompt
         )
-        return completion.choices[0].message.content
+
+        file_content_suggestion = completion.choices[0].message.content
+        logging.debug(file_content_suggestion)
+        return file_content_suggestion
 
 
 if __name__ == "__main__":
