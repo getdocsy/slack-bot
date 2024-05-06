@@ -28,13 +28,16 @@ class DocumentationAssistant:
         logging.debug(suggestion)
         return suggestion
 
+    def _convert_slack_thread_to_prompt(self, messages):
+        return [
+            {"role": "user", "name": message[0], "content": message[1]}
+            for message in messages
+        ]
+
     def get_file_path_suggestion(self, messages, file_paths):
         prompt = (
             self.base_prompt
-            + [
-                {"role": "user", "name": message[0], "content": message[1]}
-                for message in messages
-            ]
+            + self._convert_slack_thread_to_prompt(messages)
             + [
                 {
                     "role": "system",
@@ -56,10 +59,7 @@ class DocumentationAssistant:
     def get_file_content_suggestion(self, messages, file_path, file_content):
         prompt = (
             self.base_prompt
-            + [
-                {"role": "user", "name": message[0], "content": message[1]}
-                for message in messages
-            ]
+            + self._convert_slack_thread_to_prompt(messages)
             + [
                 {
                     "role": "system",
