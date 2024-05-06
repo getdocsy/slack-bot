@@ -37,7 +37,7 @@ class DocumentationAssistant:
                 {
                     "role": "system",
                     "content": (
-                        "Pick exactly one file path from the above list where you think the question from the chat conversation should be answered. Only answer with the file path."
+                        "Pick exactly one file path from the above list where you think the question from the chat conversation should be answered. Only answer with the file path. Include the complete path that was shown in the list."
                     ),
                 },
             ]
@@ -58,7 +58,7 @@ class DocumentationAssistant:
             + [
                 {
                     "role": "system",
-                    "content": f"We are expanding file {file_path} to now answer the question from the chat conversation above.",
+                    "content": f"Please modify the markdown file {file_path} to now also answer the question from the chat conversation above.",
                 },
                 {
                     "role": "system",
@@ -73,7 +73,7 @@ class DocumentationAssistant:
                 {
                     "role": "system",
                     "content": (
-                        "Modify the above markdown file. Keep the edits as minimal as possible while still answering the question. We afterwards will open a Pull Request against the public docs and want only meaningful changes in our git history."
+                        "Modify the markdown file and give out the complete file again. Keep the edits as minimal as possible while still answering the question. We afterwards will open a Pull Request against the public docs and want only meaningful changes in our git history. Only answer with the markdown file."
                     ),
                 },
             ]
