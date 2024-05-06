@@ -86,8 +86,8 @@ class DocumentationAssistant:
 
 
 if __name__ == "__main__":
-    assistant = DocumentationAssistant()
     logging.basicConfig(level=logging.DEBUG)
+    assistant = DocumentationAssistant()
     messages = [
         ("Alice", "How do I activate my account?"),
         ("Bob", "Go to settings and click 'Activate Account'."),

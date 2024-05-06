@@ -90,5 +90,5 @@ def handle_message_events(body, logger):
 
 # Start your app
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
     SocketModeHandler(app, os.environ["SLACK_APP_TOKEN"]).start()
-    logging.basicConfig(level=logging.INFO)
