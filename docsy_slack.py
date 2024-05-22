@@ -13,7 +13,10 @@ logger = logging.getLogger(__name__)
 APP_NAME = "Docsy"
 ORGANIZATION_NAME = "Laufvogel Company"
 
-app = App(token=os.environ.get("SLACK_BOT_TOKEN"))
+app = App(
+    token=os.environ.get("SLACK_BOT_TOKEN"),
+    signing_secret=os.environ.get("SLACK_SIGNING_SECRET"),
+)
 gitHubManager = GitHubManager(
     "felixzieger/congenial-computing-machine",
     "felixzieger",
@@ -110,4 +113,4 @@ def handle_message_events(body, logger):
 # Start your app
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
-    SocketModeHandler(app, os.environ["SLACK_APP_TOKEN"]).start()
+    app.start(port=int(os.environ.get("PORT",3000)))
