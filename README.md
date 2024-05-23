@@ -16,5 +16,9 @@ The app will listen on port 3000.
 Start ngrok in a separate pane
 
 ```
-ngrok http http://localhost:3000
+ngrok http --domain reasonably-firm-cricket.ngrok-free.app 3000
 ```
+
+## Troubleshooting
+
+Check ngrok enpoints https://dashboard.ngrok.com/cloud-edge/endpoints
