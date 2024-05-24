@@ -1,4 +1,0 @@
-slack_bolt
-openai
-GitPython
-PyGitHub
