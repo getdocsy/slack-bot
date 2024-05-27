@@ -1,4 +1,4 @@
-# should-this-be-in-the-docs-bot
+# docsy
 
 Prior art:
 https://github.com/humanloop/coworker
