@@ -2,7 +2,6 @@ import os
 import logging
 
 from slack_bolt import App
-from slack_bolt.adapter.socket_mode import SocketModeHandler
 
 from docsy.documentation_assistant import DocumentationAssistant
 from docsy.github_manager import GitHubManager
