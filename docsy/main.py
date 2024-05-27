@@ -2,10 +2,12 @@ import os
 import logging
 
 from slack_bolt import App
+from slack_bolt.adapter.flask import SlackRequestHandler
 
 from docsy.documentation_assistant import DocumentationAssistant
 from docsy.github_manager import GitHubManager
 
+from flask import Flask, request
 
 logger = logging.getLogger(__name__)
 
@@ -107,6 +109,15 @@ def action_button_click(body, ack, say, client, channel_id):
 @app.event("message")
 def handle_message_events(body, logger):
     logger.info(body)
+
+
+flask_app = Flask(__name__)
+handler = SlackRequestHandler(app)
+
+
+@flask_app.route("/slack/events", methods=["POST"])
+def slack_events():
+    return handler.handle(request)
 
 
 # Start your app
