@@ -26,6 +26,11 @@ gitHubManager = GitHubManager(
 ai = DocumentationAssistant()
 
 
+@app.middleware
+def log_request(logger, body, next):
+    logger.debug(body)
+    return next()
+
 @app.message("thanks")
 def message_learned(message, say):
     thread_ts = message.get("thread_ts", None) or message["ts"]
