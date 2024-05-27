@@ -18,4 +18,4 @@ COPY docsy ./docsy
 
 RUN poetry install --without dev
 
-ENTRYPOINT ["poetry", "run", "python", "-m", "docsy"]
+ENTRYPOINT ["poetry", "run", "python", "-m", "docsy.main"]
