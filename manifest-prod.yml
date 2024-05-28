@@ -1,0 +1,28 @@
+display_information:
+  name: Docsy
+  description: Docsy creates Pull Requests on documentation repositories.
+  background_color: "#004aad"
+features:
+  bot_user:
+    display_name: Docsy
+    always_online: false
+oauth_config:
+  scopes:
+    bot:
+      - channels:read
+      - reactions:read
+      - app_mentions:read
+      - chat:write
+      - channels:history
+settings:
+  event_subscriptions:
+    request_url: https://docsy.felixzieger.de/slack/events
+    bot_events:
+      - message.channels
+  interactivity:
+    is_enabled: true
+    request_url: https://docsy.felixzieger.de/slack/events
+  org_deploy_enabled: false
+  socket_mode_enabled: false
+  token_rotation_enabled: false
+
