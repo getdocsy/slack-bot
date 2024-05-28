@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "docsy"
 version = "0.1.0"
-description = ""
+description = "Docsy creates pull requests on documentation repositories."
 authors = ["Felix Zieger <mail@felixzieger.de>"]
 readme = "README.md"
 

@@ -1,6 +1,6 @@
 display_information:
   name: Docsy
-  description: Docsy creates Pull Requests on documentation repositories.
+  description: Docsy creates pull requests on documentation repositories.
   background_color: "#004aad"
 features:
   bot_user:

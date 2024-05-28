@@ -1,6 +1,6 @@
 display_information:
   name: Docsy-Dev
-  description: Docsy-Dev creates Pull Requests on documentation repositories.
+  description: Docsy-Dev creates pull requests on documentation repositories.
   background_color: "#48ad00"
 features:
   bot_user:
@@ -16,12 +16,12 @@ oauth_config:
       - channels:history
 settings:
   event_subscriptions:
-    request_url: https://reasonably-firm-cricket.ngrok-free.ap/slack/events
+    request_url: https://reasonably-firm-cricket.ngrok-free.app/slack/events
     bot_events:
       - message.channels
   interactivity:
     is_enabled: true
-    request_url: https://reasonably-firm-cricket.ngrok-free.ap/slack/events
+    request_url: https://reasonably-firm-cricket.ngrok-free.app/slack/events
   org_deploy_enabled: false
   socket_mode_enabled: false
   token_rotation_enabled: false
