@@ -18,10 +18,18 @@ app = App(
     token=os.environ.get("SLACK_BOT_TOKEN"),
     signing_secret=os.environ.get("SLACK_SIGNING_SECRET"),
 )
+
+GITHUB_APP_ID = os.environ.get("GITHUB_APP_ID")
+GITHUB_APP_PRIVATE_KEY = os.environ.get("GITHUB_APP_PRIVATE_KEY")
+GITHUB_APP_INSTALLATION_ID = int(
+    os.environ.get("GITHUB_APP_INSTALLATION_ID") or 0
+)  # We need an int but can't be sure the env variable is set at all. There is surely something nicer, but good enough for now.
+
 gitHubManager = GitHubManager(
     "felixzieger/congenial-computing-machine",
-    "felixzieger",
-    os.environ.get("GITHUB_TOKEN"),
+    GITHUB_APP_ID,
+    GITHUB_APP_PRIVATE_KEY,
+    GITHUB_APP_INSTALLATION_ID,
 )
 ai = DocumentationAssistant()
 
@@ -30,6 +38,7 @@ ai = DocumentationAssistant()
 def log_request(logger, body, next):
     logger.debug(body)
     return next()
+
 
 @app.message("thanks")
 def message_learned(message, say):
@@ -128,5 +137,4 @@ def slack_events():
 # Start your app
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
-    app.start(port=int(os.environ.get("PORT",3000)))
-
+    app.start(port=int(os.environ.get("PORT", 3000)))
