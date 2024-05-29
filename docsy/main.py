@@ -3,6 +3,10 @@ import logging
 
 from slack_bolt import App
 from slack_bolt.adapter.flask import SlackRequestHandler
+from slack_bolt.oauth.oauth_settings import OAuthSettings
+from slack_sdk.oauth.installation_store import FileInstallationStore
+from slack_sdk.oauth.state_store import FileOAuthStateStore
+
 
 from docsy.documentation_assistant import DocumentationAssistant
 from docsy.github_manager import GitHubManager
@@ -14,13 +18,26 @@ logger = logging.getLogger(__name__)
 APP_NAME = "Docsy"
 ORGANIZATION_NAME = "Laufvogel Company"
 
-app = App(
-    token=os.environ.get("SLACK_BOT_TOKEN"),
-    signing_secret=os.environ.get("SLACK_SIGNING_SECRET"),
-)
-
+# Docsy uses the same GitHub App independent of who is using it
 GITHUB_APP_ID = os.environ.get("GITHUB_APP_ID")
 GITHUB_APP_PRIVATE_KEY = os.environ.get("GITHUB_APP_PRIVATE_KEY")
+
+# Docsy uses OAUTH for multi-workspace slack support
+oauth_settings = OAuthSettings(
+    client_id=os.environ["SLACK_CLIENT_ID"],
+    client_secret=os.environ["SLACK_CLIENT_SECRET"],
+    scopes=["channels:read", "groups:read", "chat:write"],
+    installation_store=FileInstallationStore(base_dir="/tmp/data/installations"),
+    state_store=FileOAuthStateStore(
+        expiration_seconds=600, base_dir="/tmp/data/states"
+    ),
+)
+
+SLACK_SIGNING_SECRET = os.environ.get("SLACK_SIGNING_SECRET")
+
+app = App(signing_secret=SLACK_SIGNING_SECRET, oauth_settings=oauth_settings)
+
+ORGANIZATION_NAME = "Laufvogel Company"
 GITHUB_APP_INSTALLATION_ID = int(
     os.environ.get("GITHUB_APP_INSTALLATION_ID") or 0
 )  # We need an int but can't be sure the env variable is set at all. There is surely something nicer, but good enough for now.
@@ -30,7 +47,9 @@ gitHubManager = GitHubManager(
     GITHUB_APP_ID,
     GITHUB_APP_PRIVATE_KEY,
     GITHUB_APP_INSTALLATION_ID,
+    content_subdir="meshcloud-docs/docs/",
 )
+
 ai = DocumentationAssistant()
 
 
