@@ -13,6 +13,7 @@ class GitHubManager:
         app_id,
         app_private_key,
         app_installation_id,
+        content_subdir="./",
     ):
         appAuth = Auth.AppAuth(app_id, app_private_key)
         gi = GithubIntegration(auth=appAuth)
@@ -21,14 +22,13 @@ class GitHubManager:
         self.repo_name = repo_name
         self.github_repo = self.github.get_repo(self.repo_name)
         self.repo, self.repo_path = self._clone_repo()
+        self.content_subdir = content_subdir
 
-    # def fork_repo(self, source_repo):
-    #     fork = self.github.get_user().create_fork(self.github_repo).full_name
-    #     return fork
-
-    def list_md_files(self, subdir="meshcloud-docs/docs/"):
+    def list_md_files(self):
         paths = []
-        for path in Path(os.path.join(self.repo_path, subdir)).rglob("*.md"):
+        for path in Path(os.path.join(self.repo_path, self.content_subdir)).rglob(
+            "*.md"
+        ):
             paths.append(os.path.relpath(path, self.repo_path))
         return paths
 
@@ -101,11 +101,12 @@ def main():
         GITHUB_APP_ID,
         GITHUB_APP_PRIVATE_KEY,
         GITHUB_APP_INSTALLATION_ID,
+        content_subdir="meshcloud-docs/docs/",
     )
 
-    gitHubManager.create_branch("README.md", "Hi there", "testing_new_branches")
+    gitHubManager.create_branch("README.md", "Hi there!", "testing_new_branches")
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
     main()
