@@ -123,7 +123,7 @@ def action_button_click(body, ack, say, client, channel_id):
     html_url = gitHubManager.create_pr(
         branch_name_suggestion,
         branch_name_suggestion,
-        f"I am {APP_NAME}. I am an AI coworker at {ORGANIZATION_NAME}. I creaetd this PR based on a discussion I observed. Please merge or close as you see fit!",
+        f"I am {APP_NAME}. I am an AI coworker at {ORGANIZATION_NAME}. I created this PR based on a slack thread. Please merge or close as you see fit!",
     )
 
     url_block = {
