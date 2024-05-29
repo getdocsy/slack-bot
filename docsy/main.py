@@ -24,9 +24,9 @@ oauth_settings = OAuthSettings(
     client_id=os.environ["SLACK_CLIENT_ID"],
     client_secret=os.environ["SLACK_CLIENT_SECRET"],
     scopes=["channels:read", "chat:write"],
-    installation_store=FileInstallationStore(base_dir="./data/installations"),
+    installation_store=FileInstallationStore(base_dir="./data/slack/installations"),
     state_store=FileOAuthStateStore(
-        expiration_seconds=600, base_dir="/tmp/data/states"
+        expiration_seconds=600, base_dir="./data/slack/states"
     ),
 )
 app = App(signing_secret=SLACK_SIGNING_SECRET, oauth_settings=oauth_settings)
