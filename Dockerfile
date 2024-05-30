@@ -1,6 +1,9 @@
-FROM python:3.11-buster
+FROM python:alpine
 
-RUN pip install poetry==1.4.2
+RUN apk fix && \
+    apk --no-cache --update add git
+
+RUN pip install poetry==1.7.1
 
 ENV POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_IN_PROJECT=1 \
@@ -12,10 +15,10 @@ WORKDIR /app
 COPY pyproject.toml poetry.lock ./
 RUN touch README.md
 
-RUN poetry install --without dev --no-root && rm -rf $POETRY_CACHE_DIR
+RUN poetry install --only main --no-root && rm -rf $POETRY_CACHE_DIR
 
 COPY docsy ./docsy
 
-RUN poetry install --without dev
+RUN poetry install --only main
 
 ENTRYPOINT ["poetry", "run", "python", "-m", "docsy.main"]
