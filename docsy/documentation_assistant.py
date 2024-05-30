@@ -3,6 +3,8 @@ from openai import OpenAI
 
 logger = logging.getLogger(__name__)
 
+AI_MODEL = "gpt-4o"
+
 
 class DocumentationAssistant:
     def __init__(self):
@@ -22,7 +24,7 @@ class DocumentationAssistant:
     def _get_suggestion(self, prompt):
         logging.debug(prompt)
         completion = self.client.chat.completions.create(
-            model="gpt-3.5-turbo", messages=prompt
+            model=AI_MODEL, messages=prompt
         )
         suggestion = completion.choices[0].message.content
         logging.debug(suggestion)
