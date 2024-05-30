@@ -40,14 +40,17 @@ ORGANIZATION_NAME = "Laufvogel Company"
 
 ai = DocumentationAssistant()
 
-
-def _get_github_manager(team_id):
-    print(team_id)  # TODO determine based on team id
-    docs_repo, content_subdir = (
+github = {
+    "T0692AWNLLC": (
+        51286673,
         "felixzieger/congenial-computing-machine",
         "meshcloud-docs/docs/",
     )
-    github_app_installation_id = 51286673
+}
+
+
+def _get_github_manager(team_id):
+    github_app_installation_id, docs_repo, content_subdir = github[team_id]
     return GitHubManager(
         docs_repo,
         GITHUB_APP_ID,
@@ -104,7 +107,7 @@ def action_button_click(body, ack, say, client, channel_id):
         if "user" in message and "text" in message
     ]
 
-    gitHubManager = _get_github_manager(body.team_id)
+    gitHubManager = _get_github_manager(body["message"]["team"])
     file_paths = gitHubManager.list_md_files()
     file_path_suggestion = ai.get_file_path_suggestion(messages, file_paths)
 
