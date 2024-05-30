@@ -1,6 +1,9 @@
 # local data
 data/
 
+# secrets
+secrets.*.env
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -123,10 +126,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-docker.env
 .env
-docker.dev.env
-.dev.env
 .venv
 env/
 venv/
