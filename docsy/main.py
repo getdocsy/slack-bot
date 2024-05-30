@@ -34,20 +34,27 @@ app = App(signing_secret=SLACK_SIGNING_SECRET, oauth_settings=oauth_settings)
 # Docsy uses the same GitHub App independent of who is using it
 GITHUB_APP_ID = os.environ.get("GITHUB_APP_ID")
 GITHUB_APP_PRIVATE_KEY = os.environ.get("GITHUB_APP_PRIVATE_KEY")
-GITHUB_APP_INSTALLATION_ID = int(
-    os.environ.get("GITHUB_APP_INSTALLATION_ID") or 0
-)  # We need an int but can't be sure the env variable is set at all. There is surely something nicer, but good enough for now.
-gitHubManager = GitHubManager(
-    "felixzieger/congenial-computing-machine",
-    GITHUB_APP_ID,
-    GITHUB_APP_PRIVATE_KEY,
-    GITHUB_APP_INSTALLATION_ID,
-    content_subdir="meshcloud-docs/docs/",
-)
+
 
 ORGANIZATION_NAME = "Laufvogel Company"
 
 ai = DocumentationAssistant()
+
+
+def _get_github_manager(team_id):
+    print(team_id)  # TODO determine based on team id
+    docs_repo, content_subdir = (
+        "felixzieger/congenial-computing-machine",
+        "meshcloud-docs/docs/",
+    )
+    github_app_installation_id = 51286673
+    return GitHubManager(
+        docs_repo,
+        GITHUB_APP_ID,
+        GITHUB_APP_PRIVATE_KEY,
+        github_app_installation_id,
+        content_subdir=content_subdir,
+    )
 
 
 @app.middleware
@@ -97,6 +104,7 @@ def action_button_click(body, ack, say, client, channel_id):
         if "user" in message and "text" in message
     ]
 
+    gitHubManager = _get_github_manager(body.team_id)
     file_paths = gitHubManager.list_md_files()
     file_path_suggestion = ai.get_file_path_suggestion(messages, file_paths)
 
