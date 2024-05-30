@@ -8,7 +8,7 @@ features:
     always_online: false
 oauth_config:
   redirect_urls:
-    - https://docsy.felixzieger.de/slack/oauth_redirect
+    - https://app.getdocsy.com/slack/oauth_redirect
   scopes:
     bot:
       - channels:read
@@ -18,12 +18,12 @@ oauth_config:
       - channels:history
 settings:
   event_subscriptions:
-    request_url: https://docsy.felixzieger.de/slack/events
+    request_url: https://app.getdocsy.com/slack/events
     bot_events:
       - message.channels
   interactivity:
     is_enabled: true
-    request_url: https://docsy.felixzieger.de/slack/events
+    request_url: https://app.getdocsy.com/slack/events
   org_deploy_enabled: false
   socket_mode_enabled: false
   token_rotation_enabled: false
