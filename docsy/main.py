@@ -90,7 +90,7 @@ def message_learned(message, say):
 
 
 @app.action("button_click")
-def action_button_click(body, ack, say, client, channel_id):
+def action_button_click(context, body, ack, say, client, channel_id):
     ack()
     thread_ts = body["container"]["thread_ts"]
     say(
@@ -143,7 +143,11 @@ def action_button_click(body, ack, say, client, channel_id):
     }
 
     app.client.chat_postMessage(
-        channel=channel_id, text="Placeholder", blocks=[url_block], thread_ts=thread_ts
+        channel=channel_id,
+        text="Placeholder",
+        blocks=[url_block],
+        thread_ts=thread_ts,
+        token=context.bot_token,
     )
 
 
