@@ -7,6 +7,8 @@ features:
     display_name: Docsy
     always_online: false
 oauth_config:
+  redirect_urls:
+    - https://docsy.felixzieger.de/slack/oauth_redirect
   scopes:
     bot:
       - channels:read
