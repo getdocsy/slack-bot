@@ -40,6 +40,8 @@ ORGANIZATION_NAME = "Laufvogel Company"
 
 ai = DocumentationAssistant()
 
+# This stores the data we need to know about our customers to open PRs in GitHub
+# TODO move this into a DB of some sorty so adding a new customer is not a matter of building a new image
 github = {
     # Laufvogel Company Slack
     "T0692AWNLLC": (
