@@ -41,11 +41,18 @@ ORGANIZATION_NAME = "Laufvogel Company"
 ai = DocumentationAssistant()
 
 github = {
+    # Laufvogel Company Slack
     "T0692AWNLLC": (
         51286673,
         "felixzieger/congenial-computing-machine",
         "meshcloud-docs/docs/",
-    )
+    ),
+    # Docsy Slack
+    "T07786H8B42": (
+        51663706,
+        "getdocsy/docs",
+        "docs/",
+    ),
 }
 
 
