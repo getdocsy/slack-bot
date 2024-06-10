@@ -27,7 +27,8 @@ To run it locally `docker run -v=/Users/xilef/Documents/docsy/data/:/app/data --
 
 ### Argument reference
 
-GITHUB_APP_PRIVATE_KEY must be formatted without newlines.
+GITHUB_APP_PRIVATE_KEY must be formatted without newlines
+LOG_LEVEL can be one of DEBUG, INFO
 
 ## Troubleshooting
 
