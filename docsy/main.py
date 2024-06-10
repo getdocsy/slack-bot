@@ -136,6 +136,7 @@ def action_button_click(context, body, ack, say, client, channel_id):
         file_content=file_content_suggestion,
         relative_file_path=file_path_suggestion,
         branch_name=branch_name_suggestion,
+        commit_message=branch_name_suggestion,
     )
     html_url = gitHubManager.create_pr(
         branch_name_suggestion,

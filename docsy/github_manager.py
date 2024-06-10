@@ -43,7 +43,7 @@ class GitHubManager:
         relative_file_path,
         file_content,
         branch_name,
-        commit_message="first commit",
+        commit_message,
     ):
         if self._branch_exists(branch_name):
             logging.info(f"Branch '{branch_name}' exists. Checking out...")
