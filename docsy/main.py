@@ -35,9 +35,6 @@ app = App(signing_secret=SLACK_SIGNING_SECRET, oauth_settings=oauth_settings)
 GITHUB_APP_ID = os.environ.get("GITHUB_APP_ID")
 GITHUB_APP_PRIVATE_KEY = os.environ.get("GITHUB_APP_PRIVATE_KEY")
 
-
-ORGANIZATION_NAME = "Laufvogel Company"
-
 ai = DocumentationAssistant()
 
 # This stores the data we need to know about our customers to open PRs in GitHub
@@ -120,14 +117,11 @@ def action_button_click(context, body, ack, say, client, channel_id):
     file_paths = gitHubManager.list_md_files()
     file_path_suggestion = ai.get_file_path_suggestion(messages, file_paths)
 
-    logger.info(f"file_path_suggestion: {file_path_suggestion}")
-
     file_content = gitHubManager.get_file_content(file_path_suggestion)
     file_content_suggestion = ai.get_file_content_suggestion(
         messages, file_path_suggestion, file_content
     )
 
-    logger.info(file_content_suggestion)
     branch_name_suggestion = ai.get_branch_name_suggestion(
         file_content, file_content_suggestion
     )
