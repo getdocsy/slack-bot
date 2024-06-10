@@ -13,7 +13,7 @@ class DocumentationAssistant:
             {
                 "role": "system",
                 "content": (
-                    "You are a friendly AI coworker. "
+                    "You are Docsy, a friendly AI coworker. "
                     "Your help our company by improving our public documentation so it answers the questions people have about our product. "
                     "As input, you will receive chat conversations where someone asks a questions and someone answers the question. "
                 ),
@@ -79,7 +79,7 @@ class DocumentationAssistant:
                     "role": "system",
                     "content": (
                         "Now repeat the file line by line and only do the minimal edits necessary to answer the question. It's very important that you do not leave out any lines that were there before if not absolutely necesary."
-                        + "We afterwards will open a Pull Request against the public docs and want only meaningful changes in our git history. Only answer with the markdown file."
+                        + "We afterwards will open a Pull Request against the public docs and want only meaningful changes in our git history. Only answer with the new file content."
                     ),
                 },
             ]
