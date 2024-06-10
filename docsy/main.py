@@ -83,19 +83,29 @@ def message_learned(message, say):
                     "type": "mrkdwn",
                     "text": f"Hey there <@{message['user']}>! Looks like you learned something there. Should I create a PR against our public docs?",
                 },
-                "accessory": {
-                    "type": "button",
-                    "text": {"type": "plain_text", "text": "Yes, please"},
-                    "action_id": "button_click",
-                },
-            }
+            },
+            {
+                "type": "actions",
+                "elements": [
+                    {
+                        "type": "button",
+                        "text": {"type": "plain_text", "text": "Yes, please"},
+                        "action_id": "button_click_yes",
+                    },
+                    {
+                        "type": "button",
+                        "text": {"type": "plain_text", "text": "No, thanks"},
+                        "action_id": "button_click_no",
+                    },
+                ],
+            },
         ],
         text=f"Hey there <@{message['user']}>! Looks like you learned something there. Should I create a PR against our public docs?",
         thread_ts=thread_ts,
     )
 
 
-@app.action("button_click")
+@app.action("button_click_yes")
 def action_button_click(context, body, ack, say, client, channel_id):
     ack()
     thread_ts = body["container"]["thread_ts"]
@@ -152,6 +162,16 @@ def action_button_click(context, body, ack, say, client, channel_id):
         blocks=[url_block],
         thread_ts=thread_ts,
         token=context.bot_token,
+    )
+
+
+@app.action("button_click_no")
+def action_button_click_no(body, ack, say):
+    ack()
+    thread_ts = body["container"]["thread_ts"]
+    say(
+        f"All right, <@{body['user']['username']}>. No docs for this one.",
+        thread_ts=thread_ts,
     )
 
 
