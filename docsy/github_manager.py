@@ -15,7 +15,7 @@ class GitHubManager:
         app_installation_id,
         content_subdir="./",
     ):
-        appAuth = Auth.AppAuth(app_id, app_private_key)
+        appAuth = Auth.AppAuth(app_id, app_private_key.replace("\\n", "\n"))
         gi = GithubIntegration(auth=appAuth)
         self.github = gi.get_github_for_installation(app_installation_id)
         self.token = gi.get_access_token(app_installation_id).token
