@@ -90,7 +90,8 @@ class GitHubManager:
         self.github.close()
 
 
-def main():
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     GITHUB_APP_ID = os.environ.get("GITHUB_APP_ID")
     GITHUB_APP_PRIVATE_KEY = os.environ.get("GITHUB_APP_PRIVATE_KEY")
     GITHUB_APP_INSTALLATION_ID = int(
@@ -105,9 +106,6 @@ def main():
         content_subdir="meshcloud-docs/docs/",
     )
 
-    gitHubManager.create_branch("README.md", "Hi there!", "testing_new_branches")
-
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    main()
+    gitHubManager.create_branch(
+        "README.md", "Hi there!", "testing_new_branches", "first commit"
+    )
