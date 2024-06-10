@@ -33,3 +33,9 @@ LOG_LEVEL can be one of DEBUG, INFO
 ## Troubleshooting
 
 Check ngrok enpoints https://dashboard.ngrok.com/cloud-edge/endpoints
+
+## Stylesheet
+
+Font: Inter
+
+Color primary: <still open>
