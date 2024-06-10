@@ -68,6 +68,7 @@ class GitHubManager:
         pr = self.github_repo.create_pull(
             base="main", head=branch_name, title=title, body=body
         )
+        logging.info(f"PR '{title}' created successfully!")
         return pr.html_url
 
     def _clone_repo(self):
