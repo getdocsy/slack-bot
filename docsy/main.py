@@ -171,5 +171,9 @@ def slack_events():
 
 # Start your app
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
+    log_level = os.getenv("LOG_LEVEL", "INFO").upper()
+    logging.basicConfig(
+        level=getattr(logging, log_level, logging.INFO),
+    )
+
     app.start(port=int(os.environ.get("PORT", 3000)))
