@@ -59,7 +59,7 @@ def _get_organization_context(team_id):
 
 
 def _get_github_manager(team_id):
-    github_app_installation_id = github["team_id][github_app_installation_id"]
+    github_app_installation_id = github["team_id"]["github_app_installation_id"]
     docs_repo = github[team_id]["docs_repo"]
     content_subdir = github[team_id]["content_subdir"]
 
