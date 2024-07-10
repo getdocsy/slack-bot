@@ -10,12 +10,11 @@ from slack_sdk.oauth.state_store import FileOAuthStateStore
 
 from docsy.documentation_assistant import DocumentationAssistant
 from docsy.github_manager import GitHubManager
+from docsy.database import Database
 
 from flask import Flask, request
 
 logger = logging.getLogger(__name__)
-
-APP_NAME = "Docsy"
 
 # Docsy uses OAUTH for multi-workspace slack support
 SLACK_SIGNING_SECRET = os.environ.get("SLACK_SIGNING_SECRET")
@@ -29,39 +28,24 @@ oauth_settings = OAuthSettings(
     ),
 )
 app = App(signing_secret=SLACK_SIGNING_SECRET, oauth_settings=oauth_settings)
-
-# Docsy uses the same GitHub App independent of who is using it
-GITHUB_APP_ID = os.environ.get("GITHUB_APP_ID")
-GITHUB_APP_PRIVATE_KEY = os.environ.get("GITHUB_APP_PRIVATE_KEY")
-
 ai = DocumentationAssistant()
-
-# This stores the data we need to know about our customers to open PRs in GitHub
-# TODO move this into a DB of some sorty so adding a new customer is not a matter of building a new image
-github = {
-    "T0692AWNLLC": {
-        "organization_name": "Laufvogel Company",
-        "github_app_installation_id": 51286673,
-        "docs_repo": "felixzieger/congenial-computing-machine",
-        "content_subdir": "meshcloud-docs/docs/",
-    },
-    "T07786H8B42": {
-        "organization_name": "Docsy Company",
-        "github_app_installation_id": 51663706,
-        "docs_repo": "getdocsy/docs",
-        "content_subdir": "docs/",
-    },
-}
+db = Database("./data/db")
 
 
 def _get_organization_context(team_id):
-    return github[team_id]["organization_name"]
+    customer = db.get_customer(team_id)
+    return customer.organization_name
 
 
 def _get_github_manager(team_id):
-    github_app_installation_id = github[team_id]["github_app_installation_id"]
-    docs_repo = github[team_id]["docs_repo"]
-    content_subdir = github[team_id]["content_subdir"]
+    customer = db.get_customer(team_id)
+    github_app_installation_id = customer.github_app_installation_id
+    docs_repo = customer.docs_repo
+    content_subdir = customer.content_subdir
+
+    # Docsy uses the same GitHub App independent of who is using it
+    GITHUB_APP_ID = os.environ.get("GITHUB_APP_ID")
+    GITHUB_APP_PRIVATE_KEY = os.environ.get("GITHUB_APP_PRIVATE_KEY")
 
     return GitHubManager(
         docs_repo,
@@ -185,7 +169,7 @@ def action_button_click(context, body, ack, say, client, channel_id):
     html_url = gitHubManager.create_pr(
         branch_name_suggestion,
         branch_name_suggestion,
-        f"I am {APP_NAME}. I am an AI coworker at {organization_name}. I created this PR based on a slack thread. Please merge or close as you see fit!",
+        f"I am Docsy. I am an AI coworker at {organization_name}. I created this PR based on a slack thread. Please merge or close as you see fit!",
     )
 
     url_block = {
