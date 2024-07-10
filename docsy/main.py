@@ -8,7 +8,7 @@ from slack_sdk.oauth.installation_store import FileInstallationStore
 from slack_sdk.oauth.state_store import FileOAuthStateStore
 
 
-from docsy.documentation_assistant import DocumentationAssistant
+from docsy.ai import AI
 from docsy.github_manager import GitHubManager
 from docsy.database import Database
 
@@ -28,7 +28,7 @@ oauth_settings = OAuthSettings(
     ),
 )
 app = App(signing_secret=SLACK_SIGNING_SECRET, oauth_settings=oauth_settings)
-ai = DocumentationAssistant()
+ai = AI()
 db = Database("./data/db")
 
 

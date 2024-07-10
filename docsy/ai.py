@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 AI_MODEL = "gpt-4o"
 
 
-class DocumentationAssistant:
+class AI:
     def __init__(self):
         self.client = OpenAI()
         self.base_prompt = [
