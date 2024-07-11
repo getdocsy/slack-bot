@@ -20,6 +20,7 @@ settings:
   event_subscriptions:
     request_url: https://reasonably-firm-cricket.ngrok-free.app/slack/events
     bot_events:
+      - app_mention
       - message.channels
   interactivity:
     is_enabled: true
