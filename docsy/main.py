@@ -26,6 +26,8 @@ oauth_settings = OAuthSettings(
 )
 app = App(signing_secret=SLACK_SIGNING_SECRET, oauth_settings=oauth_settings)
 
+register_listeners(app)
+
 
 @app.middleware
 def log_request(logger, body, next):
@@ -37,8 +39,6 @@ def log_request(logger, body, next):
 def handle_message_events(body, logger):
     logger.info(body)
 
-
-register_listeners(app)
 
 flask_app = Flask(__name__)
 handler = SlackRequestHandler(app)
