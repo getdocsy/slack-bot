@@ -1,3 +1,5 @@
+import os
+import requests
 from slack_bolt import App
 from .sample_action import sample_action_callback
 from docsy.github_manager import get_github_manager
@@ -5,6 +7,32 @@ import docsy.shared
 
 ai = docsy.shared.ai
 db = docsy.shared.db
+
+
+def download_images_from_thread(context, thread, team_id, thread_ts):
+    download_folder = f"data/{team_id}/{thread_ts}/"
+    logging.debug(
+        f"Download images for thread {thread_ts} into folder {download_folder}"
+    )
+
+    for message in thread:
+        if "files" in message:
+            for file_info in message["files"]:
+                if file_info["mimetype"].startswith("image/"):
+                    file_url = file_info["url_private_download"]
+                    file_name = file_info["name"]
+                    file_path = os.path.join(download_folder, file_name)
+
+                    headers = {"Authorization": f"Bearer {context.bot_token}"}
+                    response = requests.get(file_url, headers=headers)
+                    if response.status_code == 200:
+                        if not os.path.exists(download_folder):
+                            os.makedirs(download_folder)
+                        with open(file_path, "wb") as file:
+                            file.write(response.content)
+                        logging.debug(f"Downloaded {file_name} to {file_path}")
+                    else:
+                        logging.debug(f"Failed to download {file_name} from {file_url}")
 
 
 def action_button_click_yes_callback(context, body, ack, say, client, channel_id):
