@@ -6,6 +6,25 @@ from github import GithubIntegration, Auth
 from pathlib import Path
 
 
+def get_github_manager(db, team_id):
+    customer = db.get_customer(team_id)
+    github_app_installation_id = customer.github_app_installation_id
+    docs_repo = customer.docs_repo
+    content_subdir = customer.content_subdir
+
+    # Docsy uses the same GitHub App independent of who is using it
+    GITHUB_APP_ID = os.environ.get("GITHUB_APP_ID")
+    GITHUB_APP_PRIVATE_KEY = os.environ.get("GITHUB_APP_PRIVATE_KEY")
+
+    return GitHubManager(
+        docs_repo,
+        GITHUB_APP_ID,
+        GITHUB_APP_PRIVATE_KEY,
+        github_app_installation_id,
+        content_subdir=content_subdir,
+    )
+
+
 class GitHubManager:
     def __init__(
         self,
