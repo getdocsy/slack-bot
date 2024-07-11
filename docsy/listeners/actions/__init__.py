@@ -38,10 +38,15 @@ def action_button_click_yes_callback(context, body, ack, say, client, channel_id
     )
 
     gitHubManager.create_branch(
+        branch_name=branch_name_suggestion,
+    )
+    gitHubManager.add_file(
         file_content=file_content_suggestion,
         relative_file_path=file_path_suggestion,
-        branch_name=branch_name_suggestion,
         commit_message=branch_name_suggestion,
+    )
+    gitHubManager.push_branch(
+        branch_name=branch_name_suggestion,
     )
     organization_name = db.get_customer(team_id).organization_name
     html_url = gitHubManager.create_pr(

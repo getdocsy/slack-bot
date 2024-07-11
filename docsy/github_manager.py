@@ -59,10 +59,7 @@ class GitHubManager:
 
     def create_branch(
         self,
-        relative_file_path,
-        file_content,
         branch_name,
-        commit_message,
     ):
         if self._branch_exists(branch_name):
             logging.info(f"Branch '{branch_name}' exists. Checking out...")
@@ -70,11 +67,28 @@ class GitHubManager:
         else:
             logging.info(f"Branch '{branch_name}' doesn't exist. Creating...")
             self.repo.git.checkout("-b", branch_name)
+
+    def add_file(
+        self,
+        relative_file_path,
+        file_content,
+        commit_message,
+    ):
         file_path = os.path.join(self.repo_path, relative_file_path)
         with open(file_path, "w") as file:
             file.write(file_content)
         self.repo.index.add([file_path])
         self.repo.index.commit(commit_message)
+
+    def push_branch(
+        self,
+        branch_name,
+    ):
+        if self._branch_exists(branch_name):
+            logging.info(f"Branch '{branch_name}' exists. Checking out...")
+            self.repo.git.checkout(branch_name)
+        else:
+            logging.info(f"Branch '{branch_name}' doesn't exist. Can't push...")
 
         origin = self.repo.remote()
         origin.push(refspec=f"{branch_name}:{branch_name}")
