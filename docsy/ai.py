@@ -1,4 +1,5 @@
 import logging
+import os
 import base64
 from openai import OpenAI
 
@@ -47,7 +48,7 @@ class AI:
                 "content": [
                     {
                         "type": "text",
-                        "text": "This image was part of the chat conversation. Its file name is {os.path.basename(image_path)}. Reference it in the markdown file if the picture is relevant to the question.",
+                        "text": f"This image was part of the chat conversation. Its file name is {os.path.basename(image_path)}. Reference it in the markdown file if the picture is relevant to the question.",
                     },
                     {
                         "type": "image_url",
