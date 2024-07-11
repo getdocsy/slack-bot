@@ -1,4 +1,5 @@
 import logging
+import base64
 from openai import OpenAI
 
 logger = logging.getLogger(__name__)
@@ -19,7 +20,6 @@ class AI:
                 ),
             },
         ]
-        self.writing_prompt = []
 
     def _get_suggestion(self, prompt):
         logging.debug(prompt)
@@ -34,6 +34,31 @@ class AI:
         return [
             {"role": "user", "name": message[0], "content": message[1]}
             for message in messages
+        ]
+
+    def _convert_images_to_prompt(self, image_paths):
+        def _encode_image(image_path):
+            with open(image_path, "rb") as image_file:
+                return base64.b64encode(image_file.read()).decode("utf-8")
+
+        return [
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "This image was part of the chat conversation. Its file name is {os.path.basename(image_path)}. Reference it in the markdown file if the picture is relevant to the question.",
+                    },
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/png;base64,{_encode_image(image_path)}",
+                            "detail": "low",  # Expirement with this. Setting this to high might bring better results
+                        },
+                    },
+                ],
+            }
+            for image_path in image_paths
         ]
 
     def get_file_path_suggestion(self, messages, file_paths):
@@ -58,10 +83,13 @@ class AI:
         )
         return self._get_suggestion(prompt)
 
-    def get_file_content_suggestion(self, messages, file_path, file_content):
+    def get_file_content_suggestion(
+        self, messages, local_image_paths, file_path, file_content
+    ):
         prompt = (
             self.base_prompt
             + self._convert_slack_thread_to_prompt(messages)
+            + self._convert_images_to_prompt(local_image_paths)
             + [
                 {
                     "role": "system",

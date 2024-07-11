@@ -1,3 +1,4 @@
+import logging
 import os
 import requests
 from slack_bolt import App
@@ -5,16 +6,19 @@ from .sample_action import sample_action_callback
 from docsy.github_manager import get_github_manager
 import docsy.shared
 
+logger = logging.getLogger(__name__)
+
 ai = docsy.shared.ai
 db = docsy.shared.db
 
 
+# Downloads images and returns local file paths of the images
 def download_images_from_thread(context, thread, team_id, thread_ts):
     download_folder = f"data/{team_id}/{thread_ts}/"
     logging.debug(
         f"Download images for thread {thread_ts} into folder {download_folder}"
     )
-
+    image_paths = []
     for message in thread:
         if "files" in message:
             for file_info in message["files"]:
@@ -31,8 +35,10 @@ def download_images_from_thread(context, thread, team_id, thread_ts):
                         with open(file_path, "wb") as file:
                             file.write(response.content)
                         logging.debug(f"Downloaded {file_name} to {file_path}")
+                        image_paths.append(file_path)
                     else:
                         logging.debug(f"Failed to download {file_name} from {file_url}")
+    return image_paths
 
 
 def action_button_click_yes_callback(context, body, ack, say, client, channel_id):
@@ -52,13 +58,15 @@ def action_button_click_yes_callback(context, body, ack, say, client, channel_id
         if "user" in message and "text" in message
     ]
     team_id = body["message"]["team"]
+    local_image_paths = download_images_from_thread(context, thread, team_id, thread_ts)
+
     gitHubManager = get_github_manager(db, team_id)
     file_paths = gitHubManager.list_md_files()
     file_path_suggestion = ai.get_file_path_suggestion(messages, file_paths)
 
     file_content = gitHubManager.get_file_content(file_path_suggestion)
     file_content_suggestion = ai.get_file_content_suggestion(
-        messages, file_path_suggestion, file_content
+        messages, local_image_paths, file_path_suggestion, file_content
     )
 
     branch_name_suggestion = ai.get_branch_name_suggestion(
@@ -77,7 +85,7 @@ def action_button_click_yes_callback(context, body, ack, say, client, channel_id
         branch_name=branch_name_suggestion,
     )
     organization_name = db.get_customer(team_id).organization_name
-    html_url = gitHubManager.create_pr(
+    html_url = gitHubManager.create_pr(  # TODO a PR with that title already existed, docsy will show "none" in it's answer
         branch_name_suggestion,
         branch_name_suggestion,
         f"I am Docsy. I am an AI coworker at {organization_name}. I created this PR based on a slack thread. Please merge or close as you see fit!",
