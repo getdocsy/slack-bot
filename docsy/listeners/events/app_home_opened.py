@@ -1,7 +1,10 @@
 from logging import Logger
+import docsy.shared
+
+db = docsy.shared.db
 
 
-def app_home_opened_callback(client, event, logger: Logger):
+def app_home_opened_callback(client, event, context, logger: Logger):
     # ignore the app_home_opened event for anything but the Home tab
     if event["tab"] != "home":
         return
@@ -15,15 +18,49 @@ def app_home_opened_callback(client, event, logger: Logger):
                         "type": "section",
                         "text": {
                             "type": "mrkdwn",
-                            "text": "*Welcome home, <@" + event["user"] + "> :house:*",
+                            "text": "*Hey <@"
+                            + event["user"]
+                            + ">, I'm Docsy. Nice to meet you! :wave:*",
                         },
+                    },
+                    {"type": "divider"},
+                    {
+                        "type": "header",
+                        "text": {"type": "plain_text", "text": "Configuration"},
                     },
                     {
                         "type": "section",
                         "text": {
                             "type": "mrkdwn",
-                            "text": "Learn how home tabs can be more useful and "
-                            + "interactive <https://api.slack.com/surfaces/tabs/using|*in the documentation*>.",
+                            "text": "Configure how Docsy behaves.",
+                        },
+                    },
+                    {
+                        "type": "input",
+                        "element": {
+                            "type": "plain_text_input",
+                            "action_id": "docs_repo_input",
+                            "initial_value": db.get_customer(context.team_id).docs_repo,
+                        },
+                        "label": {
+                            "type": "plain_text",
+                            "text": "docs repo",
+                            "emoji": False,
+                        },
+                    },
+                    {
+                        "type": "input",
+                        "element": {
+                            "type": "plain_text_input",
+                            "action_id": "content_subdir_input",
+                            "initial_value": db.get_customer(
+                                context.team_id
+                            ).content_subdir,
+                        },
+                        "label": {
+                            "type": "plain_text",
+                            "text": "content subdir",
+                            "emoji": False,
                         },
                     },
                 ],

@@ -11,15 +11,18 @@ oauth_config:
     - https://app.getdocsy.com/slack/oauth_redirect
   scopes:
     bot:
-      - channels:read
-      - reactions:read
       - app_mentions:read
-      - chat:write
       - channels:history
+      - channels:read
+      - chat:write
+      - reactions:read
+      - files:read
 settings:
   event_subscriptions:
     request_url: https://app.getdocsy.com/slack/events
     bot_events:
+      - app_home_opened
+      - app_mention
       - message.channels
   interactivity:
     is_enabled: true
