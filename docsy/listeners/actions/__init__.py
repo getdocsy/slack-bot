@@ -79,6 +79,14 @@ def action_button_click_yes_callback(context, body, ack, say, client, channel_id
     gitHubManager.add_file(
         file_content=file_content_suggestion,
         relative_file_path=file_path_suggestion,
+    )
+    for local_image_path in local_image_paths:
+        # Only add image if it is referenced in answer
+        if os.path.basename(local_image_path) in file_content_suggestion:
+            gitHubManager.add_image(
+                local_image_path=local_image_path,
+            )
+    gitHubManager.commit(
         commit_message=branch_name_suggestion,
     )
     gitHubManager.push_branch(

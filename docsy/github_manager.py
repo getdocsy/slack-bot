@@ -1,6 +1,7 @@
 import os
 import tempfile
 import logging
+import shutil
 from git import Repo
 from github import GithubIntegration, Auth
 from pathlib import Path
@@ -42,6 +43,9 @@ class GitHubManager:
         self.github_repo = self.github.get_repo(self.repo_name)
         self.repo, self.repo_path = self._clone_repo()
         self.content_subdir = content_subdir
+        self.asset_subdir = os.path.join(
+            self.content_subdir, "assets"
+        )  # TODO make configurable
 
     def list_md_files(self):
         paths = []
@@ -72,12 +76,26 @@ class GitHubManager:
         self,
         relative_file_path,
         file_content,
-        commit_message,
     ):
         file_path = os.path.join(self.repo_path, relative_file_path)
         with open(file_path, "w") as file:
             file.write(file_content)
         self.repo.index.add([file_path])
+
+    def add_image(
+        self,
+        local_image_path,
+    ):
+        file_path = os.path.join(
+            self.repo_path, self.asset_subdir, os.path.basename(local_image_path)
+        )
+        shutil.copyfile(local_image_path, file_path)
+        self.repo.index.add([file_path])
+
+    def commit(
+        self,
+        commit_message,
+    ):
         self.repo.index.commit(commit_message)
 
     def push_branch(
