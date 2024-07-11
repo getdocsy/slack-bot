@@ -118,11 +118,9 @@ class AI:
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
-    assistant = DocumentationAssistant()
+    ai = AI()
     messages = [
         ("Alice", "How do I activate my account?"),
         ("Bob", "Go to settings and click 'Activate Account'."),
     ]
-    print(
-        assistant.get_file_path_suggestion(messages, ["README.md", "docs/account.md"])
-    )
+    print(ai.get_file_path_suggestion(messages, ["README.md", "docs/account.md"]))
