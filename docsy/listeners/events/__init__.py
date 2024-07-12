@@ -37,4 +37,4 @@ def app_mention_callback(event, say):
 
 def register(app: App):
     app.event("app_mention")(app_mention_callback)
-    app.event("app_home_opened")(app_home_opened_callback)  # Example\n
+    app.event("app_home_opened")(app_home_opened_callback)  # Example\n\n

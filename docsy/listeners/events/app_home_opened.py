@@ -37,6 +37,7 @@ def app_home_opened_callback(client, event, context, logger: Logger):
                     },
                     {
                         "type": "input",
+                        "block_id": "docs_repo_input",
                         "element": {
                             "type": "plain_text_input",
                             "action_id": "docs_repo_input",
@@ -50,6 +51,7 @@ def app_home_opened_callback(client, event, context, logger: Logger):
                     },
                     {
                         "type": "input",
+                        "block_id": "content_subdir_input",
                         "element": {
                             "type": "plain_text_input",
                             "action_id": "content_subdir_input",
@@ -62,6 +64,20 @@ def app_home_opened_callback(client, event, context, logger: Logger):
                             "text": "content subdir",
                             "emoji": False,
                         },
+                    },
+                    {
+                        "type": "actions",
+                        "elements": [
+                            {
+                                "type": "button",
+                                "text": {
+                                    "type": "plain_text",
+                                    "text": "Update",
+                                    "emoji": True,
+                                },
+                                "action_id": "app_home_update_button_click",
+                            }
+                        ],
                     },
                 ],
             },

@@ -2,7 +2,7 @@ import logging
 import os
 import requests
 from slack_bolt import App
-from .sample_action import sample_action_callback
+from .app_home_update import app_home_update_button_click_callback
 from docsy.github_manager import get_github_manager
 import docsy.shared
 
@@ -14,7 +14,7 @@ db = docsy.shared.db
 
 # Downloads images and returns local file paths of the images
 def download_images_from_thread(context, thread, team_id, thread_ts):
-    download_folder = f"data/{team_id}/{thread_ts}/"
+    download_folder = f"data/{team_id}/{thread_ts}/"  # TODO this folder must be cleaned up afterwards. Or use a temp folder
     logging.debug(
         f"Download images for thread {thread_ts} into folder {download_folder}"
     )
@@ -126,6 +126,6 @@ def action_button_click_no_callback(body, ack, say):
 
 
 def register(app: App):
-    app.action("sample_action_id")(sample_action_callback)
+    app.action("app_home_update_button_click")(app_home_update_button_click_callback)
     app.action("button_click_no")(action_button_click_no_callback)
     app.action("button_click_yes")(action_button_click_yes_callback)

@@ -43,6 +43,16 @@ class Database:
         self.session.add(customer)
         self.session.commit()
 
+    def update_customer_docs_repo(self, team_id, new_docs_repo):
+        customer = self.get_customer(team_id)
+        customer.docs_repo = new_docs_repo
+        self.session.commit()
+
+    def update_customer_content_subdir(self, team_id, new_content_subdir):
+        customer = self.get_customer(team_id)
+        customer.content_subdir = new_content_subdir
+        self.session.commit()
+
 
 db = Database("./data/db")
 
