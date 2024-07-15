@@ -26,7 +26,7 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade():
     # Bind the engine to the metadata of the Base class so that the
     # declaratives can be accessed through a DBSession instance
-    engine = get_engine("./data/db")
+    engine = get_engine("./data/db.sqlite")
     Session = sessionmaker(bind=engine)
     session = Session()
 
@@ -55,7 +55,7 @@ def upgrade():
 def downgrade():
     # Bind the engine to the metadata of the Base class so that the
     # declaratives can be accessed through a DBSession instance
-    engine = get_engine("./data/db")
+    engine = get_engine("./data/db.sqlite")
     Session = sessionmaker(bind=engine)
     session = Session()
 

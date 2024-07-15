@@ -1,6 +1,10 @@
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import sessionmaker, declarative_base
 
+from alembic import command
+from alembic.config import Config
+import os
+
 Base = declarative_base()
 
 
@@ -21,6 +25,13 @@ def initialize_database(engine):
     Base.metadata.create_all(engine)
 
 
+def _run_alembic_upgrade():
+    # Assuming your alembic.ini file is in the same directory as this script
+    alembic_cfg = Config(os.path.join(os.path.dirname(__file__), "alembic.ini"))
+    # Run the upgrade to the 'head' revision
+    command.upgrade(alembic_cfg, "head")
+
+
 Session = sessionmaker()
 
 
@@ -28,6 +39,7 @@ class Database:
     def __init__(self, db_path):
         self.engine = get_engine(db_path)
         initialize_database(self.engine)
+        _run_alembic_upgrade()
         Session.configure(bind=self.engine)
         self.session = Session()
 
