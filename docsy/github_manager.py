@@ -106,6 +106,7 @@ class GitHubManager:
         file_path = os.path.join(
             self.repo_path, self.asset_subdir, os.path.basename(local_image_path)
         )
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
         shutil.copyfile(local_image_path, file_path)
         self.repo.index.add([file_path])
 
