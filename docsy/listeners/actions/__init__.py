@@ -73,7 +73,7 @@ def action_button_click_yes_callback(context, body, ack, say, client, channel_id
         file_content, file_content_suggestion
     )
 
-    gitHubManager.create_branch(
+    gitHubManager.create_branch(  # TODO checking out an existing branch after having settled on content could lead to conflicts
         branch_name=branch_name_suggestion,
     )
     gitHubManager.add_file(

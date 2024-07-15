@@ -35,7 +35,8 @@ def _get_author():
             )
         case "909544":
             return Actor(
-                "getdocsy[Bot]", "171265091+getdocsy[bot]@users.noreply.github.com"
+                "getdocsy[Bot]",
+                "171265091+getdocsy[bot]@users.noreply.github.com",  # Also mentioned in Dockerfile
             )
         case _:
             raise ValueError("Unknown GitHub App ID")
