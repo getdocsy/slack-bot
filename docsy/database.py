@@ -1,3 +1,4 @@
+import logging
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import sessionmaker, declarative_base
 
@@ -5,6 +6,7 @@ from alembic import command
 from alembic.config import Config
 import os
 
+logger = logging.getLogger(__name__)
 Base = declarative_base()
 
 

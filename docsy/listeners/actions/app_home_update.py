@@ -1,11 +1,14 @@
-from logging import Logger
 import docsy.shared
 from docsy.github_manager import get_github_manager
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 db = docsy.shared.db
 
 
-def app_home_update_button_click_callback(ack, body, client, context, logger: Logger):
+def app_home_update_button_click_callback(ack, body, client, context, logger):
     ack()  # Acknowledge the button click
 
     new_docs_repo = body["view"]["state"]["values"]["docs_repo_input"][
