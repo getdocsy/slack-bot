@@ -2,7 +2,7 @@ import os
 import tempfile
 import logging
 import shutil
-from git import Repo
+from git import Repo, Actor
 from github import GithubIntegration, Auth
 from pathlib import Path
 
@@ -26,6 +26,21 @@ def get_github_manager(db, team_id):
     )
 
 
+def _get_author():
+    match os.environ.get("GITHUB_APP_ID"):
+        case "907984":
+            return Actor(
+                "getdocsy-dev[Bot]",
+                "171074497+getdocsy-dev[bot]@users.noreply.github.com",
+            )
+        case "909544":
+            return Actor(
+                "getdocsy[Bot]", "171265091+getdocsy[bot]@users.noreply.github.com"
+            )
+        case _:
+            raise ValueError("Unknown GitHub App ID")
+
+
 class GitHubManager:
     def __init__(
         self,
@@ -46,6 +61,7 @@ class GitHubManager:
         self.asset_subdir = os.path.join(
             self.content_subdir, "assets"
         )  # TODO make configurable
+        self.author = _get_author()
 
     def list_md_files(self):
         paths = []
@@ -96,7 +112,9 @@ class GitHubManager:
         self,
         commit_message,
     ):
-        self.repo.index.commit(commit_message)
+        self.repo.index.commit(
+            commit_message, author=self.author, committer=self.author
+        )
 
     def push_branch(
         self,
@@ -142,21 +160,35 @@ class GitHubManager:
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
     GITHUB_APP_ID = os.environ.get("GITHUB_APP_ID")
     GITHUB_APP_PRIVATE_KEY = os.environ.get("GITHUB_APP_PRIVATE_KEY")
-    GITHUB_APP_INSTALLATION_ID = int(
-        os.environ.get("GITHUB_APP_INSTALLATION_ID") or 0
-    )  # We need an int but can't be sure the env variable is set at all. There is surely something nicer, but good enough for now.
 
-    gitHubManager = GitHubManager(
+    ghm = GitHubManager(
         "felixzieger/congenial-computing-machine",
-        GITHUB_APP_ID,
-        GITHUB_APP_PRIVATE_KEY,
-        GITHUB_APP_INSTALLATION_ID,
+        app_id=GITHUB_APP_ID,
+        app_installation_id=51286673,
+        app_private_key=GITHUB_APP_PRIVATE_KEY,
         content_subdir="meshcloud-docs/docs/",
     )
 
-    gitHubManager.create_branch(
-        "README.md", "Hi there!", "testing_new_branches", "first commit"
+    rand = 124
+
+    ghm.create_branch(
+        branch_name=f"test-branch-{rand}",
+    )
+    ghm.add_file(
+        relative_file_path="meshcloud-docs/docs/test.md",
+        file_content="This is a test file",
+    )
+    ghm.commit(
+        commit_message="Test commit",
+    )
+    ghm.push_branch(
+        branch_name=f"test-branch-{rand}",
+    )
+    ghm.create_pr(
+        branch_name=f"test-branch-{rand}",
+        title="Test PR",
+        body="This is a test PR",
     )
