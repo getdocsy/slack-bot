@@ -54,24 +54,4 @@ class Database:
         self.session.commit()
 
 
-db = Database("./data/db")
-
-# db.insert_customer(
-#     {
-#         "team_id": "T0692AWNLLC",
-#         "organization_name": "Laufvogel Company",
-#         "github_app_installation_id": 51286673,
-#         "docs_repo": "felixzieger/congenial-computing-machine",
-#         "content_subdir": "meshcloud-docs/docs/",
-#     },
-# )
-
-# db.insert_customer(
-#     {
-#         "team_id": "T07786H8B42",
-#         "organization_name": "Docsy Company",
-#         "github_app_installation_id": 51663706,
-#         "docs_repo": "getdocsy/docs",
-#         "content_subdir": "docs/",
-#     },
-# )
+db = Database("./data/db.sqlite")
