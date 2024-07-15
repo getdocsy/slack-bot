@@ -64,6 +64,3 @@ class Database:
         customer = self.get_customer(team_id)
         customer.content_subdir = new_content_subdir
         self.session.commit()
-
-
-db = Database("./data/db.sqlite")
