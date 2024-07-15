@@ -68,14 +68,14 @@ class AI:
             + self._convert_slack_thread_to_prompt(messages)
             + [
                 {
-                    "role": "system",
+                    "role": "user",
                     "content": "Here is the list of files of the public documentation for our product.",
                 },
             ]
-            + [{"role": "system", "content": file_path} for file_path in file_paths]
+            + [{"role": "user", "content": file_path} for file_path in file_paths]
             + [
                 {
-                    "role": "system",
+                    "role": "user",
                     "content": (
                         "Pick exactly one file path from the above list where you think the question from the chat conversation should be answered. Only answer with the file path. Include the complete path that was shown in the list."
                     ),
@@ -93,22 +93,23 @@ class AI:
             + self._convert_images_to_prompt(local_image_paths)
             + [
                 {
-                    "role": "system",
-                    "content": f"Please modify the markdown file {file_path} to now also answer the question from the chat conversation above.",
+                    "role": "user",
+                    "content": f"Please modify the file {file_path} to now also answer the question from the chat conversation above.",
                 },
                 {
-                    "role": "system",
+                    "role": "user",
                     "content": "Here is how the file currently looks like.",
                 },
                 {
-                    "role": "system",
+                    "role": "user",
                     "content": file_content,
                 },
                 {
-                    "role": "system",
+                    "role": "user",
                     "content": (
                         "Now repeat the file line by line and only do the minimal edits necessary to answer the question. It's very important that you do not leave out any lines that were there before if not absolutely necesary."
                         + "We afterwards will open a Pull Request against the public docs and want only meaningful changes in our git history. Only answer with the new file content."
+                        + "Do not add a codefence at the first line of the file."
                     ),
                 },
             ]
@@ -118,27 +119,27 @@ class AI:
     def get_branch_name_suggestion(self, file_content, file_content_suggestion):
         prompt = self.base_prompt + [
             {
-                "role": "system",
+                "role": "user",
                 "content": "Please suggest a branch name for the branch that will hold changes to the following file.",
             },
             {
-                "role": "system",
+                "role": "user",
                 "content": "Here is how the file looked before the change.",
             },
             {
-                "role": "system",
+                "role": "user",
                 "content": file_content,
             },
             {
-                "role": "system",
+                "role": "user",
                 "content": "Here is how the file looks after the change.",
             },
             {
-                "role": "system",
+                "role": "user",
                 "content": file_content_suggestion,
             },
             {
-                "role": "system",
+                "role": "user",
                 "content": "Only answer with the suggested branch name. Only use lowercase letters and hyphens in the name. Keep the name short, if possible under 4 words.",
             },
         ]
