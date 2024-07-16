@@ -27,6 +27,7 @@ def get_github_manager(db, team_id):
         GITHUB_APP_PRIVATE_KEY,
         github_app_installation_id,
         content_subdir=content_subdir,
+        sidebar_file_path=customer.sidebar_file_path,
     )
 
 
@@ -54,6 +55,7 @@ class GitHubManager:
         app_private_key,
         app_installation_id,
         content_subdir="./",
+        sidebar_file_path=None,
     ):
         appAuth = Auth.AppAuth(app_id, app_private_key.replace("\\n", "\n"))
         gi = GithubIntegration(auth=appAuth)
@@ -62,10 +64,11 @@ class GitHubManager:
         self.repo_name = repo_name
         self.github_repo = self.github.get_repo(self.repo_name)
         self.repo, self.repo_path = self._clone_repo()
-        self.content_subdir = content_subdir
+        self.content_subdir = content_subdir or "./"
         self.asset_subdir = os.path.join(
             self.content_subdir, "assets"
         )  # TODO make configurable
+        self.sidebar_file_path = (sidebar_file_path,)
         self.author = _get_author()
 
     def list_md_files(self):

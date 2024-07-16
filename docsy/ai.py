@@ -77,7 +77,38 @@ class AI:
                 {
                     "role": "user",
                     "content": (
-                        "Pick exactly one file path from the above list where you think the question from the chat conversation should be answered. Only answer with the file path. Include the complete path that was shown in the list."
+                        "Pick exactly one file path from the above list where you think the question from the chat conversation should be answered. Only answer with the file path. Include the complete path that was shown in the list. If no existing file is suitable, answer with a new file path."
+                    ),
+                },
+            ]
+        )
+        return self._get_suggestion(prompt)
+
+    def get_sidebar_content_suggestion(
+        self, messages, new_file_path, sidebar_file_content
+    ):
+        prompt = (
+            self.base_prompt
+            + self._convert_slack_thread_to_prompt(messages)
+            + [
+                {
+                    "role": "user",
+                    "content": f"We want to answer this question in a new file {new_file_path} and need to add it to the sidebar. Please suggest a file path for the new file. Only answer with the file path. Stick to the format of the existing file paths.",
+                },
+                {
+                    "role": "user",
+                    "content": "Here is how the sidebar file currently looks like.",
+                },
+                {
+                    "role": "user",
+                    "content": sidebar_file_content,
+                },
+                {
+                    "role": "user",
+                    "content": (
+                        "Now repeat the sidebar file line by line and only add a single line with the new file path where you think it fits best. It's very important that you do not leave out any lines that were there before."
+                        + "We afterwards will open a Pull Request against the public docs and want only meaningful changes in our git history. Only answer with the new file content."
+                        + "Do not add a codefence at the first line of the file."
                     ),
                 },
             ]

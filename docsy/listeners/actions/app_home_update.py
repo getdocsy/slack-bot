@@ -6,32 +6,29 @@ logger = logging.getLogger(__name__)
 db = docsy.shared.db
 
 
-def get_new_value(body, key):
-    result = body["view"]["state"]["values"][key][key]["value"]
-    if result == "":
-        return None
-    return result
-
-
 def app_home_update_button_click_callback(ack, body, client, context, logger):
     ack()  # Acknowledge the button click
 
-    new_organization_name = get_new_value(body, "organization_name_input")
-    new_github_app_installation_id = get_new_value(
-        body, "github_app_installation_id_input"
-    )
-    new_docs_repo = get_new_value(body, "docs_repo_input")
-    new_content_subdir = get_new_value(body, "content_subdir_input")
+    def get_new_value(key):
+        result = body["view"]["state"]["values"][key][key]["value"]
+        if result == "":
+            return None
+        return result
+
+    new_organization_name = get_new_value("organization_name_input")
+    new_github_app_installation_id = get_new_value("github_app_installation_id_input")
+    new_docs_repo = get_new_value("docs_repo_input")
+    new_content_subdir = get_new_value("content_subdir_input")
+    new_sidebar_file_path = get_new_value("sidebar_file_path_input")
     team_id = body["team"]["id"]
 
     db.update_customer_organization_name(team_id, new_organization_name)
     db.update_customer_github_app_installation_id(
         team_id, new_github_app_installation_id
     )
-    db.update_customer_docs_repo(
-        team_id, new_docs_repo
-    )  # TODO reload required to show new values
+    db.update_customer_docs_repo(team_id, new_docs_repo)
     db.update_customer_content_subdir(team_id, new_content_subdir)
+    db.update_customer_sidebar_file_path(team_id, new_sidebar_file_path)
 
     client.views_update(
         view_id=body["view"]["id"],
@@ -129,6 +126,24 @@ def app_home_update_button_click_callback(ack, body, client, context, logger):
                     "hint": {
                         "type": "plain_text",
                         "text": "The subdirectory in the repository where markdown files are stored. Default is root.",
+                    },
+                },
+                {
+                    "type": "input",
+                    "block_id": "sidebar_file_path_input",
+                    "element": {
+                        "type": "plain_text_input",
+                        "action_id": "sidebar_file_path_input",
+                        "initial_value": new_sidebar_file_path or "",
+                    },
+                    "label": {
+                        "type": "plain_text",
+                        "text": "sidebar file path",
+                        "emoji": False,
+                    },
+                    "hint": {
+                        "type": "plain_text",
+                        "text": "The path to the sidebar file in the repository. This file is updated when new files are added to the documentation. If not set, the sidebar will not be updated.",
                     },
                 },
                 {

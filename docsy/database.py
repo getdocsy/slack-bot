@@ -17,6 +17,7 @@ class Customer(Base):
     github_app_installation_id = Column(Integer, nullable=True)
     docs_repo = Column(String, nullable=True)
     content_subdir = Column(String, nullable=True)
+    sidebar_file_path = Column(String, nullable=True)
 
 
 def get_engine(db_path):
@@ -84,4 +85,9 @@ class Database:
     def update_customer_content_subdir(self, team_id, new_content_subdir):
         customer = self.get_customer(team_id)
         customer.content_subdir = new_content_subdir
+        self.session.commit()
+
+    def update_customer_sidebar_file_path(self, team_id, new_sidebar_file_path):
+        customer = self.get_customer(team_id)
+        customer.sidebar_file_path = new_sidebar_file_path
         self.session.commit()

@@ -131,6 +131,27 @@ def app_home_opened_callback(client, event, context, logger: Logger):
                         },
                     },
                     {
+                        "type": "input",
+                        "block_id": "sidebar_file_path_input",
+                        "element": {
+                            "type": "plain_text_input",
+                            "action_id": "sidebar_file_path_input",
+                            "initial_value": db.get_customer(
+                                context.team_id
+                            ).sidebar_file_path
+                            or "",
+                        },
+                        "label": {
+                            "type": "plain_text",
+                            "text": "sidebar file path",
+                            "emoji": False,
+                        },
+                        "hint": {
+                            "type": "plain_text",
+                            "text": "The path to the sidebar file in the repository. This file is updated when new files are added to the documentation. If not set, the sidebar will not be updated.",
+                        },
+                    },
+                    {
                         "type": "actions",
                         "elements": [
                             {

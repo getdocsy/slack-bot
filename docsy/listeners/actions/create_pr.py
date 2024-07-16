@@ -1,8 +1,6 @@
 import logging
 import os
 import requests
-from slack_bolt import App
-from .app_home_update import app_home_update_button_click_callback
 from docsy.github_manager import get_github_manager
 import docsy.shared
 
@@ -66,7 +64,34 @@ def action_button_click_yes_callback(context, body, ack, say, client, channel_id
         file_paths = gitHubManager.list_md_files()
         file_path_suggestion = ai.get_file_path_suggestion(messages, file_paths)
 
-        file_content = gitHubManager.get_file_content(file_path_suggestion)
+        # Update sidebar if file is new and sidebar is configured
+        if file_path_suggestion not in file_paths:
+            sidebar_file_path = db.get_customer(team_id).sidebar_file_path
+            if sidebar_file_path:
+                sidebar_file_content = gitHubManager.get_file_content(sidebar_file_path)
+                sidebar_content_suggestion = ai.get_sidebar_content_suggestion(
+                    messages,
+                    file_path_suggestion,
+                    sidebar_file_content,
+                )
+                gitHubManager.add_file(
+                    file_content=sidebar_content_suggestion,
+                    relative_file_path=sidebar_file_path,
+                )
+            else:
+                logging.info("No sidebar configured. Skipping sidebar update.")
+
+            file_content = """---
+id: meshstack.administration.overview
+title: New page title
+---
+
+Hi Docsy, this file content is only here to show you the format of a typical docs page. The title above is used in the sidebar and usually is similar to the file name. Please include this section in your answer but adapt the id and title.
+"""
+        else:
+            logging.info("File already exists. Skipping sidebar update.")
+            file_content = gitHubManager.get_file_content(file_path_suggestion)
+
         file_content_suggestion = ai.get_file_content_suggestion(
             messages, local_image_paths, file_path_suggestion, file_content
         )
@@ -82,6 +107,7 @@ def action_button_click_yes_callback(context, body, ack, say, client, channel_id
             file_content=file_content_suggestion,
             relative_file_path=file_path_suggestion,
         )
+
         for local_image_path in local_image_paths:
             # Only add image if it is referenced in answer
             if os.path.basename(local_image_path) in file_content_suggestion:
