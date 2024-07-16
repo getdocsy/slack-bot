@@ -53,8 +53,8 @@ def slack_events():
 if __name__ == "__main__":
     log_level = os.environ.get("LOG_LEVEL", "INFO").upper()
     logging.basicConfig(level=log_level)
-    for logger_name in logging.root.manager.loggerDict:
-        logging.getLogger(logger_name).setLevel(log_level)
+    # for logger_name in logging.root.manager.loggerDict:
+    #     logging.getLogger(logger_name).setLevel(log_level)
     logger.info(f"Log level set to {log_level}")
 
     app.start(port=int(os.environ.get("PORT", 3000)))
