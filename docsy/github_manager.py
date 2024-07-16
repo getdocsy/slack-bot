@@ -12,6 +12,10 @@ def get_github_manager(db, team_id):
     github_app_installation_id = customer.github_app_installation_id
     docs_repo = customer.docs_repo
     content_subdir = customer.content_subdir
+    if (not github_app_installation_id) or (not docs_repo) or (not content_subdir):
+        raise ValueError(
+            "I am missing some bits in the configuration. Please complete the setup in the app home."
+        )
 
     # Docsy uses the same GitHub App independent of who is using it
     GITHUB_APP_ID = os.environ.get("GITHUB_APP_ID")

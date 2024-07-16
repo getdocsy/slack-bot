@@ -60,60 +60,68 @@ def action_button_click_yes_callback(context, body, ack, say, client, channel_id
     team_id = body["message"]["team"]
     local_image_paths = download_images_from_thread(context, thread, team_id, thread_ts)
 
-    gitHubManager = get_github_manager(db, team_id)
-    file_paths = gitHubManager.list_md_files()
-    file_path_suggestion = ai.get_file_path_suggestion(messages, file_paths)
+    try:
+        gitHubManager = get_github_manager(db, team_id)
 
-    file_content = gitHubManager.get_file_content(file_path_suggestion)
-    file_content_suggestion = ai.get_file_content_suggestion(
-        messages, local_image_paths, file_path_suggestion, file_content
-    )
+        file_paths = gitHubManager.list_md_files()
+        file_path_suggestion = ai.get_file_path_suggestion(messages, file_paths)
 
-    branch_name_suggestion = ai.get_branch_name_suggestion(
-        file_content, file_content_suggestion
-    )
+        file_content = gitHubManager.get_file_content(file_path_suggestion)
+        file_content_suggestion = ai.get_file_content_suggestion(
+            messages, local_image_paths, file_path_suggestion, file_content
+        )
 
-    gitHubManager.create_branch(  # TODO checking out an existing branch after having settled on content could lead to conflicts
-        branch_name=branch_name_suggestion,
-    )
-    gitHubManager.add_file(
-        file_content=file_content_suggestion,
-        relative_file_path=file_path_suggestion,
-    )
-    for local_image_path in local_image_paths:
-        # Only add image if it is referenced in answer
-        if os.path.basename(local_image_path) in file_content_suggestion:
-            gitHubManager.add_image(
-                local_image_path=local_image_path,
-            )
-    gitHubManager.commit(
-        commit_message=branch_name_suggestion,
-    )
-    gitHubManager.push_branch(
-        branch_name=branch_name_suggestion,
-    )
-    organization_name = db.get_customer(team_id).organization_name
-    html_url = gitHubManager.create_pr(  # TODO a PR with that title already existed, docsy will show "none" in it's answer
-        branch_name_suggestion,
-        branch_name_suggestion,
-        f"I am Docsy. I am an AI coworker at {organization_name}. I created this PR based on a slack thread. Please merge or close as you see fit!",
-    )
+        branch_name_suggestion = ai.get_branch_name_suggestion(
+            file_content, file_content_suggestion
+        )
 
-    url_block = {
-        "type": "section",
-        "text": {
-            "type": "mrkdwn",
-            "text": f"I opened a PR with that change. How does <{html_url}|this> look?",
-        },
-    }
+        gitHubManager.create_branch(  # TODO checking out an existing branch after having settled on content could lead to conflicts
+            branch_name=branch_name_suggestion,
+        )
+        gitHubManager.add_file(
+            file_content=file_content_suggestion,
+            relative_file_path=file_path_suggestion,
+        )
+        for local_image_path in local_image_paths:
+            # Only add image if it is referenced in answer
+            if os.path.basename(local_image_path) in file_content_suggestion:
+                gitHubManager.add_image(
+                    local_image_path=local_image_path,
+                )
+        gitHubManager.commit(
+            commit_message=branch_name_suggestion,
+        )
+        gitHubManager.push_branch(
+            branch_name=branch_name_suggestion,
+        )
+        organization_name = db.get_customer(team_id).organization_name
+        html_url = gitHubManager.create_pr(
+            branch_name_suggestion,
+            branch_name_suggestion,
+            f"I am Docsy. I am an AI coworker at {organization_name}. I created this PR based on a slack thread. Please merge or close as you see fit!",
+        )
 
-    client.chat_postMessage(
-        channel=channel_id,
-        text="Placeholder",
-        blocks=[url_block],
-        thread_ts=thread_ts,
-        token=context.bot_token,
-    )
+        url_block = {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": f"I opened a PR with that change. How does <{html_url}|this> look?",
+            },
+        }
+
+        client.chat_postMessage(
+            channel=channel_id,
+            text="Placeholder",
+            blocks=[url_block],
+            thread_ts=thread_ts,
+            token=context.bot_token,
+        )
+    except Exception as e:
+        logging.error(f"Failed to create PR. {e}")
+        say(
+            f"Sorry, I couldn't create the PR. {e}",
+            thread_ts=thread_ts,
+        )
 
 
 def action_button_click_no_callback(body, ack, say):
