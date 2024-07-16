@@ -18,6 +18,8 @@ oauth_config:
       - app_mentions:read
       - chat:write
       - files:read
+      - channels:read
+      - channels:history
 settings:
   event_subscriptions:
     request_url: https://app.getdocsy.com/slack/events
