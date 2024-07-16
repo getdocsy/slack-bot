@@ -57,6 +57,18 @@ class Database:
         self.session.add(customer)
         self.session.commit()
 
+    def update_customer_organization_name(self, team_id, new_organization_name):
+        customer = self.get_customer(team_id)
+        customer.organization_name = new_organization_name
+        self.session.commit()
+
+    def update_customer_github_app_installation_id(
+        self, team_id, new_github_app_installation_id
+    ):
+        customer = self.get_customer(team_id)
+        customer.github_app_installation_id = new_github_app_installation_id
+        self.session.commit()
+
     def update_customer_docs_repo(self, team_id, new_docs_repo):
         customer = self.get_customer(team_id)
         customer.docs_repo = new_docs_repo

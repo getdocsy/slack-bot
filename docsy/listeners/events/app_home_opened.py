@@ -37,6 +37,40 @@ def app_home_opened_callback(client, event, context, logger: Logger):
                     },
                     {
                         "type": "input",
+                        "block_id": "organization_name_input",
+                        "element": {
+                            "type": "plain_text_input",
+                            "action_id": "organization_name_input",
+                            "initial_value": db.get_customer(
+                                context.team_id
+                            ).organization_name,
+                        },
+                        "label": {
+                            "type": "plain_text",
+                            "text": "organization name",
+                            "emoji": False,
+                        },
+                    },
+                    {
+                        "type": "input",
+                        "block_id": "github_app_installation_id_input",
+                        "element": {
+                            "type": "plain_text_input",
+                            "action_id": "github_app_installation_id_input",
+                            "initial_value": str(
+                                db.get_customer(
+                                    context.team_id
+                                ).github_app_installation_id
+                            ),
+                        },
+                        "label": {
+                            "type": "plain_text",
+                            "text": "GitHub app installation ID",
+                            "emoji": False,
+                        },
+                    },
+                    {
+                        "type": "input",
                         "block_id": "docs_repo_input",
                         "element": {
                             "type": "plain_text_input",

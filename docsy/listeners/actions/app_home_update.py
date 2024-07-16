@@ -1,23 +1,30 @@
+import logging
 import docsy.shared
 from docsy.github_manager import get_github_manager
 
-import logging
-
 logger = logging.getLogger(__name__)
-
 db = docsy.shared.db
+
+
+def get_new_value(body, key):
+    return body["view"]["state"]["values"][key][key]["value"]
 
 
 def app_home_update_button_click_callback(ack, body, client, context, logger):
     ack()  # Acknowledge the button click
 
-    new_docs_repo = body["view"]["state"]["values"]["docs_repo_input"][
-        "docs_repo_input"
-    ]["value"]
-    new_content_subdir = body["view"]["state"]["values"]["content_subdir_input"][
-        "content_subdir_input"
-    ]["value"]
+    new_organization_name = get_new_value(body, "organization_name_input")
+    new_github_app_installation_id = get_new_value(
+        body, "github_app_installation_id_input"
+    )
+    new_docs_repo = get_new_value(body, "docs_repo_input")
+    new_content_subdir = get_new_value(body, "content_subdir_input")
     team_id = body["team"]["id"]
+
+    db.update_customer_organization_name(team_id, new_organization_name)
+    db.update_customer_github_app_installation_id(
+        team_id, new_github_app_installation_id
+    )
     db.update_customer_docs_repo(
         team_id, new_docs_repo
     )  # TODO reload required to show new values
@@ -49,6 +56,38 @@ def app_home_update_button_click_callback(ack, body, client, context, logger):
                     "text": {
                         "type": "mrkdwn",
                         "text": "Configure how Docsy behaves.",
+                    },
+                },
+                {
+                    "type": "input",
+                    "block_id": "organization_name_input",
+                    "element": {
+                        "type": "plain_text_input",
+                        "action_id": "organization_name_input",
+                        "initial_value": db.get_customer(
+                            context.team_id
+                        ).organization_name,
+                    },
+                    "label": {
+                        "type": "plain_text",
+                        "text": "organization name",
+                        "emoji": False,
+                    },
+                },
+                {
+                    "type": "input",
+                    "block_id": "github_app_installation_id_input",
+                    "element": {
+                        "type": "plain_text_input",
+                        "action_id": "github_app_installation_id_input",
+                        "initial_value": str(
+                            db.get_customer(context.team_id).github_app_installation_id
+                        ),
+                    },
+                    "label": {
+                        "type": "plain_text",
+                        "text": "GitHub app installation ID",
+                        "emoji": False,
                     },
                 },
                 {
