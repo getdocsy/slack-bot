@@ -13,10 +13,10 @@ Base = declarative_base()
 class Customer(Base):
     __tablename__ = "customers"
     team_id = Column(String, primary_key=True)
-    organization_name = Column(String, nullable=False)
-    github_app_installation_id = Column(Integer, nullable=False)
-    docs_repo = Column(String, nullable=False)
-    content_subdir = Column(String, nullable=False)
+    organization_name = Column(String, nullable=True)
+    github_app_installation_id = Column(Integer, nullable=True)
+    docs_repo = Column(String, nullable=True)
+    content_subdir = Column(String, nullable=True)
 
 
 def get_engine(db_path):
@@ -51,6 +51,13 @@ class Database:
             return customer
         else:
             raise ValueError(f"No customer found for team_id: {team_id}")
+
+    def customer_exists(self, team_id):
+        customer = self.session.query(Customer).filter_by(team_id=team_id).first()
+        if customer:
+            return True
+        else:
+            return False
 
     def insert_customer(self, customer_data):
         customer = Customer(**customer_data)

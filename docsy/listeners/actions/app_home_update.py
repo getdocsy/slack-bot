@@ -7,7 +7,10 @@ db = docsy.shared.db
 
 
 def get_new_value(body, key):
-    return body["view"]["state"]["values"][key][key]["value"]
+    result = body["view"]["state"]["values"][key][key]["value"]
+    if result == "":
+        return None
+    return result
 
 
 def app_home_update_button_click_callback(ack, body, client, context, logger):
@@ -29,8 +32,6 @@ def app_home_update_button_click_callback(ack, body, client, context, logger):
         team_id, new_docs_repo
     )  # TODO reload required to show new values
     db.update_customer_content_subdir(team_id, new_content_subdir)
-
-    gitHubManager = get_github_manager(db, team_id)
 
     client.views_update(
         view_id=body["view"]["id"],
@@ -64,9 +65,7 @@ def app_home_update_button_click_callback(ack, body, client, context, logger):
                     "element": {
                         "type": "plain_text_input",
                         "action_id": "organization_name_input",
-                        "initial_value": db.get_customer(
-                            context.team_id
-                        ).organization_name,
+                        "initial_value": new_organization_name or "",
                     },
                     "label": {
                         "type": "plain_text",
@@ -80,9 +79,7 @@ def app_home_update_button_click_callback(ack, body, client, context, logger):
                     "element": {
                         "type": "plain_text_input",
                         "action_id": "github_app_installation_id_input",
-                        "initial_value": str(
-                            db.get_customer(context.team_id).github_app_installation_id
-                        ),
+                        "initial_value": str(new_github_app_installation_id or ""),
                     },
                     "label": {
                         "type": "plain_text",
@@ -96,7 +93,7 @@ def app_home_update_button_click_callback(ack, body, client, context, logger):
                     "element": {
                         "type": "plain_text_input",
                         "action_id": "docs_repo_input",
-                        "initial_value": new_docs_repo,
+                        "initial_value": new_docs_repo or "",
                     },
                     "label": {
                         "type": "plain_text",
@@ -110,7 +107,7 @@ def app_home_update_button_click_callback(ack, body, client, context, logger):
                     "element": {
                         "type": "plain_text_input",
                         "action_id": "content_subdir_input",
-                        "initial_value": new_content_subdir,
+                        "initial_value": new_content_subdir or "",
                     },
                     "label": {
                         "type": "plain_text",

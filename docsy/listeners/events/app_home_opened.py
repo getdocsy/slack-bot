@@ -5,6 +5,17 @@ db = docsy.shared.db
 
 
 def app_home_opened_callback(client, event, context, logger: Logger):
+    if not db.customer_exists(context.team_id):
+        db.insert_customer(
+            {
+                "team_id": context.team_id,
+                "organization_name": None,
+                "github_app_installation_id": None,
+                "docs_repo": None,
+                "content_subdir": None,
+            },
+        )
+
     # ignore the app_home_opened event for anything but the Home tab
     if event["tab"] != "home":
         return
@@ -43,7 +54,8 @@ def app_home_opened_callback(client, event, context, logger: Logger):
                             "action_id": "organization_name_input",
                             "initial_value": db.get_customer(
                                 context.team_id
-                            ).organization_name,
+                            ).organization_name
+                            or "",
                         },
                         "label": {
                             "type": "plain_text",
@@ -61,6 +73,7 @@ def app_home_opened_callback(client, event, context, logger: Logger):
                                 db.get_customer(
                                     context.team_id
                                 ).github_app_installation_id
+                                or ""
                             ),
                         },
                         "label": {
@@ -75,7 +88,8 @@ def app_home_opened_callback(client, event, context, logger: Logger):
                         "element": {
                             "type": "plain_text_input",
                             "action_id": "docs_repo_input",
-                            "initial_value": db.get_customer(context.team_id).docs_repo,
+                            "initial_value": db.get_customer(context.team_id).docs_repo
+                            or "",
                         },
                         "label": {
                             "type": "plain_text",
@@ -91,7 +105,8 @@ def app_home_opened_callback(client, event, context, logger: Logger):
                             "action_id": "content_subdir_input",
                             "initial_value": db.get_customer(
                                 context.team_id
-                            ).content_subdir,
+                            ).content_subdir
+                            or "",
                         },
                         "label": {
                             "type": "plain_text",
