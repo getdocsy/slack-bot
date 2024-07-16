@@ -137,9 +137,10 @@ class GitHubManager:
         logging.info(f"Branch '{branch_name}' pushed successfully!")
 
     def create_pr(self, branch_name, title, body):
-        if self._pr_exists(title):
+        existing_pr = self._get_pr(title)
+        if existing_pr:
             logging.info(f"PR '{title}' exists. Nothing to do")
-            return None
+            return existing_pr.html_url
         pr = self.github_repo.create_pull(
             base="main", head=branch_name, title=title, body=body
         )
@@ -157,9 +158,12 @@ class GitHubManager:
         branches = [branch.name for branch in self.github_repo.get_branches()]
         return branch_name in branches
 
-    def _pr_exists(self, title):
+    def _get_pr(self, title):
         pulls = self.github_repo.get_pulls()
-        return title in [pull.title for pull in pulls]
+        for pull in pulls:
+            if pull.title == title:
+                return pull
+        return None
 
     def close(self):
         self.github.close()
