@@ -43,7 +43,7 @@ def app_home_opened_callback(client, event, context, logger: Logger):
                         "type": "section",
                         "text": {
                             "type": "mrkdwn",
-                            "text": "Configure how Docsy behaves.",
+                            "text": "For more information on these options, see the <https://docs.getdocsy.com/|docs>.",
                         },
                     },
                     {
@@ -61,6 +61,10 @@ def app_home_opened_callback(client, event, context, logger: Logger):
                             "type": "plain_text",
                             "text": "organization name",
                             "emoji": False,
+                        },
+                        "hint": {
+                            "type": "plain_text",
+                            "text": "How should I refer to your organization?",
                         },
                     },
                     {
@@ -81,6 +85,10 @@ def app_home_opened_callback(client, event, context, logger: Logger):
                             "text": "GitHub app installation ID",
                             "emoji": False,
                         },
+                        "hint": {
+                            "type": "plain_text",
+                            "text": "This is the ID of the GitHub app installation. You can find it in the GitHub app settings.",
+                        },
                     },
                     {
                         "type": "input",
@@ -95,6 +103,10 @@ def app_home_opened_callback(client, event, context, logger: Logger):
                             "type": "plain_text",
                             "text": "docs repo",
                             "emoji": False,
+                        },
+                        "hint": {
+                            "type": "plain_text",
+                            "text": "The name of the repository where the documentation is stored. Format is owner/repo.",
                         },
                     },
                     {
@@ -112,6 +124,10 @@ def app_home_opened_callback(client, event, context, logger: Logger):
                             "type": "plain_text",
                             "text": "content subdir",
                             "emoji": False,
+                        },
+                        "hint": {
+                            "type": "plain_text",
+                            "text": "The subdirectory in the repository where markdown files are stored. Default is root.",
                         },
                     },
                     {
