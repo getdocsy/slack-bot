@@ -23,6 +23,7 @@ oauth_settings = OAuthSettings(
     state_store=FileOAuthStateStore(
         expiration_seconds=600, base_dir="./data/slack/states"
     ),
+    install_page_rendering_enabled=False,
 )
 app = App(signing_secret=SLACK_SIGNING_SECRET, oauth_settings=oauth_settings)
 
