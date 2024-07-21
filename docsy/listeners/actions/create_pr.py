@@ -20,8 +20,17 @@ def download_images_from_thread(context, thread, team_id, thread_ts, base_file_n
     for message in thread:
         if "files" in message:
             for file_info in message["files"]:
+                if (
+                    "mimetype" not in file_info
+                    or "url_private_download" not in file_info
+                ):
+                    # without mimetype or download url, we can't decide if it's an image or download it
+                    # so we skip it
+                    continue
+
                 if file_info["mimetype"].startswith("image/"):
                     file_url = file_info["url_private_download"]
+                    # rename file to avoid naming conflicts
                     file_name = (
                         base_file_name
                         + "_"
