@@ -5,7 +5,7 @@ from openai import OpenAI
 
 logger = logging.getLogger(__name__)
 
-AI_MODEL = "gpt-4o"
+AI_MODEL = "gpt-4o-mini"
 
 
 class AI:
