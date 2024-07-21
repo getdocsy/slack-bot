@@ -11,7 +11,7 @@ db = docsy.shared.db
 
 
 # Downloads images and returns local file paths of the images
-def download_images_from_thread(context, thread, team_id, thread_ts):
+def download_images_from_thread(context, thread, team_id, thread_ts, base_file_name):
     download_folder = f"data/{team_id}/{thread_ts}/"  # TODO this folder must be cleaned up afterwards. Or use a temp folder
     logging.debug(
         f"Download images for thread {thread_ts} into folder {download_folder}"
@@ -22,7 +22,13 @@ def download_images_from_thread(context, thread, team_id, thread_ts):
             for file_info in message["files"]:
                 if file_info["mimetype"].startswith("image/"):
                     file_url = file_info["url_private_download"]
-                    file_name = file_info["name"]
+                    file_name = (
+                        base_file_name
+                        + "_"
+                        + str(len(image_paths))
+                        + "_"
+                        + file_info["name"]
+                    )
                     file_path = os.path.join(download_folder, file_name)
 
                     headers = {"Authorization": f"Bearer {context.bot_token}"}
@@ -56,7 +62,10 @@ def action_button_click_yes_callback(context, body, ack, say, client, channel_id
         if "user" in message and "text" in message
     ]
     team_id = body["message"]["team"]
-    local_image_paths = download_images_from_thread(context, thread, team_id, thread_ts)
+    base_file_name = ai.get_base_file_name(messages)
+    local_image_paths = download_images_from_thread(
+        context, thread, team_id, thread_ts, base_file_name
+    )
 
     try:
         gitHubManager = get_github_manager(db, team_id)

@@ -62,6 +62,21 @@ class AI:
             for image_path in image_paths
         ]
 
+    def get_base_file_name(self, messages):
+        prompt = (
+            self.base_prompt
+            + self._convert_slack_thread_to_prompt(messages)
+            + [
+                {
+                    "role": "user",
+                    "content": (
+                        "We need a prefix for images that appeared in this thread. This prefix will end up in the file name of the images. Please answer with exactly one suggestion, sticking to lowercase letters and hyphens."
+                    ),
+                },
+            ]
+        )
+        return self._get_suggestion(prompt)
+
     def get_file_path_suggestion(self, messages, file_paths):
         prompt = (
             self.base_prompt
