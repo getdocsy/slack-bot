@@ -20,6 +20,9 @@ def app_home_update_button_click_callback(ack, body, client, context, logger):
     new_docs_repo = get_new_value("docs_repo_input")
     new_content_subdir = get_new_value("content_subdir_input")
     new_sidebar_file_path = get_new_value("sidebar_file_path_input")
+    new_front_matter_input = get_new_value("front_matter_input")
+    new_blacklist_input = get_new_value("blacklist_input")
+
     team_id = body["team"]["id"]
 
     db.update_customer_organization_name(team_id, new_organization_name)
@@ -29,6 +32,8 @@ def app_home_update_button_click_callback(ack, body, client, context, logger):
     db.update_customer_docs_repo(team_id, new_docs_repo)
     db.update_customer_content_subdir(team_id, new_content_subdir)
     db.update_customer_sidebar_file_path(team_id, new_sidebar_file_path)
+    db.update_customer_front_matter(team_id, new_front_matter_input)
+    db.update_customer_blacklist(team_id, new_blacklist_input)
 
     client.views_update(
         view_id=body["view"]["id"],
@@ -144,6 +149,44 @@ def app_home_update_button_click_callback(ack, body, client, context, logger):
                     "hint": {
                         "type": "plain_text",
                         "text": "The path to the sidebar file in the repository. This file is updated when new files are added to the documentation. If not set, the sidebar will not be updated.",
+                    },
+                },
+                {
+                    "type": "input",
+                    "block_id": "front_matter_input",
+                    "element": {
+                        "type": "plain_text_input",
+                        "multiline": True,
+                        "action_id": "front_matter_input",
+                        "initial_value": new_front_matter_input or "",
+                    },
+                    "label": {
+                        "type": "plain_text",
+                        "text": "Front matter example",
+                        "emoji": True,
+                    },
+                    "hint": {
+                        "type": "plain_text",
+                        "text": "Enter an example of the front matter you use in your markdown files. Docsy will use this to create new files.",
+                    },
+                },
+                {
+                    "type": "input",
+                    "block_id": "blacklist_input",
+                    "element": {
+                        "type": "plain_text_input",
+                        "multiline": True,
+                        "action_id": "blacklist_input",
+                        "initial_value": new_blacklist_input or "",
+                    },
+                    "label": {
+                        "type": "plain_text",
+                        "text": "Black list",
+                        "emoji": True,
+                    },
+                    "hint": {
+                        "type": "plain_text",
+                        "text": "Enter words you want to blacklist, separated by commas. Docsy will not open pull requests with any of those words.",
                     },
                 },
                 {

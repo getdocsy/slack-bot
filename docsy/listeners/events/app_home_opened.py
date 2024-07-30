@@ -152,6 +152,48 @@ def app_home_opened_callback(client, event, context, logger: Logger):
                         },
                     },
                     {
+                        "type": "input",
+                        "block_id": "front_matter_input",
+                        "element": {
+                            "type": "plain_text_input",
+                            "multiline": True,
+                            "action_id": "front_matter_input",
+                            "initial_value": db.get_customer(
+                                context.team_id
+                            ).front_matter
+                            or "",
+                        },
+                        "label": {
+                            "type": "plain_text",
+                            "text": "Front matter example",
+                            "emoji": True,
+                        },
+                        "hint": {
+                            "type": "plain_text",
+                            "text": "Enter an example of the front matter you use in your markdown files. Docsy will use this to create new files.",
+                        },
+                    },
+                    {
+                        "type": "input",
+                        "block_id": "blacklist_input",
+                        "element": {
+                            "type": "plain_text_input",
+                            "multiline": True,
+                            "action_id": "blacklist_input",
+                            "initial_value": db.get_customer(context.team_id).blacklist
+                            or "",
+                        },
+                        "label": {
+                            "type": "plain_text",
+                            "text": "Black list",
+                            "emoji": True,
+                        },
+                        "hint": {
+                            "type": "plain_text",
+                            "text": "Enter words you want to blacklist, separated by commas. Docsy will not open pull requests with any of those words.",
+                        },
+                    },
+                    {
                         "type": "actions",
                         "elements": [
                             {

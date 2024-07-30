@@ -18,6 +18,8 @@ class Customer(Base):
     docs_repo = Column(String, nullable=True)
     content_subdir = Column(String, nullable=True)
     sidebar_file_path = Column(String, nullable=True)
+    front_matter = Column(String, nullable=True)
+    blacklist = Column(String, nullable=True)
 
 
 def get_engine(db_path):
@@ -90,4 +92,14 @@ class Database:
     def update_customer_sidebar_file_path(self, team_id, new_sidebar_file_path):
         customer = self.get_customer(team_id)
         customer.sidebar_file_path = new_sidebar_file_path
+        self.session.commit()
+
+    def update_customer_front_matter(self, team_id, new_front_matter):
+        customer = self.get_customer(team_id)
+        customer.front_matter = new_front_matter
+        self.session.commit()
+
+    def update_customer_blacklist(self, team_id, new_blacklist):
+        customer = self.get_customer(team_id)
+        customer.blacklist = new_blacklist
         self.session.commit()
