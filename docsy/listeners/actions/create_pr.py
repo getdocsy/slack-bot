@@ -122,11 +122,8 @@ def action_button_click_yes_callback(context, body, ack, say, client, channel_id
                 for word in blacklist:
                     if word in line:
                         say(
-                            f"Sorry, I couldn't create the PR. The word '{word}' is blacklisted and appeared in my suggestion.",
-                            thread_ts=thread_ts,
-                        )
-                        say(
-                            f"Here is the change I planned to make based on this thread: ```\n{line}\n```",
+                            f"Sorry, I couldn't create the PR. The word '{word}' is blacklisted and appeared in the suggestion I created based on this thread."
+                            + "This is a security measure to avoid leaking sensitive information to the public.",
                             thread_ts=thread_ts,
                         )
                         return
