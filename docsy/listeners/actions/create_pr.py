@@ -1,6 +1,8 @@
 import logging
 import os
 import requests
+import difflib
+import pprint
 from docsy.github_manager import get_github_manager
 import docsy.shared
 
@@ -99,13 +101,7 @@ def action_button_click_yes_callback(context, body, ack, say, client, channel_id
             else:
                 logging.info("No sidebar configured. Skipping sidebar update.")
 
-            file_content = """---
-id: meshstack.administration.overview
-title: New page title
----
-
-Hi Docsy, this file content is only here to show you the format of a typical docs page. The title above is used in the sidebar and usually is similar to the file name. Please include this section in your answer but adapt the id and title.
-"""
+            file_content = db.get_customer(team_id).front_matter or ""
         else:
             logging.info("File already exists. Skipping sidebar update.")
             file_content = gitHubManager.get_file_content(file_path_suggestion)
@@ -113,6 +109,27 @@ Hi Docsy, this file content is only here to show you the format of a typical doc
         file_content_suggestion = ai.get_file_content_suggestion(
             messages, local_image_paths, file_path_suggestion, file_content
         )
+        assert file_content_suggestion is not None
+
+        # Check if changes contain blacklisted words
+        diff = difflib.unified_diff(
+            file_content.splitlines(keepends=True),
+            file_content_suggestion.splitlines(keepends=True),
+        )
+        blacklist = db.get_customer_blacklist(team_id)
+        for line in diff:
+            if line.startswith("+"):
+                for word in blacklist:
+                    if word in line:
+                        say(
+                            f"Sorry, I couldn't create the PR. The word '{word}' is blacklisted and appeared in my suggestion.",
+                            thread_ts=thread_ts,
+                        )
+                        say(
+                            f"Here is the change I planned to make based on this thread: ```\n{line}\n```",
+                            thread_ts=thread_ts,
+                        )
+                        return
 
         branch_name_suggestion = ai.get_branch_name_suggestion(
             file_content, file_content_suggestion
@@ -163,7 +180,7 @@ Hi Docsy, this file content is only here to show you the format of a typical doc
     except Exception as e:
         logging.error(f"Failed to create PR. {e}")
         say(
-            f"Sorry, I couldn't create the PR. {e}",
+            "Sorry, I couldn't create the PR.",
             thread_ts=thread_ts,
         )
 

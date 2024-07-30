@@ -55,6 +55,16 @@ class Database:
         else:
             raise ValueError(f"No customer found for team_id: {team_id}")
 
+    def get_customer_blacklist(self, team_id):
+        customer = self.get_customer(team_id)
+        return (
+            [
+                word.strip() for word in customer.blacklist.split(",")
+            ]  # Remove whitespace and split by comma
+            if customer.blacklist
+            else []
+        )
+
     def customer_exists(self, team_id):
         customer = self.session.query(Customer).filter_by(team_id=team_id).first()
         if customer:
