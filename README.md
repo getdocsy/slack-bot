@@ -5,9 +5,8 @@ https://github.com/humanloop/coworker
 
 ## Local Development
 
+From the root of the project:
 ```
-nix-shell
-
 python docsy_slack.py
 ```
 
@@ -17,6 +16,16 @@ Start ngrok in a separate pane
 
 ```
 ngrok http --domain reasonably-firm-cricket.ngrok-free.app 3000
+```
+
+Check ngrok enpoints https://dashboard.ngrok.com/cloud-edge/endpoints
+
+### Create new database migration
+
+From the root of the project:
+```sh
+poetry shell
+alembic --config=docsy/alembic.ini revision -m "create base_branch column"
 ```
 
 ## Deployment using Docker
@@ -30,12 +39,3 @@ To run it locally `docker run -v=/Users/xilef/Documents/docsy/data/:/app/data --
 GITHUB_APP_PRIVATE_KEY must be formatted without newlines
 LOG_LEVEL can be one of DEBUG, INFO
 
-## Troubleshooting
-
-Check ngrok enpoints https://dashboard.ngrok.com/cloud-edge/endpoints
-
-## Stylesheet
-
-Font: Inter
-
-Color primary: <still open>
