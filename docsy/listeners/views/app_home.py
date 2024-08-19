@@ -70,7 +70,7 @@ def get_config_blocks(team_id, user_id):
         create_input_block(
             label = "Base Branch",
             block_id = "base_branch_input",
-            hint = "The name of the branch against which Docsy should open pull requests.",
+            hint = "The name of the branch against which Docsy should open pull requests. Default is main.",
             team_id = team_id,
         ),
         create_input_block(

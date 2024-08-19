@@ -28,7 +28,7 @@ def get_github_manager(db, team_id):
         github_app_installation_id,
         content_subdir=content_subdir,
         sidebar_file_path=customer.sidebar_file_path,
-        base_branch=customer.base_branch,
+        base_branch=customer.base_branch or "main",
     )
 
 
