@@ -25,7 +25,7 @@ Check ngrok enpoints https://dashboard.ngrok.com/cloud-edge/endpoints
 From the root of the project:
 ```sh
 poetry shell
-alembic --config=docsy/alembic.ini revision -m "create base_branch column"
+alembic --config=docsy/alembic.ini revision --autogenerat -m "create base_branch column"
 ```
 
 ## Deployment using Docker
