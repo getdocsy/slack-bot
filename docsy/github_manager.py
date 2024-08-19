@@ -28,6 +28,7 @@ def get_github_manager(db, team_id):
         github_app_installation_id,
         content_subdir=content_subdir,
         sidebar_file_path=customer.sidebar_file_path,
+        base_branch=customer.base_branch,
     )
 
 
@@ -145,7 +146,7 @@ class GitHubManager:
             logging.info(f"PR '{title}' exists. Nothing to do")
             return existing_pr.html_url
         pr = self.github_repo.create_pull(
-            base="main", head=branch_name, title=title, body=body
+            base=base_branch, head=branch_name, title=title, body=body
         )
         logging.info(f"PR '{title}' created successfully!")
         return pr.html_url

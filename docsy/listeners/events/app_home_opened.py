@@ -13,6 +13,10 @@ def app_home_opened_callback(client, event, context, logger: Logger):
                 "github_app_installation_id": None,
                 "docs_repo": None,
                 "content_subdir": None,
+                "sidebar_file_path": None,
+                "front_matter": None,
+                "blacklist": None,
+                "base_branch": None,
             },
         )
 
@@ -191,6 +195,25 @@ def app_home_opened_callback(client, event, context, logger: Logger):
                         "hint": {
                             "type": "plain_text",
                             "text": "Enter words you want to blacklist, separated by commas. Docsy will not open pull requests with any of those words.",
+                        },
+                    },
+                    {
+                        "type": "input",
+                        "block_id": "base_branch_input",
+                        "element": {
+                            "type": "plain_text_input",
+                            "action_id": "base_branch_input",
+                            "initial_value": db.get_customer(context.team_id).base_branch
+                            or "",
+                        },
+                        "label": {
+                            "type": "plain_text",
+                            "text": "base branch file path",
+                            "emoji": False,
+                        },
+                        "hint": {
+                            "type": "plain_text",
+                            "text": "The name of the branch you want the changes pulled into. This must be an existing branch on the current repository.",
                         },
                     },
                     {

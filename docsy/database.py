@@ -20,6 +20,7 @@ class Customer(Base):
     sidebar_file_path = Column(String, nullable=True)
     front_matter = Column(String, nullable=True)
     blacklist = Column(String, nullable=True)
+    base_branch = Column(String, nullable=True)
 
 
 def get_engine(db_path):
@@ -112,4 +113,9 @@ class Database:
     def update_customer_blacklist(self, team_id, new_blacklist):
         customer = self.get_customer(team_id)
         customer.blacklist = new_blacklist
+        self.session.commit()
+
+    def update_customer_base_branch(self, team_id, new_base_branch):
+        customer = self.get_customer(team_id)
+        customer.base_branch = new_base_branch
         self.session.commit()

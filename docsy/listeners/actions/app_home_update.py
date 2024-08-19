@@ -22,6 +22,7 @@ def app_home_update_button_click_callback(ack, body, client, context, logger):
     new_sidebar_file_path = get_new_value("sidebar_file_path_input")
     new_front_matter_input = get_new_value("front_matter_input")
     new_blacklist_input = get_new_value("blacklist_input")
+    new_base_branch = get_new_value("base_branch_input")
 
     team_id = body["team"]["id"]
 
@@ -34,6 +35,7 @@ def app_home_update_button_click_callback(ack, body, client, context, logger):
     db.update_customer_sidebar_file_path(team_id, new_sidebar_file_path)
     db.update_customer_front_matter(team_id, new_front_matter_input)
     db.update_customer_blacklist(team_id, new_blacklist_input)
+    db.update_customer_base_branch(team_id, new_base_branch)
 
     client.views_update(
         view_id=body["view"]["id"],
@@ -187,6 +189,24 @@ def app_home_update_button_click_callback(ack, body, client, context, logger):
                     "hint": {
                         "type": "plain_text",
                         "text": "Enter words you want to blacklist, separated by commas. Docsy will not open pull requests with any of those words.",
+                    },
+                },
+                {
+                    "type": "input",
+                    "block_id": "base_branch_input",
+                    "element": {
+                        "type": "plain_text_input",
+                        "action_id": "base_branch_input",
+                        "initial_value": new_base_branch or "",
+                    },
+                    "label": {
+                        "type": "plain_text",
+                        "text": "base branch file path",
+                        "emoji": False,
+                    },
+                    "hint": {
+                        "type": "plain_text",
+                        "text": "The name of the branch you want the changes pulled into. This must be an existing branch on the current repository.",
                     },
                 },
                 {
