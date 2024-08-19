@@ -52,7 +52,7 @@ def get_config_blocks(team_id, user_id):
         create_input_block(
             label="Organization Name",
             block_id="organization_name_input",
-            hint="How should I refer to your organization?",
+            hint="How should Docsy refer to your organization?",
             team_id = team_id,
         ),
         create_input_block(
@@ -65,6 +65,12 @@ def get_config_blocks(team_id, user_id):
             label="Docs Repo",
             block_id="docs_repo_input",
             hint="The name of the repository where the documentation is stored. Format is owner/repo.",
+            team_id = team_id,
+        ),
+        create_input_block(
+            label = "Base Branch",
+            block_id = "base_branch_input",
+            hint = "The name of the branch against which Docsy should open pull requests.",
             team_id = team_id,
         ),
         create_input_block(
@@ -91,12 +97,6 @@ def get_config_blocks(team_id, user_id):
             block_id="blacklist_input",
             hint="Enter words you want to blacklist, separated by commas. Docsy will not open pull requests with any of those words.",
             multiline=True,
-            team_id = team_id,
-        ),
-        create_input_block(
-            label = "Base Branch",
-            block_id = "base_branch_input",
-            hint = "The name of the branch against which Docsy should open pull requests.",
             team_id = team_id,
         ),
         {
