@@ -45,4 +45,4 @@ SLACK_CLIENT_ID
 SLACK_CLIENT_SECRET
 
 GITHUB_APP_ID
-GITHUB_APP_PRIVATE_KEY must be formatted without newlines; use `cat private-key.pem | tr -d '\n'`
+GITHUB_APP_PRIVATE_KEY must be formatted without newlines; use `awk '{printf "%s\\n", $0}' github-app.pem`
