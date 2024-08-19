@@ -36,6 +36,13 @@ To run it locally `docker run -v=/Users/xilef/Documents/docsy/data/:/app/data --
 
 ### Argument reference
 
-GITHUB_APP_PRIVATE_KEY must be formatted without newlines
 LOG_LEVEL can be one of DEBUG, INFO
 
+OPENAI_API_KEY
+
+SLACK_SIGNING_SECRET
+SLACK_CLIENT_ID
+SLACK_CLIENT_SECRET
+
+GITHUB_APP_ID
+GITHUB_APP_PRIVATE_KEY must be formatted without newlines; use `cat private-key.pem | tr -d '\n'`
