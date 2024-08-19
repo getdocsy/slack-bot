@@ -82,44 +82,8 @@ class Database:
         self.session.add(customer)
         self.session.commit()
 
-    def update_customer_organization_name(self, team_id, new_organization_name):
+    def update_customer(self, team_id, customer_data):
         customer = self.get_customer(team_id)
-        customer.organization_name = new_organization_name
-        self.session.commit()
-
-    def update_customer_github_app_installation_id(
-        self, team_id, new_github_app_installation_id
-    ):
-        customer = self.get_customer(team_id)
-        customer.github_app_installation_id = new_github_app_installation_id
-        self.session.commit()
-
-    def update_customer_docs_repo(self, team_id, new_docs_repo):
-        customer = self.get_customer(team_id)
-        customer.docs_repo = new_docs_repo
-        self.session.commit()
-
-    def update_customer_content_subdir(self, team_id, new_content_subdir):
-        customer = self.get_customer(team_id)
-        customer.content_subdir = new_content_subdir
-        self.session.commit()
-
-    def update_customer_sidebar_file_path(self, team_id, new_sidebar_file_path):
-        customer = self.get_customer(team_id)
-        customer.sidebar_file_path = new_sidebar_file_path
-        self.session.commit()
-
-    def update_customer_front_matter(self, team_id, new_front_matter):
-        customer = self.get_customer(team_id)
-        customer.front_matter = new_front_matter
-        self.session.commit()
-
-    def update_customer_blacklist(self, team_id, new_blacklist):
-        customer = self.get_customer(team_id)
-        customer.blacklist = new_blacklist
-        self.session.commit()
-
-    def update_customer_base_branch(self, team_id, new_base_branch):
-        customer = self.get_customer(team_id)
-        customer.base_branch = new_base_branch
+        for key, value in customer_data.items():
+            setattr(customer, key, value)
         self.session.commit()
