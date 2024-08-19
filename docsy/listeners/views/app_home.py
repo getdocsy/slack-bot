@@ -15,7 +15,7 @@ def create_input_block(label, block_id, hint, team_id, multiline=False):
             "type": "plain_text_input",
             "multiline": multiline,
             "action_id": block_id,
-            "initial_value": getattr(db.get_customer(team_id),get_attr_name(block_id)) or "",
+            "initial_value": str(getattr(db.get_customer(team_id),get_attr_name(block_id)) or ""),
         },
         "label": {
             "type": "plain_text",
