@@ -30,13 +30,12 @@ def get_engine(db_path):
 def initialize_database(engine):
     Base.metadata.create_all(engine)
     alembic_cfg = Config(os.path.join(os.path.dirname(__file__), "alembic.ini"))
+    # Do not run migrations for new databases
     command.stamp(alembic_cfg, "head")
 
 
-def _run_alembic_upgrade():
-    # Assuming your alembic.ini file is in the same directory as this script
+def run_alembic_upgrade():
     alembic_cfg = Config(os.path.join(os.path.dirname(__file__), "alembic.ini"))
-    # Run the upgrade to the 'head' revision
     command.upgrade(alembic_cfg, "head")
 
 
@@ -46,10 +45,14 @@ Session = sessionmaker()
 class Database:
     def __init__(self, db_path):
         self.engine = get_engine(db_path)
+
+        # Only initialize the database if it doesn't exist
         if not os.path.exists(os.path.dirname(db_path)):
             os.makedirs(os.path.dirname(db_path))
-        initialize_database(self.engine)
-        _run_alembic_upgrade()
+            initialize_database(self.engine)
+        else:
+            run_alembic_upgrade()
+
         Session.configure(bind=self.engine)
         self.session = Session()
 
