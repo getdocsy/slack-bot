@@ -145,7 +145,7 @@ class GitHubManager:
             logging.info(f"PR '{title}' exists. Nothing to do")
             return existing_pr.html_url
         pr = self.github_repo.create_pull(
-            base="develop", head=branch_name, title=title, body=body
+            base="main", head=branch_name, title=title, body=body
         )
         logging.info(f"PR '{title}' created successfully!")
         return pr.html_url
