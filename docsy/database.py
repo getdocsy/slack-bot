@@ -29,6 +29,8 @@ def get_engine(db_path):
 
 def initialize_database(engine):
     Base.metadata.create_all(engine)
+    alembic_cfg = Config(os.path.join(os.path.dirname(__file__), "alembic.ini"))
+    command.stamp(alembic_cfg, "head")
 
 
 def _run_alembic_upgrade():
