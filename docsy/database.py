@@ -44,6 +44,8 @@ Session = sessionmaker()
 class Database:
     def __init__(self, db_path):
         self.engine = get_engine(db_path)
+        if not os.path.exists(os.path.dirname(db_path)):
+            os.makedirs(os.path.dirname(db_path))
         initialize_database(self.engine)
         _run_alembic_upgrade()
         Session.configure(bind=self.engine)
