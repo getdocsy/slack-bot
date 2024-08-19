@@ -57,6 +57,7 @@ class GitHubManager:
         app_installation_id,
         content_subdir="./",
         sidebar_file_path=None,
+        base_branch="main",
     ):
         appAuth = Auth.AppAuth(app_id, app_private_key.replace("\\n", "\n"))
         gi = GithubIntegration(auth=appAuth)
