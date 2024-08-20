@@ -58,9 +58,20 @@ def download_images_from_thread(context, thread, team_id, thread_ts, base_file_n
 
 def action_button_click_yes_callback(context, body, ack, say, client, channel_id):
     ack()
+    team_id = body["message"]["team"]
+    channel_name = client.conversations_info(channel=channel_id)["channel"]["name"]
+    username = body["user"]["username"]
+    db.insert_event(
+        {
+            "title": "User accepts offer for PR creation",
+            "description": f"User {username} accepts offer for PR creation in channel {channel_name}",
+            "author": username,
+            "team_id": team_id,
+        }
+    )
     thread_ts = body["container"]["thread_ts"]
     say(
-        f"All right, <@{body['user']['username']}>. I'll get back to you with a suggestion",
+        f"All right, <@{username}>. I'll get back to you with a suggestion",
         thread_ts=thread_ts,
     )
 
@@ -72,7 +83,6 @@ def action_button_click_yes_callback(context, body, ack, say, client, channel_id
         for message in thread
         if "user" in message and "text" in message
     ]
-    team_id = body["message"]["team"]
     base_file_name = ai.get_base_file_name(messages)
     local_image_paths = download_images_from_thread(
         context, thread, team_id, thread_ts, base_file_name
@@ -182,10 +192,21 @@ def action_button_click_yes_callback(context, body, ack, say, client, channel_id
         )
 
 
-def action_button_click_no_callback(body, ack, say):
+def action_button_click_no_callback(body, ack, say, channel_id, client):
     ack()
+    team_id = body["message"]["team"]
+    channel_name = client.conversations_info(channel=channel_id)["channel"]["name"]
+    username = body["user"]["username"]
+    db.insert_event(
+        {
+            "title": "User declines offer for PR creation",
+            "description": f"User {username} declines offer for PR creation in channel {channel_name}",
+            "author": username,
+            "team_id": team_id,
+        }
+    )
     thread_ts = body["container"]["thread_ts"]
     say(
-        f"All right, <@{body['user']['username']}>. No docs for this one.",
+        f"All right, <@{username}>. No docs for this one.",
         thread_ts=thread_ts,
     )

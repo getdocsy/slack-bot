@@ -1,5 +1,14 @@
 import logging
-from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy import (
+    create_engine,
+    Column,
+    Integer,
+    String,
+    DateTime,
+    Text,
+    ForeignKey,
+    func,
+)
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 from alembic import command
@@ -18,9 +27,22 @@ class Customer(Base):
     docs_repo = Column(String, nullable=True)
     content_subdir = Column(String, nullable=True)
     sidebar_file_path = Column(String, nullable=True)
-    front_matter = Column(String, nullable=True)
-    blacklist = Column(String, nullable=True)
+    front_matter = Column(Text, nullable=True)
+    blacklist = Column(Text, nullable=True)
     base_branch = Column(String, nullable=True)
+
+
+class Event(Base):
+    __tablename__ = "events"
+    created_on = Column(
+        DateTime(timezone=True), server_default=func.now(), primary_key=True
+    )
+    title = Column(String, nullable=False)
+    description = Column(String, nullable=True)
+    previous_content = Column(Text, nullable=True)
+    content = Column(Text, nullable=True)
+    author = Column(String, nullable=True)
+    team_id = Column(String, ForeignKey("customers.team_id"), nullable=True)
 
 
 def get_engine(db_path):
@@ -56,6 +78,7 @@ class Database:
         Session.configure(bind=self.engine)
         self.session = Session()
 
+    # Customer methods
     def get_customer(self, team_id):
         customer = self.session.query(Customer).filter_by(team_id=team_id).first()
         if customer:
@@ -89,4 +112,10 @@ class Database:
         customer = self.get_customer(team_id)
         for key, value in customer_data.items():
             setattr(customer, key, value)
+        self.session.commit()
+
+    # Event methods
+    def insert_event(self, event_data):
+        event = Event(**event_data)
+        self.session.add(event)
         self.session.commit()
