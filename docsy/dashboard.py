@@ -68,6 +68,10 @@ def index():
     return render_template("index.html")
 
 
+def main():
+    app.run_server(host="127.0.0.1", port=8050)
+
+
 # Run the app
 if __name__ == "__main__":
     app.run_server(host="127.0.0.1", port=8050)

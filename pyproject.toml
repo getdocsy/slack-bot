@@ -5,6 +5,10 @@ description = "Docsy creates pull requests on documentation repositories."
 authors = ["Felix Zieger <mail@felixzieger.de>"]
 readme = "README.md"
 
+[tool.poetry.scripts]
+docsy_slack = "docsy.main:main"
+docsy_dashboard = "docsy.dashboard:main"
+
 [tool.poetry.dependencies]
 python = "^3.11"
 slack-bolt = "^1.18.1"
