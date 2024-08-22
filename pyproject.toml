@@ -7,7 +7,7 @@ readme = "README.md"
 
 [tool.poetry.scripts]
 docsy_slack = "docsy.main:main"
-docsy_dashboard = "docsy.dashboard:main"
+docsy_dashboard = "docsy.dashboard:run_server"
 
 [tool.poetry.dependencies]
 python = "^3.11"
