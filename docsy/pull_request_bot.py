@@ -1,4 +1,6 @@
 import os
+import hmac
+import hashlib
 from flask import Flask, request, jsonify
 from github import GithubIntegration, Auth
 
@@ -9,12 +11,29 @@ app = Flask(__name__)
 # assert GITHUB_APP_ID is not None, "GITHUB_APP_ID is not set"
 # assert GITHUB_APP_PRIVATE_KEY is not None, "GITHUB_APP_PRIVATE_KEY is not set"
 
+GITHUB_WEBHOOK_SECRET = os.environ.get("GITHUB_WEBHOOK_SECRET")
+assert GITHUB_WEBHOOK_SECRET is not None, "GITHUB_WEBHOOK_SECRET is not set"
+
 # app_installation_id = 51286673
 # repo_name = "felixzieger/congenial-computing-machine"
 
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
+    signature = request.headers.get("X-Hub-Signature-256")
+    if signature is None:
+        print("missing signature")
+        return jsonify({"status": "missing signature"}), 400
+
+    secret = bytes(GITHUB_WEBHOOK_SECRET, "utf-8")
+
+    mac = hmac.new(secret, msg=request.data, digestmod=hashlib.sha256)
+    expected_signature = "sha256=" + mac.hexdigest()
+
+    if not hmac.compare_digest(expected_signature, signature):
+        print("invalid signature")
+        return jsonify({"status": "invalid signature"}), 400
+
     if request.method == "POST":
         payload = request.json
 
@@ -33,6 +52,7 @@ def webhook():
 
         return jsonify({"status": "processed"}), 200
     else:
+        print("invalid request")
         return jsonify({"status": "invalid request"}), 400
 
 
