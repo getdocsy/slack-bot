@@ -13,11 +13,17 @@ from flask import Flask, request
 
 logger = logging.getLogger(__name__)
 
-# Docsy uses OAUTH for multi-workspace slack support
+SLACK_CLIENT_ID = os.environ["SLACK_CLIENT_ID"]
+SLACK_CLIENT_SECRET = os.environ["SLACK_CLIENT_SECRET"]
 SLACK_SIGNING_SECRET = os.environ.get("SLACK_SIGNING_SECRET")
+assert SLACK_CLIENT_ID is not None, "SLACK_CLIENT_ID is not set"
+assert SLACK_CLIENT_SECRET is not None, "SLACK_CLIENT_SECRET is not set"
+assert SLACK_SIGNING_SECRET is not None, "SLACK_SIGNING_SECRET is not set"
+
+# Docsy uses OAUTH for multi-workspace slack support
 oauth_settings = OAuthSettings(
-    client_id=os.environ["SLACK_CLIENT_ID"],
-    client_secret=os.environ["SLACK_CLIENT_SECRET"],
+    client_id=SLACK_CLIENT_ID,
+    client_secret=SLACK_CLIENT_SECRET,
     scopes=[
         "app_mentions:read",
         "chat:write",
@@ -31,6 +37,7 @@ oauth_settings = OAuthSettings(
     ),
     install_page_rendering_enabled=False,
 )
+
 app = App(signing_secret=SLACK_SIGNING_SECRET, oauth_settings=oauth_settings)
 
 register_listeners(app)
