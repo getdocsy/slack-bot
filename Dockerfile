@@ -24,4 +24,4 @@ COPY docsy ./docsy
 
 RUN poetry install --only main
 
-ENTRYPOINT ["poetry", "run", "gunicorn", "-w", "1", "-b", "0", "0.0.0.0:3000", "docsy.main:flask_app"]
+ENTRYPOINT ["poetry", "run", "gunicorn", "-w", "2", "-b", "0.0.0.0:3000", "docsy.main:flask_app"]
