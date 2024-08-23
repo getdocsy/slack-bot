@@ -32,7 +32,20 @@ alembic --config=docsy/alembic.ini revision --autogenerat -m "create base_branch
 
 The app needs a persistent volume that is mapped to `/app/data/` within the container.
 
-To run it locally `docker run -v=/Users/xilef/Documents/docsy/data/:/app/data --env-file=secrets.docsy-dev.docker.env -p 3000:3000 felixzieger/docsy`.
+Build the container locally
+`docker build -t felixzieger/docsy .`
+
+Run the container locally
+`docker run -v=/Users/xilef/Documents/docsy/data/:/app/data --env-file=secrets.docsy-dev.docker.env -p 3000:3000 felixzieger/docsy`.
+
+Where `secrets.docsy-dev.docker.env` contains the environment variables needed for the app to run. See argument reference below.
+Format
+```
+LOG_LEVEL=DEBUG
+OPENAI_API_KEY=sk-...
+SLACK_SIGNING_SECRET=...
+...
+```
 
 ### Argument reference
 
