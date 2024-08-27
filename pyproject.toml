@@ -6,8 +6,9 @@ authors = ["Felix Zieger <mail@felixzieger.de>"]
 readme = "README.md"
 
 [tool.poetry.scripts]
-docsy_slack = "docsy.main:main"
-docsy_dashboard = "docsy.dashboard:run_server"
+docsy_slack = "docsy.slack_bot:flask_app"
+docsy_github = "docsy.github_bot:flask_app"
+docsy_dashboard = "docsy.dashboard:flask_app"
 
 [tool.poetry.dependencies]
 python = "^3.11"
