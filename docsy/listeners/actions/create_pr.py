@@ -2,8 +2,7 @@ import logging
 import os
 import requests
 import difflib
-import pprint
-from docsy.github_manager import get_github_manager
+from docsy.github_manager import get_github_manager_for_team
 import docsy.shared
 
 logger = logging.getLogger(__name__)
@@ -89,7 +88,7 @@ def action_button_click_yes_callback(context, body, ack, say, client, channel_id
     )
 
     try:
-        gitHubManager = get_github_manager(db, team_id)
+        gitHubManager = get_github_manager_for_team(db, team_id)
 
         file_paths = gitHubManager.list_md_files()
         file_path_suggestion = ai.get_file_path_suggestion(messages, file_paths)

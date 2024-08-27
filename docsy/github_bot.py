@@ -1,21 +1,19 @@
+import logging
 import os
 import hmac
 import hashlib
 from flask import Flask, request, jsonify
-from github import GithubIntegration, Auth
+
+from docsy.github_manager import get_github_manager_for_repo
+import docsy.shared
 
 flask_app = Flask(__name__)
 
 GITHUB_WEBHOOK_SECRET = os.environ.get("GITHUB_WEBHOOK_SECRET")
 assert GITHUB_WEBHOOK_SECRET is not None, "GITHUB_WEBHOOK_SECRET is not set"
 
-# GITHUB_APP_ID = os.environ.get("GITHUB_APP_ID")
-# GITHUB_APP_PRIVATE_KEY = os.environ.get("GITHUB_APP_PRIVATE_KEY")
-# assert GITHUB_APP_ID is not None, "GITHUB_APP_ID is not set"
-# assert GITHUB_APP_PRIVATE_KEY is not None, "GITHUB_APP_PRIVATE_KEY is not set"
-
-# app_installation_id = 51286673
-# repo_name = "felixzieger/congenial-computing-machine"
+ai = docsy.shared.ai
+db = docsy.shared.db
 
 
 @flask_app.route("/github/events", methods=["POST"])
@@ -37,18 +35,24 @@ def webhook():
     if request.method == "POST":
         payload = request.json
 
-        if payload["action"] == "opened":
+        if payload["action"] == "opened" or payload["action"] == "reopened":
             # Handle pull request opened event
-            pull_request = payload["pull_request"]
-            pr_number = pull_request["number"]
-            pr_title = pull_request["title"]
-            pr_user = pull_request["user"]["login"]
+            # pull_request = payload["pull_request"]
+            # pr_number = pull_request["number"]
+            # pr_title = pull_request["title"]
+            # pr_user = pull_request["user"]["login"]
             repo_name = payload["repository"]["full_name"]
 
-            # Example: print details or take action
-            print(
-                f"Pull request #{pr_number} opened by {pr_user} in {repo_name}: {pr_title}"
-            )
+            github_app_installation_id = payload["installation"]["id"]
+
+            try:
+                gitHubManager = get_github_manager_for_repo(
+                    github_app_installation_id, repo_name
+                )
+
+                file_paths = gitHubManager.list_md_files()
+            except Exception:
+                return jsonify({"status": "internal server error"}), 500
 
         return jsonify({"status": "processed"}), 200
     else:

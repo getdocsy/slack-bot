@@ -1,7 +1,6 @@
 import logging
 import json
 import docsy.shared
-from docsy.github_manager import get_github_manager
 from docsy.listeners.views.app_home import get_config_blocks
 
 logger = logging.getLogger(__name__)

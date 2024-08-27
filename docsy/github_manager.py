@@ -7,7 +7,7 @@ from github import GithubIntegration, Auth
 from pathlib import Path
 
 
-def get_github_manager(db, team_id):
+def get_github_manager_for_team(db, team_id: str):
     customer = db.get_customer(team_id)
     github_app_installation_id = customer.github_app_installation_id
     docs_repo = customer.docs_repo
@@ -19,7 +19,9 @@ def get_github_manager(db, team_id):
 
     # Docsy uses the same GitHub App independent of who is using it
     GITHUB_APP_ID = os.environ.get("GITHUB_APP_ID")
+    assert GITHUB_APP_ID is not None
     GITHUB_APP_PRIVATE_KEY = os.environ.get("GITHUB_APP_PRIVATE_KEY")
+    assert GITHUB_APP_PRIVATE_KEY is not None
 
     return GitHubManager(
         docs_repo,
@@ -28,6 +30,21 @@ def get_github_manager(db, team_id):
         github_app_installation_id,
         content_subdir=content_subdir,
         base_branch=customer.base_branch,
+    )
+
+
+def get_github_manager_for_repo(github_app_installation_id: int, repo_name: str):
+    # Docsy uses the same GitHub App independent of who is using it
+    GITHUB_APP_ID = os.environ.get("GITHUB_APP_ID")
+    assert GITHUB_APP_ID is not None
+    GITHUB_APP_PRIVATE_KEY = os.environ.get("GITHUB_APP_PRIVATE_KEY")
+    assert GITHUB_APP_PRIVATE_KEY is not None
+
+    return GitHubManager(
+        repo_name,
+        GITHUB_APP_ID,
+        GITHUB_APP_PRIVATE_KEY,
+        github_app_installation_id,
     )
 
 
@@ -51,9 +68,9 @@ class GitHubManager:
     def __init__(
         self,
         repo_name: str,
-        app_id,
-        app_private_key,
-        app_installation_id,
+        app_id: str,
+        app_private_key: str,
+        app_installation_id: int,
         content_subdir="./",
         base_branch="main",
     ):
