@@ -4,21 +4,21 @@ import hashlib
 from flask import Flask, request, jsonify
 from github import GithubIntegration, Auth
 
-app = Flask(__name__)
+flask_app = Flask(__name__)
+
+GITHUB_WEBHOOK_SECRET = os.environ.get("GITHUB_WEBHOOK_SECRET")
+assert GITHUB_WEBHOOK_SECRET is not None, "GITHUB_WEBHOOK_SECRET is not set"
 
 # GITHUB_APP_ID = os.environ.get("GITHUB_APP_ID")
 # GITHUB_APP_PRIVATE_KEY = os.environ.get("GITHUB_APP_PRIVATE_KEY")
 # assert GITHUB_APP_ID is not None, "GITHUB_APP_ID is not set"
 # assert GITHUB_APP_PRIVATE_KEY is not None, "GITHUB_APP_PRIVATE_KEY is not set"
 
-GITHUB_WEBHOOK_SECRET = os.environ.get("GITHUB_WEBHOOK_SECRET")
-assert GITHUB_WEBHOOK_SECRET is not None, "GITHUB_WEBHOOK_SECRET is not set"
-
 # app_installation_id = 51286673
 # repo_name = "felixzieger/congenial-computing-machine"
 
 
-@app.route("/webhook", methods=["POST"])
+@flask_app.route("/github/events", methods=["POST"])
 def webhook():
     signature = request.headers.get("X-Hub-Signature-256")
     if signature is None:
@@ -57,4 +57,4 @@ def webhook():
 
 
 if __name__ == "__main__":
-    app.run(port=3000, debug=True)
+    flask_app.run(port=3000, debug=True)
