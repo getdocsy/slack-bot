@@ -27,7 +27,6 @@ def get_github_manager(db, team_id):
         GITHUB_APP_PRIVATE_KEY,
         github_app_installation_id,
         content_subdir=content_subdir,
-        sidebar_file_path=customer.sidebar_file_path,
         base_branch=customer.base_branch,
     )
 
@@ -56,7 +55,6 @@ class GitHubManager:
         app_private_key,
         app_installation_id,
         content_subdir="./",
-        sidebar_file_path=None,
         base_branch="main",
     ):
         appAuth = Auth.AppAuth(app_id, app_private_key.replace("\\n", "\n"))
@@ -70,7 +68,6 @@ class GitHubManager:
         self.asset_subdir = os.path.join(
             self.content_subdir, "assets"
         )  # TODO make configurable
-        self.sidebar_file_path = (sidebar_file_path,)
         self.author = _get_author()
         self.base_branch = base_branch or "main"
 
