@@ -5,11 +5,11 @@ import pandas as pd
 import sqlite3
 import datetime
 
-server = Flask(__name__)
+flask_app = Flask(__name__)
 
 app = Dash(
     __name__,
-    server=server,
+    server=flask_app,
     url_base_pathname="/dashboard/",
 )
 
@@ -49,7 +49,7 @@ def serve_layout():
             html.H1(children="Event Dashboard"),
             html.Div(
                 children=[
-                    "This dashboard shows a few metrics about user interactions with Docsy.",
+                    "This dashboard shows a few metrics about user interactions with Docsy. ",
                     "It was last updated on " + datetime.datetime.now().strftime("%c"),
                 ]
             ),
@@ -59,18 +59,15 @@ def serve_layout():
     )
 
 
+app.title = "Docsy Dashboard"
 app.layout = serve_layout
 
 
 # Flask route for the main page
-@server.route("/")
+@flask_app.route("/")
 def index():
     return render_template("index.html")
 
 
-def run_server():
-    app.run_server(host="127.0.0.1", port=8050)
-
-
 if __name__ == "__main__":
-    run_server()
+    app.run_server(host="127.0.0.1", port=8050)
