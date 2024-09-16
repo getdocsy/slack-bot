@@ -167,6 +167,11 @@ class GitHubManager:
         logging.info(f"PR '{title}' created successfully!")
         return pr.html_url
 
+    def create_comment(self, pull_request_number, comment):
+        logging.info(f"Creating comment on PR #{pull_request_number}...")
+        pull_request = self.github_repo.get_pull(pull_request_number)
+        pull_request.create_issue_comment(comment)
+
     def _clone_repo(self):
         repo_path = tempfile.mkdtemp()  # TODO better handling of temp directories. This one would need to be cleaned up.
         logging.debug(f"Cloning repository to {repo_path}...")

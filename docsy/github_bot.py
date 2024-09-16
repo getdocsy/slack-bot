@@ -1,4 +1,3 @@
-import logging
 import os
 import hmac
 import hashlib
@@ -37,8 +36,8 @@ def webhook():
 
         if payload["action"] == "opened" or payload["action"] == "reopened":
             # Handle pull request opened event
-            # pull_request = payload["pull_request"]
-            # pr_number = pull_request["number"]
+            pull_request = payload["pull_request"]
+            pr_number = pull_request["number"]
             # pr_title = pull_request["title"]
             # pr_user = pull_request["user"]["login"]
             repo_name = payload["repository"]["full_name"]
@@ -48,6 +47,10 @@ def webhook():
             try:
                 gitHubManager = get_github_manager_for_repo(
                     github_app_installation_id, repo_name
+                )
+
+                gitHubManager.create_comment(
+                    pr_number, "Thanks for opening this pull request!"
                 )
 
                 file_paths = gitHubManager.list_md_files()
