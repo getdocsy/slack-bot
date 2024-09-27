@@ -59,11 +59,17 @@ def handle_message_events(body, logger):
 flask_app = Flask(__name__)
 handler = SlackRequestHandler(app)
 
-
 @flask_app.route("/slack/events", methods=["POST"])
 def slack_events():
     return handler.handle(request)
 
+@flask_app.route("/slack/install", methods=["GET"])
+def slack_install():
+    return handler.handle(request)
+
+@flask_app.route("/slack/oauth_redirect", methods=["GET"])
+def slack_oauth_redirect():
+    return handler.handle(request)
 
 if __name__ == "__main__":
     log_level = os.environ.get("LOG_LEVEL", "INFO").upper()
