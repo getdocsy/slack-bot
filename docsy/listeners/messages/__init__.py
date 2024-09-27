@@ -8,19 +8,15 @@ logger = logging.getLogger(__name__)
 ai = docsy.shared.ai
 db = docsy.shared.db
 
-def is_valid_path(string):
-    try:
-        Path(string)  # Attempt to create a Path object
-        return True
-    except ValueError:
-        return False
-
 def message_im_callback(message, client, say):
-    # breakpoint()
-    # message_ts = message["ts"]
-    history = client.conversations_history(
+    try:
+        ts = message["thread_ts"]
+    except KeyError:
+        ts = message["ts"]
+
+    history = client.conversations_replies(
       channel=message["channel"],
-      limit=10 # Precautionary measure: do not fetch 100 messages (which is the default)
+      ts=ts,
     )
 
     messages = [
@@ -35,6 +31,7 @@ def message_im_callback(message, client, say):
 
 
     next_action = ai.get_next_action(messages, file_paths)
+    print(next_action)
     match next_action:
         case "SYSTEM_CREATE_PR":
             text = "Should I create a PR against our public docs with what we have discussed?"
@@ -64,10 +61,12 @@ def message_im_callback(message, client, say):
                 },
             ],
             text=text,
+            thread_ts=ts,
             )
         case _: 
             say(
                 text=next_action,
+                thread_ts=ts
             )
 
 def register(app: App):
