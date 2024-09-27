@@ -30,6 +30,8 @@ oauth_settings = OAuthSettings(
         "files:read",
         "channels:read",
         "channels:history",
+        "im:history",
+        "im:read",
     ],
     installation_store=FileInstallationStore(base_dir="./data/slack/installations"),
     state_store=FileOAuthStateStore(

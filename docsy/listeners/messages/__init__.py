@@ -1,38 +1,12 @@
 from slack_bolt import App
 
 
-def message_learned_callback(message, say):
-    thread_ts = message.get("thread_ts", None) or message["ts"]
+def message_im_callback(message, say):
+    user = message["user"]
     say(
-        blocks=[
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": f"Hey there <@{message['user']}>! Looks like you learned something there. Should I create a PR against our public docs?",
-                },
-            },
-            {
-                "type": "actions",
-                "elements": [
-                    {
-                        "type": "button",
-                        "text": {"type": "plain_text", "text": "Yes, please"},
-                        "action_id": "button_click_yes",
-                    },
-                    {
-                        "type": "button",
-                        "text": {"type": "plain_text", "text": "No, thanks"},
-                        "action_id": "button_click_no",
-                    },
-                ],
-            },
-        ],
-        text=f"Hey there <@{message['user']}>! Looks like you learned something there. Should I create a PR against our public docs?",
-        thread_ts=thread_ts,
+        text=f"Hey there <@{user}>! Thanks for messaging"
     )
 
 
 def register(app: App):
-    # app.message("thanks")(message_learned_callback)
-    return
+    app.message("")(message_im_callback)
