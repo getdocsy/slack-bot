@@ -31,7 +31,6 @@ def message_im_callback(message, client, say):
 
 
     next_action = ai.get_next_action(messages, file_paths)
-    print(next_action)
     match next_action:
         case "SYSTEM_CREATE_PR":
             text = "Should I create a PR against our public docs with what we have discussed?"
