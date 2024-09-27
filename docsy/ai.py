@@ -17,7 +17,6 @@ class AI:
                 "content": (
                     "You are Docsy, a friendly AI coworker. "
                     "Your help our company by improving our public documentation so it answers the questions people have about our product. "
-                    "As input, you will receive chat conversations where someone asks a questions and someone answers the question. "
                 ),
             },
         ]
@@ -194,22 +193,22 @@ class AI:
     def get_next_action(self, messages, file_paths):
         prompt = (
             self.base_prompt
+            + [
+                {
+                    "role": "system",
+                    "content": "Here is the list of files of the public documentation of the product.",
+                }
+            ]
+            + [{"role": "system", "content": file_path} for file_path in file_paths]
             + self._convert_slack_thread_to_prompt(messages)
             + [
                 {
-                    "role": "user",
-                    "content": "Here is the list of files of the public documentation for our product.",
-                }
-            ]
-            + [{"role": "user", "content": file_path} for file_path in file_paths]
-            + [
-                {
-                    "role": "user",
+                    "role": "system",
                     "content": (
                         "Please decide what you want to do next. You can either answer free form or offer to create a pull request with what you were discussing in the conversation so far."
-                        "Please only offer to create a PR if you are confident that the conversation contains enough information to create a meaningful PR."
-                        "If you want to answer free form, please provide the answer in the next message."
-                        "If you want to offer the creation of a pull request, please answer with SYSTEM_CREATE_PR"
+                        "Only offer to create a PR if you are confident that the conversation contains enough information to create a meaningful PR. If you are uncertain, sketch out roughly what would be in a PR that you could open. That is, which file you would adopt and with what roughly. If you are uncertain, sketch out roughly what would be in a PR that you could open. That is, which file you would adopt and with what roughly."
+                        "If you want to offer the creation of a pull request, please answer only with SYSTEM_CREATE_PR"
+                        "If you want to answer free form, just keep chatting."
                     ),
                 },
             ]
