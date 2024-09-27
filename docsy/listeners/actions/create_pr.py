@@ -58,16 +58,23 @@ def download_images_from_thread(context, thread, team_id, thread_ts, base_file_n
 def action_button_click_yes_callback(context, body, ack, say, client, channel_id):
     ack()
     team_id = body["message"]["team"]
-    channel_name = client.conversations_info(channel=channel_id)["channel"]["name"]
+    
+    try: # Direct message channels do not have a name
+        channel_name = client.conversations_info(channel=channel_id)["channel"]["name"]
+        channel = f"channel {channel_name}"
+    except KeyError:
+        channel = "direct message"
+
     username = body["user"]["username"]
     db.insert_event(
         {
             "title": "User accepts offer for PR creation",
-            "description": f"User {username} accepts offer for PR creation in channel {channel_name}",
+            "description": f"User {username} accepts offer for PR creation in {channel}",
             "author": username,
             "team_id": team_id,
         }
     )
+
     thread_ts = body["container"]["thread_ts"]
     say(
         f"All right, <@{username}>. I'll get back to you with a suggestion",
@@ -194,12 +201,18 @@ def action_button_click_yes_callback(context, body, ack, say, client, channel_id
 def action_button_click_no_callback(body, ack, say, channel_id, client):
     ack()
     team_id = body["message"]["team"]
-    channel_name = client.conversations_info(channel=channel_id)["channel"]["name"]
+    
+    try: # Direct message channels do not have a name
+        channel_name = client.conversations_info(channel=channel_id)["channel"]["name"]
+        channel = f"channel {channel_name}"
+    except KeyError:
+        channel = "direct message"
+
     username = body["user"]["username"]
     db.insert_event(
         {
             "title": "User declines offer for PR creation",
-            "description": f"User {username} declines offer for PR creation in channel {channel_name}",
+            "description": f"User {username} declines offer for PR creation in {channel}",
             "author": username,
             "team_id": team_id,
         }
