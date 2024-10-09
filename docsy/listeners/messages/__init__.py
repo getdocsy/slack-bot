@@ -1,5 +1,4 @@
 import logging
-from pathlib import Path
 from slack_bolt import App
 from docsy.github_manager import get_github_manager_for_team
 import docsy.shared
@@ -24,7 +23,7 @@ def message_im_callback(message, client, say):
         for m in history["messages"]
         if "user" in m and "text" in m
     ]
-
+    
     team_id = message["team"]
     gitHubManager = get_github_manager_for_team(db, team_id)
     file_paths = gitHubManager.list_md_files()
@@ -61,6 +60,12 @@ def message_im_callback(message, client, say):
             ],
             text=text,
             thread_ts=ts,
+            )
+        case "SYSTEM_DISCUSS":
+            text = ai.discuss(messages, file_paths)
+            say(
+                text=text,
+                thread_ts=ts
             )
         case _: 
             say(
