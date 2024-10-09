@@ -1,11 +1,9 @@
-import logging
+from loguru import logger
 import os
 import requests
 import difflib
 from docsy.github_manager import get_github_manager_for_team
 import docsy.shared
-
-logger = logging.getLogger(__name__)
 
 ai = docsy.shared.ai
 db = docsy.shared.db

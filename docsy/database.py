@@ -1,4 +1,4 @@
-import logging
+from loguru import logger
 from sqlalchemy import (
     create_engine,
     Column,
@@ -15,7 +15,6 @@ from alembic import command
 from alembic.config import Config
 import os
 
-logger = logging.getLogger(__name__)
 Base = declarative_base()
 
 

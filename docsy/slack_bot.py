@@ -1,5 +1,5 @@
 import os
-import logging
+from loguru import logger
 
 from slack_bolt import App
 from slack_bolt.adapter.flask import SlackRequestHandler
@@ -10,8 +10,6 @@ from slack_sdk.oauth.state_store import FileOAuthStateStore
 from docsy.listeners import register_listeners
 
 from flask import Flask, request
-
-logger = logging.getLogger(__name__)
 
 SLACK_CLIENT_ID = os.environ["SLACK_CLIENT_ID"]
 SLACK_CLIENT_SECRET = os.environ["SLACK_CLIENT_SECRET"]
@@ -73,6 +71,5 @@ def slack_oauth_redirect():
 if __name__ == "__main__":
     log_level = os.environ.get("LOG_LEVEL", "INFO").upper()
     print(f"Log level set to {log_level}")
-    logging.basicConfig(level=log_level, force=True)
 
     app.start(port=int(os.environ.get("PORT", 3000)))

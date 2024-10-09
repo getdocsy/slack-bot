@@ -1,9 +1,7 @@
-import logging
+from loguru import logger
 import os
 import base64
 from openai import OpenAI
-
-logger = logging.getLogger(__name__)
 
 AI_MODEL = "gpt-4o-mini"
 
@@ -27,7 +25,7 @@ class AI:
             model=AI_MODEL, messages=prompt
         )
         suggestion = completion.choices[0].message.content
-        logger.debug(suggestion[:20])
+        logger.info(suggestion[:20])
         return suggestion
 
     def _convert_slack_thread_to_prompt(self, messages):
@@ -239,7 +237,6 @@ class AI:
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logger.debug)
     ai = AI()
     messages = [
         ("Alice", "How do I activate my account?"),

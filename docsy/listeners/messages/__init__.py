@@ -1,8 +1,7 @@
-import logging
+from loguru import logger
 from slack_bolt import App
 from docsy.github_manager import get_github_manager_for_team
 import docsy.shared
-logger = logging.getLogger(__name__)
 
 ai = docsy.shared.ai
 db = docsy.shared.db

@@ -1,9 +1,8 @@
-import logging
+from loguru import logger
 import json
 import docsy.shared
 from docsy.listeners.views.app_home import get_config_blocks
 
-logger = logging.getLogger(__name__)
 db = docsy.shared.db
 
 

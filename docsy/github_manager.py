@@ -1,12 +1,10 @@
 import os
 import tempfile
-import logging
+from loguru import logger
 import shutil
 from git import Repo, Actor
 from github import GithubIntegration, Auth
 from pathlib import Path
-
-logger = logging.getLogger(__name__)
 
 def get_github_manager_for_team(db, team_id: str):
     customer = db.get_customer(team_id)
@@ -196,7 +194,6 @@ class GitHubManager:
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logger.debug)
     GITHUB_APP_ID = os.environ.get("GITHUB_APP_ID")
     GITHUB_APP_PRIVATE_KEY = os.environ.get("GITHUB_APP_PRIVATE_KEY")
 
