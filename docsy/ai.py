@@ -92,7 +92,7 @@ class AI:
                     "content": "Here is the list of files of the public documentation for our product.",
                 },
             ]
-            + [{"role": "user", "content": file_path} for file_path in file_paths]
+            + [{"role": "user", "content": "\n".join(file_paths)}]
             + [
                 {
                     "role": "user",
@@ -205,7 +205,7 @@ class AI:
                     "content": "Here is the list of files of the public documentation of the product.",
                 }
             ]
-            + [{"role": "system", "content": file_path} for file_path in file_paths]
+            + [{"role": "user", "content": "\n".join(file_paths)}]
             + self._convert_slack_thread_to_prompt(messages)
             + [
                 {
@@ -230,7 +230,7 @@ class AI:
                     "content": "Here is the list of files of the public documentation of the product.",
                 }
             ]
-            + [{"role": "system", "content": file_path} for file_path in file_paths]
+            + [{"role": "user", "content": "\n".join(file_paths)}]
             + self._convert_slack_thread_to_prompt(messages)
             + [
                 {
