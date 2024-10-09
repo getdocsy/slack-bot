@@ -51,31 +51,28 @@ def log_request(logger, body, next):
     return next()
 
 
-@app.event("message")
-def handle_message_events(body, logger):
-    logger.info(body)
-
-
 flask_app = Flask(__name__)
 handler = SlackRequestHandler(app)
+
 
 @flask_app.route("/slack/events", methods=["POST"])
 def slack_events():
     return handler.handle(request)
 
+
 @flask_app.route("/slack/install", methods=["GET"])
 def slack_install():
     return handler.handle(request)
+
 
 @flask_app.route("/slack/oauth_redirect", methods=["GET"])
 def slack_oauth_redirect():
     return handler.handle(request)
 
+
 if __name__ == "__main__":
     log_level = os.environ.get("LOG_LEVEL", "INFO").upper()
-    logging.basicConfig(level=log_level)
-    # for logger_name in logging.root.manager.loggerDict:
-    #     logging.getLogger(logger_name).setLevel(log_level)
-    logger.info(f"Log level set to {log_level}")
+    print(f"Log level set to {log_level}")
+    logging.basicConfig(level=log_level, force=True)
 
     app.start(port=int(os.environ.get("PORT", 3000)))
