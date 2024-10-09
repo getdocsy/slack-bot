@@ -1,6 +1,7 @@
 from loguru import logger
 import os
 import base64
+import textwrap
 from openai import OpenAI
 
 AI_MODEL = "gpt-4o-mini"
@@ -19,13 +20,20 @@ class AI:
             },
         ]
 
+    def _log_prompt(self, prompt):    
+        for message in prompt:
+            content = textwrap.shorten(message["content"], width=100, placeholder="...")
+            logger.debug(content)
+
     def _get_suggestion(self, prompt):
-        logger.info(prompt[:20])
+        logger.info("Querying AI")
+        self._log_prompt(prompt)
         completion = self.client.chat.completions.create(
             model=AI_MODEL, messages=prompt
         )
         suggestion = completion.choices[0].message.content
-        logger.info(suggestion[:20])
+        logger.info("AI responsed")
+        logger.debug(textwrap.shorten(suggestion, width=100, placeholder="..."))
         return suggestion
 
     def _convert_slack_thread_to_prompt(self, messages):

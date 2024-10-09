@@ -116,5 +116,6 @@ class Database:
     # Event methods
     def insert_event(self, event_data):
         event = Event(**event_data)
+        logger.info(event.title)
         self.session.add(event)
         self.session.commit()

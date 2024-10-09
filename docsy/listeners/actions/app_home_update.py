@@ -7,7 +7,8 @@ db = docsy.shared.db
 
 
 def app_home_update_button_click_callback(ack, body, client, context, logger):
-    ack()  # Acknowledge the button click
+    ack()
+    logger.info("User updated configuration in app home")
 
     def get_new_value(key):
         result = body["view"]["state"]["values"][key][key]["value"]

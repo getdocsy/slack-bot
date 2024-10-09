@@ -6,7 +6,6 @@ from flask import Flask, request, jsonify
 from docsy.github_manager import get_github_manager_for_repo
 import docsy.shared
 
-
 flask_app = Flask(__name__)
 
 GITHUB_WEBHOOK_SECRET = os.environ.get("GITHUB_WEBHOOK_SECRET")

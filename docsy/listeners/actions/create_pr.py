@@ -56,13 +56,14 @@ def download_images_from_thread(context, thread, team_id, thread_ts, base_file_n
 def action_button_click_yes_callback(context, body, ack, say, client, channel_id):
     ack()
     team_id = body["message"]["team"]
-    
-    try: # Direct message channels do not have a name
+
+    try:  # Direct message channels do not have a name
         channel_name = client.conversations_info(channel=channel_id)["channel"]["name"]
         channel = f"channel {channel_name}"
     except KeyError:
         channel = "direct message"
 
+    logger.info("User accepted offer for PR creation")
     username = body["user"]["username"]
     db.insert_event(
         {
@@ -113,7 +114,7 @@ def action_button_click_yes_callback(context, body, ack, say, client, channel_id
                     relative_file_path=sidebar_file_path,
                 )
             else:
-                logger.info("No sidebar configured. Skipping sidebar update.")
+                logger.debug("No sidebar configured. Skipping sidebar update.")
 
             file_content = db.get_customer(team_id).front_matter or ""
         else:
@@ -199,8 +200,8 @@ def action_button_click_yes_callback(context, body, ack, say, client, channel_id
 def action_button_click_no_callback(body, ack, say, channel_id, client):
     ack()
     team_id = body["message"]["team"]
-    
-    try: # Direct message channels do not have a name
+
+    try:  # Direct message channels do not have a name
         channel_name = client.conversations_info(channel=channel_id)["channel"]["name"]
         channel = f"channel {channel_name}"
     except KeyError:
