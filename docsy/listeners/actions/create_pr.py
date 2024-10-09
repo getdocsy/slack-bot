@@ -14,7 +14,7 @@ db = docsy.shared.db
 # Downloads images and returns local file paths of the images
 def download_images_from_thread(context, thread, team_id, thread_ts, base_file_name):
     download_folder = f"data/{team_id}/{thread_ts}/"  # TODO this folder must be cleaned up afterwards. Or use a temp folder
-    logging.debug(
+    logger.debug(
         f"Download images for thread {thread_ts} into folder {download_folder}"
     )
     image_paths = []
@@ -48,10 +48,10 @@ def download_images_from_thread(context, thread, team_id, thread_ts, base_file_n
                             os.makedirs(download_folder)
                         with open(file_path, "wb") as file:
                             file.write(response.content)
-                        logging.debug(f"Downloaded {file_name} to {file_path}")
+                        logger.debug(f"Downloaded {file_name} to {file_path}")
                         image_paths.append(file_path)
                     else:
-                        logging.debug(f"Failed to download {file_name} from {file_url}")
+                        logger.debug(f"Failed to download {file_name} from {file_url}")
     return image_paths
 
 
@@ -115,11 +115,11 @@ def action_button_click_yes_callback(context, body, ack, say, client, channel_id
                     relative_file_path=sidebar_file_path,
                 )
             else:
-                logging.info("No sidebar configured. Skipping sidebar update.")
+                logger.info("No sidebar configured. Skipping sidebar update.")
 
             file_content = db.get_customer(team_id).front_matter or ""
         else:
-            logging.info("File already exists. Skipping sidebar update.")
+            logger.info("File already exists. Skipping sidebar update.")
             file_content = gitHubManager.get_file_content(file_path_suggestion)
 
         file_content_suggestion = ai.get_file_content_suggestion(
@@ -191,7 +191,7 @@ def action_button_click_yes_callback(context, body, ack, say, client, channel_id
             token=context.bot_token,
         )
     except Exception as e:
-        logging.error(f"Failed to create PR. {e}")
+        logger.error(f"Failed to create PR. {e}")
         say(
             "Sorry, I couldn't create the PR.",
             thread_ts=thread_ts,

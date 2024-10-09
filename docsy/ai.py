@@ -22,12 +22,12 @@ class AI:
         ]
 
     def _get_suggestion(self, prompt):
-        logging.info(prompt[:20])
+        logger.info(prompt[:20])
         completion = self.client.chat.completions.create(
             model=AI_MODEL, messages=prompt
         )
         suggestion = completion.choices[0].message.content
-        logging.debug(suggestion[:20])
+        logger.debug(suggestion[:20])
         return suggestion
 
     def _convert_slack_thread_to_prompt(self, messages):
@@ -239,7 +239,7 @@ class AI:
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logger.debug)
     ai = AI()
     messages = [
         ("Alice", "How do I activate my account?"),

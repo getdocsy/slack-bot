@@ -6,6 +6,7 @@ from git import Repo, Actor
 from github import GithubIntegration, Auth
 from pathlib import Path
 
+logger = logging.getLogger(__name__)
 
 def get_github_manager_for_team(db, team_id: str):
     customer = db.get_customer(team_id)
@@ -107,10 +108,10 @@ class GitHubManager:
         branch_name,
     ):
         if self._branch_exists(branch_name):
-            logging.info(f"Branch '{branch_name}' exists. Checking out...")
+            logger.info(f"Branch '{branch_name}' exists. Checking out...")
             self.repo.git.checkout(branch_name)
         else:
-            logging.info(f"Branch '{branch_name}' doesn't exist. Creating...")
+            logger.info(f"Branch '{branch_name}' doesn't exist. Creating...")
             self.repo.git.checkout("-b", branch_name)
 
     def add_file(
@@ -147,34 +148,34 @@ class GitHubManager:
         branch_name,
     ):
         if self._branch_exists(branch_name):
-            logging.info(f"Branch '{branch_name}' exists. Checking out...")
+            logger.info(f"Branch '{branch_name}' exists. Checking out...")
             self.repo.git.checkout(branch_name)
         else:
-            logging.info(f"Branch '{branch_name}' doesn't exist. Can't push...")
+            logger.info(f"Branch '{branch_name}' doesn't exist. Can't push...")
 
         origin = self.repo.remote()
         origin.push(refspec=f"{branch_name}:{branch_name}")
-        logging.info(f"Branch '{branch_name}' pushed successfully!")
+        logger.info(f"Branch '{branch_name}' pushed successfully!")
 
     def create_pr(self, branch_name, title, body):
         existing_pr = self._get_pr(title)
         if existing_pr:
-            logging.info(f"PR '{title}' exists. Nothing to do")
+            logger.info(f"PR '{title}' exists. Nothing to do")
             return existing_pr.html_url
         pr = self.github_repo.create_pull(
             base=self.base_branch, head=branch_name, title=title, body=body
         )
-        logging.info(f"PR '{title}' created successfully!")
+        logger.info(f"PR '{title}' created successfully!")
         return pr.html_url
 
     def create_comment(self, pull_request_number, comment):
-        logging.info(f"Creating comment on PR #{pull_request_number}...")
+        logger.info(f"Creating comment on PR #{pull_request_number}...")
         pull_request = self.github_repo.get_pull(pull_request_number)
         pull_request.create_issue_comment(comment)
 
     def _clone_repo(self):
         repo_path = tempfile.mkdtemp()  # TODO better handling of temp directories. This one would need to be cleaned up.
-        logging.debug(f"Cloning repository to {repo_path}...")
+        logger.debug(f"Cloning repository to {repo_path}...")
         repo_url = f"https://x-access-token:{self.token}@github.com/{self.repo_name}"
         repo = Repo.clone_from(repo_url, repo_path)
         return repo, repo_path
@@ -195,7 +196,7 @@ class GitHubManager:
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logger.debug)
     GITHUB_APP_ID = os.environ.get("GITHUB_APP_ID")
     GITHUB_APP_PRIVATE_KEY = os.environ.get("GITHUB_APP_PRIVATE_KEY")
 
