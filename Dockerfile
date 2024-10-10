@@ -1,14 +1,12 @@
 FROM python:alpine
 
 RUN apk fix && \
-    apk --no-cache --update add \
-    git \
-    cargo # builds started failing without cargo. haven't figured out why yet. slows down builds a lot.
+    apk --no-cache --update add git
 
 RUN git config --global user.name "getdocsy[Bot]" # TODO remove hardcoded bot name and make it depend on environment
 RUN git config --global user.email "171265091+getdocsy[bot]@users.noreply.github.com"
 
-RUN pip install poetry==1.7.1
+RUN pip install poetry==1.8.3
 
 ENV POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_IN_PROJECT=1 \

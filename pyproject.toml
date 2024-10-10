@@ -13,7 +13,7 @@ docsy_dashboard = "docsy.dashboard:flask_app"
 [tool.poetry.dependencies]
 python = "^3.11"
 slack-bolt = "^1.18.1"
-openai = "^1.30.3"
+openai = "1.39.0" # Higher versions lead to failing builds because of missing depencencies
 gitpython = "^3.1.43"
 pygithub = "^2.3.0"
 flask = "^3.0.3"
