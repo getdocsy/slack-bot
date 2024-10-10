@@ -176,6 +176,7 @@ class GitHubManager:
         logger.debug(f"Cloning repository to {repo_path}...")
         repo_url = f"https://x-access-token:{self.token}@github.com/{self.repo_name}"
         repo = Repo.clone_from(repo_url, repo_path)
+        logger.debug("Finished cloning repository")
         return repo, repo_path
 
     def _branch_exists(self, branch_name):
