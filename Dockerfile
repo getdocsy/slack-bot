@@ -1,7 +1,9 @@
 FROM python:alpine
 
 RUN apk fix && \
-    apk --no-cache --update add git
+    apk --no-cache --update add \
+    git \
+    cargo # builds started failing without cargo. haven't figured out why yet. slows down builds a lot.
 
 RUN git config --global user.name "getdocsy[Bot]" # TODO remove hardcoded bot name and make it depend on environment
 RUN git config --global user.email "171265091+getdocsy[bot]@users.noreply.github.com"
