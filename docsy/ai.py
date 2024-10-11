@@ -15,14 +15,14 @@ class AI:
                 "role": "system",
                 "content": (
                     "You are Docsy, a friendly AI coworker. "
-                    "Your help our company by improving our public documentation so it answers the questions people have about our product. "
+                    "Your help the company by improving the public documentation so it answers the questions people have about their product. "
                 ),
             },
         ]
 
-    def _log_prompt(self, prompt):    
+    def _log_prompt(self, prompt):
         for message in prompt:
-            content = textwrap.shorten(message["content"], width=100, placeholder="...")
+            content = message["role"] + ": " + textwrap.shorten(message["content"], width=90, placeholder="...")
             logger.debug(content)
 
     def _get_suggestion(self, prompt):
@@ -38,7 +38,13 @@ class AI:
 
     def _convert_slack_thread_to_prompt(self, messages):
         return [
-            {"role": "user", "name": message[0], "content": message[1]}
+            {
+                "role": "assistant" if message[0] == "assistant" else "user",
+                "name": message[
+                    0
+                ],  # this attiribute could be left out for assistant messages (since only docsy is assistant, other bots would simply be users)
+                "content": message[1],
+            }
             for message in messages
         ]
 
@@ -49,7 +55,7 @@ class AI:
 
         return [
             {
-                "role": "user",
+                "role": "system",
                 "content": [
                     {
                         "type": "text",
@@ -73,7 +79,7 @@ class AI:
             + self._convert_slack_thread_to_prompt(messages)
             + [
                 {
-                    "role": "user",
+                    "role": "system",
                     "content": (
                         "We need a prefix for images that appeared in this thread. This prefix will end up in the file name of the images. Please answer with exactly one suggestion, sticking to lowercase letters and hyphens."
                     ),
@@ -88,14 +94,14 @@ class AI:
             + self._convert_slack_thread_to_prompt(messages)
             + [
                 {
-                    "role": "user",
-                    "content": "Here is the list of files of the public documentation for our product.",
+                    "role": "system",
+                    "content": "Here is the list of files of the public documentation for the product the conversation is about.",
                 },
             ]
-            + [{"role": "user", "content": "\n".join(file_paths)}]
+            + [{"role": "system", "content": "\n".join(file_paths)}]
             + [
                 {
-                    "role": "user",
+                    "role": "system",
                     "content": (
                         "Pick exactly one file path from the above list where you think the question from the chat conversation should be answered. Only answer with the file path. Include the complete path that was shown in the list. If no existing file is suitable or if the user wants the information to appear on a new page, answer with a new file path."
                     ),
@@ -112,19 +118,19 @@ class AI:
             + self._convert_slack_thread_to_prompt(messages)
             + [
                 {
-                    "role": "user",
+                    "role": "system",
                     "content": f"We want to answer this question in a new file {new_file_path} and need to add it to the sidebar. Please suggest a file path for the new file. Only answer with the file path. Stick to the format of the existing file paths.",
                 },
                 {
-                    "role": "user",
+                    "role": "system",
                     "content": "Here is how the sidebar file currently looks like.",
                 },
                 {
-                    "role": "user",
+                    "role": "system",
                     "content": sidebar_file_content,
                 },
                 {
-                    "role": "user",
+                    "role": "system",
                     "content": (
                         "Now repeat the sidebar file line by line and only add a single line with the new file path where you think it fits best. It's very important that you do not leave out any lines that were there before."
                         + "We afterwards will open a Pull Request against the public docs and want only meaningful changes in our git history. Only answer with the new file content."
@@ -144,19 +150,19 @@ class AI:
             + self._convert_images_to_prompt(local_image_paths)
             + [
                 {
-                    "role": "user",
+                    "role": "system",
                     "content": f"Please modify the file {file_path} to now also answer the question from the chat conversation above.",
                 },
                 {
-                    "role": "user",
+                    "role": "system",
                     "content": "Here is how the file currently looks like.",
                 },
                 {
-                    "role": "user",
+                    "role": "system",
                     "content": file_content,
                 },
                 {
-                    "role": "user",
+                    "role": "system",
                     "content": (
                         "Now repeat the file line by line and only do the minimal edits necessary to answer the question. It's very important that you do not leave out any lines that were there before if not absolutely necesary."
                         + "We afterwards will open a Pull Request against the public docs and want only meaningful changes in our git history. Only answer with the new file content."
@@ -170,27 +176,27 @@ class AI:
     def get_branch_name_suggestion(self, file_content, file_content_suggestion):
         prompt = self.base_prompt + [
             {
-                "role": "user",
+                "role": "system",
                 "content": "Please suggest a branch name for the branch that will hold changes to the following file.",
             },
             {
-                "role": "user",
+                "role": "system",
                 "content": "Here is how the file looked before the change.",
             },
             {
-                "role": "user",
+                "role": "system",
                 "content": file_content,
             },
             {
-                "role": "user",
+                "role": "system",
                 "content": "Here is how the file looks after the change.",
             },
             {
-                "role": "user",
+                "role": "system",
                 "content": file_content_suggestion,
             },
             {
-                "role": "user",
+                "role": "system",
                 "content": "Only answer with the suggested branch name. Only use lowercase letters and hyphens in the name. Keep the name short, if possible under 4 words.",
             },
         ]
@@ -205,7 +211,7 @@ class AI:
                     "content": "Here is the list of files of the public documentation of the product.",
                 }
             ]
-            + [{"role": "user", "content": "\n".join(file_paths)}]
+            + [{"role": "system", "content": "\n".join(file_paths)}]
             + self._convert_slack_thread_to_prompt(messages)
             + [
                 {
@@ -220,7 +226,7 @@ class AI:
             ]
         )
         return self._get_suggestion(prompt)
-    
+
     def discuss(self, messages, file_paths):
         prompt = (
             self.base_prompt
@@ -230,14 +236,12 @@ class AI:
                     "content": "Here is the list of files of the public documentation of the product.",
                 }
             ]
-            + [{"role": "user", "content": "\n".join(file_paths)}]
+            + [{"role": "system", "content": "\n".join(file_paths)}]
             + self._convert_slack_thread_to_prompt(messages)
             + [
                 {
                     "role": "system",
-                    "content": (
-                        "Write a response to the chat conversation."
-                    ),
+                    "content": ("Write a response to the chat conversation."),
                 },
             ]
         )

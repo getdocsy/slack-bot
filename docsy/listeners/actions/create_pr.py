@@ -83,8 +83,8 @@ def action_button_click_yes_callback(context, body, ack, say, client, channel_id
     thread = client.conversations_replies(channel=channel_id, ts=thread_ts).data[
         "messages"
     ]
-    messages = [
-        (message["user"], message["text"])
+    messages = [  # TODO distinguish between different bots. as it is today, all messages from bots are attributed to "assistant"
+        ("assistant" if message.get("bot_id") else message["user"], message["text"])
         for message in thread
         if "user" in message and "text" in message
     ]
