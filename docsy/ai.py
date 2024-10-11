@@ -103,7 +103,10 @@ class AI:
                 {
                     "role": "system",
                     "content": (
-                        "Pick exactly one file path from the above list where you think the question from the chat conversation should be answered. Only answer with the file path. Include the complete path that was shown in the list. If no existing file is suitable or if the user wants the information to appear on a new page, answer with a new file path."
+                        "We need to decide on which page of the documentation the question from the chat conversation should be answered. "
+                        "If you think an existing file is best, pick a file path from the above list. "
+                        "If no existing file is suitable or if the user wants the information to appear on a new page, answer with a new file path. "
+                        "In both cases, only answer with exactly one file path. Include the complete path in a format like it was shown in the list."
                     ),
                 },
             ]
@@ -119,7 +122,8 @@ class AI:
             + [
                 {
                     "role": "system",
-                    "content": f"We want to answer this question in a new file {new_file_path} and need to add it to the sidebar. Please suggest a file path for the new file. Only answer with the file path. Stick to the format of the existing file paths.",
+                    "content": f"We want to answer this question in a new file {new_file_path} and need to add it to the sidebar. "
+                    "Please suggest a file path for the new file. Only answer with the file path. Stick to the format of the existing file paths.",
                 },
                 {
                     "role": "system",
@@ -217,10 +221,12 @@ class AI:
                 {
                     "role": "system",
                     "content": (
-                        "Please decide what you want to do next. You can either answer free form or offer to create a pull request (PR) with what you were discussing in the conversation so far."
-                        "Only offer to create a PR if you are confident that the conversation contains enough information to create a meaningful PR. If you are uncertain, sketch out roughly what would be in a PR that you could open. That is, which file you would adopt and with what roughly. If you are uncertain, sketch out roughly what would be in a PR that you could open. That is, which file you would adopt and with what roughly."
+                        "Please decide what you want to do next. "
+                        "You can either answer free form or offer to create a pull request (PR). "
+                        "Only offer to create a PR if you are confident that the conversation contains enough information to create a meaningful PR. "
                         "If you want to offer the creation of a pull request, answer with SYSTEM_CREATE_PR"
                         "If you want to answer free form, answer with SYSTEM_DISCUSS"
+                        "If you haven't said anything in the conversation yet, only answer with SYSTEM_CREATE_PR if the user told you to create a PR in their first message. "
                     ),
                 },
             ]
