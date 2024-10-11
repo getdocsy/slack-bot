@@ -2,7 +2,7 @@ from loguru import logger
 import os
 import requests
 import difflib
-from docsy.github_manager import get_github_manager_for_team
+from docsy.github_manager import get_github_manager_for_team, GitHubManagerException
 import docsy.shared
 
 ai = docsy.shared.ai
@@ -188,6 +188,12 @@ def action_button_click_yes_callback(context, body, ack, say, client, channel_id
             blocks=[url_block],
             thread_ts=thread_ts,
             token=context.bot_token,
+        )
+    except GitHubManagerException as e:
+        logger.error(f"Failed to clone repo. {e}")
+        say(
+            "Sorry, I couldn't connect to your GitHub organization. Please check the configuration in app home.",
+            thread_ts=thread_ts,
         )
     except Exception as e:
         logger.error(f"Failed to create PR. {e}")

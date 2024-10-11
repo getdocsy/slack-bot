@@ -62,6 +62,8 @@ def _get_author():
         case _:
             raise ValueError("Unknown GitHub App ID")
 
+class GitHubManagerException(Exception):
+    pass
 
 class GitHubManager:
     def __init__(
@@ -76,7 +78,11 @@ class GitHubManager:
         appAuth = Auth.AppAuth(app_id, app_private_key.replace("\\n", "\n"))
         gi = GithubIntegration(auth=appAuth)
         self.github = gi.get_github_for_installation(app_installation_id)
-        self.token = gi.get_access_token(app_installation_id).token
+        try:
+            self.token = gi.get_access_token(app_installation_id).token
+        except Exception as e:
+            logger.error(f"Failed to clone git repository: {e}")
+            raise GitHubManagerException("Failed to get access token")
         self.repo_name = repo_name
         self.github_repo = self.github.get_repo(self.repo_name)
         self.repo, self.repo_path = self._clone_repo()
@@ -192,7 +198,6 @@ class GitHubManager:
 
     def close(self):
         self.github.close()
-
 
 if __name__ == "__main__":
     GITHUB_APP_ID = os.environ.get("GITHUB_APP_ID")
