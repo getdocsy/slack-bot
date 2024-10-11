@@ -97,7 +97,7 @@ class AI:
                 {
                     "role": "user",
                     "content": (
-                        "Pick exactly one file path from the above list where you think the question from the chat conversation should be answered. Only answer with the file path. Include the complete path that was shown in the list. If no existing file is suitable, answer with a new file path."
+                        "Pick exactly one file path from the above list where you think the question from the chat conversation should be answered. Only answer with the file path. Include the complete path that was shown in the list. If no existing file is suitable or if the user wants the information to appear on a new page, answer with a new file path."
                     ),
                 },
             ]
