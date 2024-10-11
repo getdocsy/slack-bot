@@ -1,5 +1,5 @@
 {
-  description = "Python application packaged using poetry2nix";
+  description = "Docsy helps you to manage your documentation in a better way.";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   inputs.poetry2nix.url = "github:nix-community/poetry2nix";
@@ -14,9 +14,17 @@
         mkPoetryApplication;
       myPythonApp = mkPoetryApplication { projectDir = ./.; };
     in {
-      apps.${system}.default = {
-        type = "app";
-        program = "${myPythonApp}/bin/docsy_dashboard";
+      apps.${system} = {
+        # nix run .#docsy_dashboard 
+        docsy_dashboard = {
+          type = "app";
+          program = "${myPythonApp}/bin/docsy_dashboard";
+        };
+        docsy_slack = {
+          type = "app";
+          program = "${myPythonApp}/bin/docsy_slack";
+        };
       };
+      devShells.x86_64-darwin.default = pkgs.mkShell { buildInputs = [ pkgs.python3 pkgs.poetry ]; };
     };
 }
