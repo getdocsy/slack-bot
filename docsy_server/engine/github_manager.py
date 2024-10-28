@@ -186,6 +186,13 @@ class GitHubManager:
         logger.debug("Finished cloning repository")
         return repo, repo_path
 
+    def get_commits(self, pull_request_number):
+        pull_request = self.github_repo.get_pull(pull_request_number)
+        return pull_request.get_commits()
+    
+    def get_diff(self, base_commit, head_commit):
+        return self.repo.git.diff(base_commit, head_commit)
+
     def _branch_exists(self, branch_name):
         branches = [branch.name for branch in self.github_repo.get_branches()]
         return branch_name in branches
