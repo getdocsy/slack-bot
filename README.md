@@ -1,24 +1,12 @@
-# docsy
-
-Prior art:
-https://github.com/humanloop/coworker
+# Docsy Server
 
 ## Local Development
 
-From the root of the project:
-```
-python docsy_slack.py
-```
-
-The app will listen on port 3000.
+Start slack bot
+`just slack`
 
 Start ngrok in a separate pane
-
-```
-ngrok http --domain reasonably-firm-cricket.ngrok-free.app 3000
-```
-
-Check ngrok enpoints https://dashboard.ngrok.com/cloud-edge/endpoints
+`just ngrok`
 
 ### Create new database migration
 
