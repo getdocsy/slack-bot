@@ -1,10 +1,8 @@
 from loguru import logger
 from slack_bolt import App
 from docsy_server.engine.github_manager import get_github_manager_for_team, GitHubManagerException
-import docsy_server.engine.shared
+from docsy_server.engine import ai, db
 
-ai = docsy_server.engine.shared.ai
-db = docsy_server.engine.shared.db
 
 def message_im_callback(message, client, say):
     try:

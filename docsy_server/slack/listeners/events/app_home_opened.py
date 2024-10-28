@@ -1,8 +1,6 @@
 from logging import Logger
-import docsy_server.engine.shared
+from docsy_server.engine import db
 from docsy_server.slack.listeners.views.app_home import get_config_blocks
-
-db = docsy_server.engine.shared.db
 
 
 def app_home_opened_callback(client, event, context, logger: Logger):

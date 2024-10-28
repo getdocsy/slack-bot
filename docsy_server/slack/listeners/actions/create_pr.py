@@ -3,10 +3,7 @@ import os
 import requests
 import difflib
 from docsy_server.engine.github_manager import get_github_manager_for_team, GitHubManagerException
-import docsy_server.engine.shared
-
-ai = docsy_server.engine.shared.ai
-db = docsy_server.engine.shared.db
+from docsy_server.engine import ai, db
 
 
 # Downloads images and returns local file paths of the images

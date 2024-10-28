@@ -4,15 +4,12 @@ import hashlib
 from flask import Flask, request, jsonify
 
 from docsy_server.engine.github_manager import get_github_manager_for_repo
-import docsy_server.engine.shared
+from docsy_server.engine import ai, db
 
 flask_app = Flask(__name__)
 
 GITHUB_WEBHOOK_SECRET = os.environ.get("GITHUB_WEBHOOK_SECRET")
 assert GITHUB_WEBHOOK_SECRET is not None, "GITHUB_WEBHOOK_SECRET is not set"
-
-ai = docsy_server.engine.shared.ai
-db = docsy_server.engine.shared.db
 
 
 @flask_app.route("/github/events", methods=["POST"])
