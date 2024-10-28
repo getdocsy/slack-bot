@@ -14,11 +14,7 @@ def test_generate_suggestion_valid_input(client):
         "context": [
             {
                 "github_repository_name": "felixzieger/docsy",
-                "branch": "main"
-            },
-            {
-                "github_repository_name": "docsy/docs",
-                "branch": "main"
+                "pull_request_number": 1
             }
         ]
     }

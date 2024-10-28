@@ -1,15 +1,15 @@
 from dataclasses import dataclass
 
-class State:
+class Context:
     pass
 
 @dataclass
-class GithubRepositoryState(State):
-    """Represents a GitHub repository at a specific commit.
+class GithubRepositoryContext(Context):
+    """Represents a GitHub repository.
 
     Attributes:
         github_repository_name (str): The name of the GitHub repository in format 'owner/repo'
-        branch (str): The branch name in the repository being worked with
+        pull_request_number (int): The number of the pull request being worked on
     """
     github_repository_name: str
-    branch: str
+    pull_request_number: int
