@@ -1,24 +1,16 @@
 set dotenv-filename := "secrets.docsy-dev.docker.env"
 
 slack:
-    @echo "Starting slack bot"
-    poetry shell
-    python docsy_server/slack/slack.py
+    poetry run python docsy_server/slack/slack.py
 
 github:
-    @echo "Starting github bot"
-    poetry shell
-    python docsy_server/github/github.py
+    poetry run python docsy_server/github/github.py
 
-engine:
-    @echo "Starting engine"
-    poetry shell
-    python docsy_server/engine/engine.py
+api:
+    poetry run python docsy_server/api/api.py
 
 dashboard:
-    @echo "Starting dashboard"
-    poetry shell
-    python docsy_server/dashboard/dashboard.py
+    poetry run python docsy_server/dashboard/dashboard.py
 
 ngrok:
     ngrok http --domain reasonably-firm-cricket.ngrok-free.app 3000
