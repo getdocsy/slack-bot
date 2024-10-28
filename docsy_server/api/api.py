@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 from docsy_server.api.context import GithubRepositoryContext
 from docsy_server.engine.github_manager import get_github_manager_for_repo
+from docsy_server.engine.ai import Prompt
+from docsy_server.engine import ai
 
 app = Flask(__name__)
 
@@ -23,13 +25,25 @@ def generate_suggestion():
     states:list[str] = []
     events:list[str] = []
     for c in context:
-        c = GithubRepositoryContext(**c)
+        try:
+            if 'pull_request_number' not in c:
+                return jsonify({"error": "Missing required field: pull_request_number"}), 400
+            c = GithubRepositoryContext(**c)
+        except Exception as e:
+            return jsonify({"error": str(e)}), 400
         ghm = get_github_manager_for_repo(51286673,c.github_repository_name) # TODO: choose installation id from auth
-        # states.append(ghm.list_md_files())
+        states.append(ghm.list_md_files())
         for commit in ghm.get_commits(c.pull_request_number):
             events.append(ghm.get_diff(commit.parents[0].sha, commit.sha))
-    
-    return jsonify({"suggestion": "Hello, world!"}), 200
+
+    prompts = [
+        Prompt(role="system", content="The following changes are made to the repository:"),
+    ] + [Prompt(role="user", content=event) for event in events] + [
+        Prompt(role="system", content="Do you think the documentation needs to be updated to reflect the changes?")
+    ]
+    suggestion = ai.get_suggestion(prompts)
+
+    return jsonify({"suggestion": suggestion}), 200
 
 if __name__ == '__main__':
     app.run(debug=True)

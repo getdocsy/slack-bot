@@ -3,9 +3,14 @@ import os
 import base64
 import textwrap
 from openai import OpenAI
+from typing import TypedDict, Literal
 
 AI_MODEL = "gpt-4o-mini"
 
+class Prompt(TypedDict):
+    role: Literal["system", "user", "assistant"]
+    content: str
+    # name: str | None
 
 class AI:
     def __init__(self):
@@ -35,6 +40,9 @@ class AI:
         logger.info("AI responsed")
         logger.debug(textwrap.shorten(suggestion, width=100, placeholder="..."))
         return suggestion
+
+    def get_suggestion(self, prompt: list[Prompt]):
+        return self._get_suggestion(prompt)
 
     def _convert_slack_thread_to_prompt(self, messages):
         return [
@@ -137,8 +145,8 @@ class AI:
                     "role": "system",
                     "content": (
                         "Now repeat the sidebar file line by line and only add a single line with the new file path where you think it fits best. It's very important that you do not leave out any lines that were there before."
-                        + "We afterwards will open a Pull Request against the public docs and want only meaningful changes in our git history. Only answer with the new file content."
-                        + "Do not add a codefence at the first line of the file."
+                        "We afterwards will open a Pull Request against the public docs and want only meaningful changes in our git history. Only answer with the new file content."
+                        "Do not add a codefence at the first line of the file."
                     ),
                 },
             ]
@@ -169,8 +177,8 @@ class AI:
                     "role": "system",
                     "content": (
                         "Now repeat the file line by line and only do the minimal edits necessary to answer the question. It's very important that you do not leave out any lines that were there before if not absolutely necesary."
-                        + "We afterwards will open a Pull Request against the public docs and want only meaningful changes in our git history. Only answer with the new file content."
-                        + "Do not add a codefence at the first line of the file."
+                        "We afterwards will open a Pull Request against the public docs and want only meaningful changes in our git history. Only answer with the new file content."
+                        "Do not add a codefence at the first line of the file."
                     ),
                 },
             ]
