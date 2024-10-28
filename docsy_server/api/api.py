@@ -25,19 +25,17 @@ def generate_suggestion():
     states:list[str] = []
     events:list[str] = []
     for c in context:
-        try:
-            if 'pull_request_number' not in c:
-                return jsonify({"error": "Missing required field: pull_request_number"}), 400
-            c = GithubRepositoryContext(**c)
-        except Exception as e:
-            return jsonify({"error": str(e)}), 400
+        if 'pull_request_number' not in c:
+            return jsonify({"error": "Missing required field: pull_request_number"}), 400
+        c = GithubRepositoryContext(**c)
+
         ghm = get_github_manager_for_repo(51286673,c.github_repository_name) # TODO: choose installation id from auth
         states.append(ghm.list_md_files())
         for commit in ghm.get_commits(c.pull_request_number):
             events.append(ghm.get_diff(commit.parents[0].sha, commit.sha))
 
     prompts = [
-        Prompt(role="system", content="The following changes are made to the repository:"),
+        Prompt(role="system", content="The following changes are made to the code:"),
     ] + [Prompt(role="user", content=event) for event in events] + [
         Prompt(role="system", content="Do you think the documentation needs to be updated to reflect the changes?")
     ]
