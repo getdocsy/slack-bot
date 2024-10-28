@@ -1,29 +1,37 @@
 [tool.poetry]
-name = "docsy"
+name = "docsy_server"
 version = "0.1.0"
 description = "Docsy creates pull requests on documentation repositories."
 authors = ["Felix Zieger <mail@felixzieger.de>"]
 readme = "README.md"
 
 [tool.poetry.scripts]
-docsy_slack = "docsy.slack_bot:flask_app"
-docsy_github = "docsy.github_bot:flask_app"
-docsy_dashboard = "docsy.dashboard:flask_app"
+slack = "docsy_server.slack.slack:flask_app"
+github = "docsy_server.github.github:flask_app"
+dashboard = "docsy_server.dashboard.dashboard:flask_app"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-slack-bolt = "^1.18.1"
-openai = "1.39.0" # Higher versions lead to failing builds because of missing depencencies
-gitpython = "^3.1.43"
-pygithub = "^2.3.0"
 flask = "^3.0.3"
-sqlalchemy = "^2.0.31"
-alembic = "^1.13.2"
-dash = "^2.17.1"
-pandas = "^2.2.2"
 gunicorn = "^23.0.0"
 loguru = "^0.7.2"
 
+[tool.poetry.group.engine.dependencies]
+openai = "1.39.0" # Higher versions lead to failing builds because of missing depencencies
+gitpython = "^3.1.43"
+pygithub = "^2.3.0"
+alembic = "^1.13.2"
+sqlalchemy = "^2.0.31"
+
+[tool.poetry.group.dashboard.dependencies]
+dash = "^2.17.1"
+pandas = "^2.2.2"
+
+[tool.poetry.group.slack.dependencies]
+slack-bolt = "^1.18.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
 
 [build-system]
 requires = ["poetry-core"]

@@ -20,8 +20,8 @@ RUN touch README.md
 
 RUN poetry install --only main --no-root && rm -rf $POETRY_CACHE_DIR
 
-COPY docsy ./docsy
+COPY docsy_server docsy_server
 
-RUN poetry install --only main
+RUN poetry install --without dev
 
-ENTRYPOINT ["poetry", "run", "gunicorn", "-w", "1", "-b", "0.0.0.0:3000", "docsy.slack_bot:flask_app"]
+ENTRYPOINT ["poetry", "run", "gunicorn", "-w", "1", "-b", "0.0.0.0:3000", "docsy_server.slack.slack:flask_app"]
