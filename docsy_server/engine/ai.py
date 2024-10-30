@@ -30,7 +30,7 @@ class AI:
             content = message["role"] + ": " + textwrap.shorten(message["content"], width=90, placeholder="...")
             logger.debug(content)
 
-    def _get_suggestion(self, prompt):
+    def _get_suggestion(self, prompt) -> str:
         logger.info("Querying AI")
         self._log_prompt(prompt)
         completion = self.client.chat.completions.create(
@@ -41,7 +41,7 @@ class AI:
         logger.debug(textwrap.shorten(suggestion, width=100, placeholder="..."))
         return suggestion
 
-    def get_suggestion(self, prompt: list[Prompt]):
+    def get_suggestion(self, prompt: list[Prompt]) -> str:
         return self._get_suggestion(prompt)
 
     def _convert_slack_thread_to_prompt(self, messages):
