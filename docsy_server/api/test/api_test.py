@@ -13,8 +13,7 @@ def test_generate_suggestion_valid_input(client):
     test_data = {
         "context": [
             {
-                "github_repository_owner": "felixzieger",
-                "github_repository_name": "docsy",
+                "github_repo_full_name": "felixzieger/docsy",
                 "commits": [
                     {
                         "sha": "abc123",
@@ -54,8 +53,7 @@ def test_generate_suggestion_valid_input(client):
                 ]
                 },],
             "target": {
-                "github_repository_owner": "felixzieger",
-                "github_repository_name": "docsy-docs"
+                "github_repo_full_name": "felixzieger/docsy-docs"
             }
         }
 

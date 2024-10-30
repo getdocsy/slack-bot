@@ -1,3 +1,4 @@
+import json
 from loguru import logger
 import os
 import base64
@@ -56,7 +57,7 @@ class AI:
                 "Do not format your answer as markdown, just return the JSON object."
             ))
         ]
-        suggestion_str = self.get_suggestion(prompts)
+        suggestion_str = self._get_suggestion(prompts)
         return json.loads(suggestion_str)
 
     def _convert_slack_thread_to_prompt(self, messages):
