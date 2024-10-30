@@ -15,7 +15,9 @@ def generate_suggestion():
         data = request.get_json()
         context = data['context']
         target = GithubRepositoryContext(**data['target'])
-        suggestion = ai.get_suggestion_from_context(context, target)
+        ghm = get_github_manager_for_repo(51286673, target.github_repo_full_name)
+        file_paths = ghm.list_md_files()
+        suggestion = ai.get_suggestion_from_context(context, file_paths)
         return jsonify({"suggestion": suggestion}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500

@@ -41,9 +41,7 @@ class AI:
         logger.debug(textwrap.shorten(suggestion, width=100, placeholder="..."))
         return suggestion
 
-    def get_suggestion_from_context(self, context: list[str], target: GithubRepositoryContext) -> dict:
-        ghm = get_github_manager_for_repo(51286673, target.github_repo_full_name)
-        file_paths = ghm.list_md_files()
+    def get_suggestion_from_context(self, context: list[str], file_paths: list[str]) -> dict:
         prompts = [
             Prompt(role="system", content="The following changes are made to the code:"),
         ] + [Prompt(role="user", content=str(c)) for c in context] + [
