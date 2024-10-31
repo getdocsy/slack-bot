@@ -11,13 +11,14 @@ github = "docsy_server.github.github:flask_app"
 dashboard = "docsy_server.dashboard.dashboard:flask_app"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = ">=3.11,<3.13"
 flask = "^3.0.3"
 gunicorn = "^23.0.0"
 loguru = "^0.7.2"
 
 [tool.poetry.group.engine.dependencies]
-openai = "1.39.0" # Higher versions lead to failing builds because of missing depencencies
+openai = "^1.47.0"
+aider-chat = "^0.60.1"
 gitpython = "^3.1.43"
 pygithub = "^2.3.0"
 alembic = "^1.13.2"
