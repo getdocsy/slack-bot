@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Union, List
 
 class Context:
     pass
@@ -31,3 +32,5 @@ class DocsySuggestionContext(Context):
     """
     suggestion: str
     context: list[GithubRepositoryContext]
+
+Context = List[Union[GithubRepositoryContext, DocsySuggestionContext]]

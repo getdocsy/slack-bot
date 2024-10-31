@@ -42,10 +42,24 @@ class AI:
         logger.debug(textwrap.shorten(suggestion, width=100, placeholder="..."))
         return suggestion
 
-    def get_suggestion_from_context(self, context: list[str], file_paths: list[str]) -> dict:
+    def _get_repository_context_prompts(self, context: Context) -> list[Prompt]:
+        repository_contexts = [c for c in context if isinstance(c, GithubRepositoryContext)]
+        if len(repository_contexts) == 0:
+            return []
+        else:
+            return [Prompt(role="system", content="The following changes are made to the code:"),] + [Prompt(role="user", content=str(c)) for c in repository_contexts]
+
+    def _get_accepted_suggestion_prompts(self, context: Context) -> list[Prompt]:
+        accepted_suggestions = [c.suggestion for c in context if isinstance(c, DocsySuggestionContext)]
+        if len(accepted_suggestions) == 0:
+            return []
+        else:
+            return [Prompt(role="system", content="The following suggestions were accepted by the user already:")] + [Prompt(role="user", content=s) for s in accepted_suggestions]
+
+    def get_suggestion_from_context(self, context: Context, file_paths: list[str]) -> dict:
         prompts = [
-            Prompt(role="system", content="The following changes are made to the code:"),
-        ] + [Prompt(role="user", content=str(c)) for c in context] + [
+        ] + self._get_repository_context_prompts(context) + [
+        ] + self._get_accepted_suggestion_prompts(context) + [
             Prompt(role="system", content="The following is the current structure of the documentation:"),
             Prompt(role="system", content="\n".join(file_paths)),
             Prompt(role="system", content=(
