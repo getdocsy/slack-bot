@@ -5,6 +5,7 @@ import base64
 import textwrap
 from openai import OpenAI
 from typing import TypedDict, Literal
+from docsy_server.api.model import GithubRepositoryContext, FileSuggestion, GithubRepository, Suggestion
 
 AI_MODEL = "gpt-4o-mini"
 
@@ -15,6 +16,7 @@ class Prompt(TypedDict):
 
 class AI:
     def __init__(self):
+        
         self.client = OpenAI()
         self.base_prompt = [
             {
@@ -42,24 +44,18 @@ class AI:
         logger.debug(textwrap.shorten(suggestion, width=100, placeholder="..."))
         return suggestion
 
-    def _get_repository_context_prompts(self, context: Context) -> list[Prompt]:
-        repository_contexts = [c for c in context if isinstance(c, GithubRepositoryContext)]
-        if len(repository_contexts) == 0:
-            return []
-        else:
-            return [Prompt(role="system", content="The following changes are made to the code:"),] + [Prompt(role="user", content=str(c)) for c in repository_contexts]
 
-    def _get_accepted_suggestion_prompts(self, context: Context) -> list[Prompt]:
-        accepted_suggestions = [c.suggestion for c in context if isinstance(c, DocsySuggestionContext)]
-        if len(accepted_suggestions) == 0:
-            return []
-        else:
-            return [Prompt(role="system", content="The following suggestions were accepted by the user already:")] + [Prompt(role="user", content=s) for s in accepted_suggestions]
+    # def _get_suggestion_prompts(self, context: Context) -> list[Prompt]:
+    #     suggestions = [c.suggestion for c in context if isinstance(c, Suggestion)]
+    #     if len(suggestions) == 0:
+    #         return []
+    #     else:
+    #         return [Prompt(role="system", content="The following suggestions were accepted by the user already:")] + [Prompt(role="user", content=s) for s in accepted_suggestions]
 
-    def get_suggestion_from_context(self, context: Context, file_paths: list[str]) -> dict:
+    def get_structure_suggestions(self, github_repo_context: GithubRepositoryContext, file_paths: list[str]) -> list[FileSuggestion]:
         prompts = [
-        ] + self._get_repository_context_prompts(context) + [
-        ] + self._get_accepted_suggestion_prompts(context) + [
+            Prompt(role="system", content="The following changes are made to the code:"),
+            Prompt(role="system", content=str(github_repo_context)),
             Prompt(role="system", content="The following is the current structure of the documentation:"),
             Prompt(role="system", content="\n".join(file_paths)),
             Prompt(role="system", content=(
@@ -72,8 +68,9 @@ class AI:
             ))
         ]
         suggestion_str = self._get_suggestion(prompts)
-        return json.loads(suggestion_str)
-
+        file_suggestions : list[FileSuggestion] = json.loads(suggestion_str)["files"]
+        return file_suggestions
+ 
     def _convert_slack_thread_to_prompt(self, messages):
         return [
             {

@@ -101,6 +101,9 @@ class GitHubManager:
             paths.append(os.path.relpath(path, self.repo_path))
         return paths
 
+    def resolve_file_paths(self, file_paths: list[str]) -> list[str]:
+        return [os.path.join(self.repo_path, file_path) for file_path in file_paths]
+
     def get_file_content(self, relative_file_path):
         file_path = os.path.join(self.repo_path, relative_file_path)
         with open(file_path, "r") as file:
@@ -111,12 +114,15 @@ class GitHubManager:
         self,
         branch_name,
     ):
-        if self._branch_exists(branch_name):
-            logger.info(f"Branch '{branch_name}' exists. Checking out...")
+        if self._branch_exists_on_remote(branch_name):
+            logger.info(f"Branch '{branch_name}' exists on remote. Checking out...")
             self.repo.git.checkout(branch_name)
         else:
-            logger.info(f"Branch '{branch_name}' doesn't exist. Creating...")
+            logger.info(f"Branch '{branch_name}' doesn't exist on remote. Creating...")
             self.repo.git.checkout("-b", branch_name)
+
+    def add_files_to_index(self, file_paths: list[str]):
+        self.repo.index.add(file_paths)
 
     def add_file(
         self,
@@ -152,12 +158,7 @@ class GitHubManager:
         self,
         branch_name,
     ):
-        if self._branch_exists(branch_name):
-            logger.info(f"Branch '{branch_name}' exists. Checking out...")
-            self.repo.git.checkout(branch_name)
-        else:
-            logger.info(f"Branch '{branch_name}' doesn't exist. Can't push...")
-
+        self.repo.git.checkout(branch_name)
         origin = self.repo.remote()
         origin.push(refspec=f"{branch_name}:{branch_name}")
         logger.info(f"Branch '{branch_name}' pushed successfully!")
@@ -193,7 +194,7 @@ class GitHubManager:
     def get_diff(self, base_commit, head_commit):
         return self.repo.git.diff(base_commit, head_commit)
 
-    def _branch_exists(self, branch_name):
+    def _branch_exists_on_remote(self, branch_name):
         branches = [branch.name for branch in self.github_repo.get_branches()]
         return branch_name in branches
 
