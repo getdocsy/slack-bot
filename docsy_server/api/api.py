@@ -25,20 +25,21 @@ def generate_structure_suggestion():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# @app.route('/engine/suggestion/content', methods=['POST'])
-# def generate_content_suggestion():
-#     logger.info("Generating content suggestion")
-#     try:
-#         data = request.get_json()
-#         context: Context = data['context']
-#         target = GithubRepository(**data['target'])
-#         ghm = get_github_manager_for_repo(51286673, target.github_repo_full_name)
-#         file_suggestions = ai.get_content_suggestions(context, ghm)
-#         suggestion = Suggestion(target=target, file_suggestions=file_suggestions)
-#         result = jsonify(suggestion.export_to_cli_format())
-#         return result, 200
-#     except Exception as e:
-#         return jsonify({"error": str(e)}), 500
+@app.route('/engine/suggestion', methods=['POST'])
+def generate_suggestion():
+    logger.info("Generating suggestion")
+    try:
+        data = request.get_json()
+        context: GithubRepositoryContext = data['context']
+        target = GithubRepository(**data['target'])
+        ghm = get_github_manager_for_repo(51286673, target.github_repo_full_name)
+        coder = DocsyCoder(ghm)
+        file_suggestions = coder.suggest(context, ghm.list_md_files())
+        suggestion = Suggestion(target=target, file_suggestions=file_suggestions)
+        result = jsonify(suggestion.export_to_cli_format())
+        return result, 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/engine/apply', methods=['POST'])
 def apply_suggestion():
