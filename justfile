@@ -15,6 +15,8 @@ dashboard:
 ngrok:
     ngrok http --domain reasonably-firm-cricket.ngrok-free.app 3000
 
+cli:
+    poetry run python docsy/cli/cli.py
 
 # The format of the PEM key in the secrets file causes problems. Not sure where that comes from
 docker_slack:
