@@ -1,7 +1,7 @@
 import click
 import json
 
-from docsy.engine import coderv2
+from docsy.engine.coderv2 import DocsyCoder
 from docsy.model.GitRepository import LocalGitRepository
 
 @click.group()
@@ -25,7 +25,7 @@ def suggest() -> None:
     target_repo = LocalGitRepository(config["target"]["full_repo_name"], config["target"]["branch"], config["target"]["local_path"])
 
     # Suggest changes
-    coder = coderv2.DocsyCoder(target_repo)
+    coder = DocsyCoder(target_repo)
     coder.suggest([source_repo.get_last_commit()])
 
     pass
