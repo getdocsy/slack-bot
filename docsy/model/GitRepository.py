@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-import subprocess
+from git import Repo
 
 from docsy.model.Commit import Commit
 
@@ -11,6 +11,10 @@ class GitRepository():
 @dataclass
 class LocalGitRepository(GitRepository):
     local_path: str
+    _repo: Repo = None
+
+    def __post_init__(self):
+        self._repo = Repo(self.local_path)
 
     def get_last_commit(self) -> Commit:
         return self.get_commits_between('HEAD~', 'HEAD')[0]
@@ -23,17 +27,9 @@ class LocalGitRepository(GitRepository):
         Returns:
             List of commits that are ahead of the default branch
         """
-        # Get the merge base (common ancestor) between current HEAD and default branch
-        merge_base_result = subprocess.run(
-            ["git", "-C", self.local_path, "merge-base", "HEAD", self.branch],
-            capture_output=True,
-            text=True,
-            cwd=self.local_path
-        )
-        merge_base = merge_base_result.stdout.strip()
-
-        # Get commits between merge base and HEAD
-        return self.get_commits_between(merge_base, 'HEAD')
+        # Get the merge base using GitPython
+        merge_base = self._repo.merge_base(self._repo.head.commit, self._repo.refs[self.branch].commit)
+        return self.get_commits_between(merge_base[0].hexsha, 'HEAD')
 
     def get_commits_between(self, from_sha: str, to_sha: str) -> list[Commit]:
         """
@@ -44,30 +40,16 @@ class LocalGitRepository(GitRepository):
         Returns:
             List of commits between the two SHAs. Empty list if the SHAs are the same.
         """
-        # Get list of commit SHAs and messages between from_sha and to_sha
-        log_result = subprocess.run(
-            ["git", "-C", self.local_path, "log", "--format=%H%n%s", f"{from_sha}..{to_sha}"],
-            capture_output=True,
-            text=True,
-            cwd=self.local_path
-        )
-        commit_info = [line for line in log_result.stdout.strip().split('\n') if line]
-
-        # Group SHA and message pairs
         commits = []
-        for i in range(0, len(commit_info), 2):
-            sha = commit_info[i]
-            message = commit_info[i + 1]
+        for commit in self._repo.iter_commits(f'{from_sha}..{to_sha}'):
+            # Get diff with parent
+            diff = commit.parents[0].diff(commit, create_patch=True)
+            diff_text = '\n'.join(d.diff.decode('utf-8') for d in diff)
             
-            # Get diff to parent
-            diff_result = subprocess.run(
-                ["git", "-C", self.local_path, "diff", f"{sha}~", sha], # ~ is a shortcut for parent. see https://gitirc.eu/gitrevisions.html
-                capture_output=True,
-                text=True,
-                cwd=self.local_path
-            )
-            diff = diff_result.stdout.strip()
-            
-            commits.append(Commit(sha=sha, message=message, diff=diff))
+            commits.append(Commit(
+                sha=commit.hexsha,
+                message=commit.message.strip(),
+                diff=diff_text
+            ))
         
         return commits

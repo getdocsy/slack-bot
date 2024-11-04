@@ -26,9 +26,8 @@ def suggest() -> None:
 
     # Suggest changes
     coder = DocsyCoder(target_repo)
-    coder.suggest([source_repo.get_last_commit()])
-
-    pass
+    suggestion = coder.suggest(source_repo.get_commits_ahead_of_default())
+    print(suggestion)
 
 if __name__ == '__main__':
     cli()
