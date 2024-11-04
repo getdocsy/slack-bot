@@ -2,8 +2,8 @@ from aider.coders import Coder as AiderCoder
 from aider.models import Model
 from aider.io import InputOutput
 from loguru import logger
-from docsy_server.api.model import FileSuggestion, Suggestion, GithubRepositoryContext
-from docsy_server.engine.github_manager import GitHubManager
+from docsy.api.model import FileSuggestion, Suggestion, GithubRepositoryContext
+from docsy.engine.github_manager import GitHubManager
 
 AIDER_MODEL = Model("gpt-4o-mini")
 io = InputOutput(yes=True) # automatically confirm all prompts
@@ -52,5 +52,3 @@ class DocsyCoder:
         prompt = self._get_apply_prompt(suggestion, context)
         logger.info(f"Running with prompt: {prompt}")
         coder.run(prompt) # commits changes automatically
-
-        self.github_manager.push_branch(branch_name)

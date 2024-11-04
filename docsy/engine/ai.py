@@ -5,7 +5,7 @@ import base64
 import textwrap
 from openai import OpenAI
 from typing import TypedDict, Literal
-from docsy_server.api.model import GithubRepositoryContext, FileSuggestion, GithubRepository, Suggestion
+from docsy.api.model import GithubRepositoryContext, FileSuggestion, GithubRepository, Suggestion
 
 AI_MODEL = "gpt-4o-mini"
 

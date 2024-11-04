@@ -2,8 +2,8 @@ from loguru import logger
 import os
 import requests
 import difflib
-from docsy_server.engine.github_manager import get_github_manager_for_team, GitHubManagerException
-from docsy_server.engine import ai, db
+from docsy.engine.github_manager import get_github_manager_for_team, GitHubManagerException
+from docsy.engine import ai, db
 
 
 # Downloads images and returns local file paths of the images

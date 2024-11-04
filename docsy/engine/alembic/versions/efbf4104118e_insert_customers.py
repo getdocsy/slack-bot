@@ -14,7 +14,7 @@ import sqlalchemy as sa
 
 from sqlalchemy.orm import sessionmaker
 
-from docsy_server.engine.database import Customer, get_engine
+from docsy.engine.database import Customer, get_engine
 
 # revision identifiers, used by Alembic.
 revision: str = "efbf4104118e"

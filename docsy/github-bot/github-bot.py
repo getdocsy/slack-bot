@@ -3,8 +3,8 @@ import hmac
 import hashlib
 from flask import Flask, request, jsonify
 
-from docsy_server.engine.github_manager import get_github_manager_for_repo
-from docsy_server.engine import ai, db
+from docsy.engine.github_manager import get_github_manager_for_repo
+from docsy.engine import ai, db
 
 flask_app = Flask(__name__)
 

@@ -1,7 +1,7 @@
 from loguru import logger
 import json
-from docsy_server.engine import db
-from docsy_server.slack.listeners.views.app_home import get_config_blocks
+from docsy.engine import db
+from docsy.slack.listeners.views.app_home import get_config_blocks
 
 
 def app_home_update_button_click_callback(ack, body, client, context, logger):

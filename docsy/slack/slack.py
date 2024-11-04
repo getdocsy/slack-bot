@@ -7,7 +7,7 @@ from slack_bolt.oauth.oauth_settings import OAuthSettings
 from slack_sdk.oauth.installation_store import FileInstallationStore
 from slack_sdk.oauth.state_store import FileOAuthStateStore
 
-from docsy_server.slack.listeners import register_listeners
+from docsy.slack.listeners import register_listeners
 
 from flask import Flask, request
 

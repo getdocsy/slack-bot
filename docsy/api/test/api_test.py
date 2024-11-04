@@ -1,5 +1,5 @@
 import pytest
-from docsy_server.api.api import app
+from docsy.api.api import app
 import json
 
 @pytest.fixture
@@ -19,10 +19,10 @@ def test_generate_suggestion_valid_input(client):
                         "sha": "abc123",
                         "message": "Test commit",
                         "diff": """
-                            diff --git a/docsy_server/api/api.py b/docsy_server/api/api.py
+                            diff --git a/docsy/api/api.py b/docsy/api/api.py
                             index 29bcfb0..989afac 100644
-                            --- a/docsy_server/api/api.py
-                            +++ b/docsy_server/api/api.py
+                            --- a/docsy/api/api.py
+                            +++ b/docsy/api/api.py
                             @@ -25,19 +25,17 @@ def generate_suggestion():
                                  states:list[str] = []
                                  events:list[str] = []

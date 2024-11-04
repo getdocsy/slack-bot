@@ -1,14 +1,14 @@
 [tool.poetry]
-name = "docsy_server"
+name = "docsy"
 version = "0.1.0"
 description = "Docsy creates pull requests on documentation repositories."
 authors = ["Felix Zieger <mail@felixzieger.de>"]
 readme = "README.md"
 
 [tool.poetry.scripts]
-slack = "docsy_server.slack.slack:flask_app"
-github = "docsy_server.github.github:flask_app"
-dashboard = "docsy_server.dashboard.dashboard:flask_app"
+slack = "docsy.slack.slack:flask_app"
+github = "docsy.github.github:flask_app"
+dashboard = "docsy.dashboard.dashboard:flask_app"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.13"

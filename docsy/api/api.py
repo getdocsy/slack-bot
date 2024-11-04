@@ -1,11 +1,11 @@
 import json
 from loguru import logger
 from flask import Flask, request, jsonify
-from docsy_server.api.model import GithubRepository, Suggestion, GithubRepositoryContext
-from docsy_server.engine.github_manager import get_github_manager_for_repo
-from docsy_server.engine.ai import Prompt
-from docsy_server.engine import ai
-from docsy_server.engine.coder import DocsyCoder
+from docsy.api.model import GithubRepository, Suggestion, GithubRepositoryContext
+from docsy.engine.github_manager import get_github_manager_for_repo
+from docsy.engine.ai import Prompt
+from docsy.engine import ai
+from docsy.engine.coder import DocsyCoder
 
 app = Flask(__name__)
 

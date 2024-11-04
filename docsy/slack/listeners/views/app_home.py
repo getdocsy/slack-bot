@@ -1,5 +1,5 @@
 from logging import Logger
-from docsy_server.engine import db
+from docsy.engine import db
 
 def create_input_block(label, block_id, hint, team_id, multiline=False):
 
