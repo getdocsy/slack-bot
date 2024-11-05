@@ -14,16 +14,23 @@ def init() -> None:
     with open("docsy.json", "w") as f:
         json.dump({ "target": { "full_repo_name": "felixzieger/docsy-docs", "default_branch": "main", "local_path": "/Users/felix/Documents/docsy-docs" } }, f)
 
+
 @cli.command()
-def suggest() -> None:
+@click.option('--commit', help='Specific commit reference or hash to use as source')
+def suggest(commit: str | None) -> None:
     # Load source repo
     source_repo = LocalGitRepository("felixzieger/docsy", "main", "/Users/felix/Documents/docsy/server")
-    source_branch = source_repo.get_current_branch()
-    if source_branch != source_repo.default_branch:
-        source_commits = source_repo.get_commits_ahead_of_default()
+    if commit:
+        # If commit is specified, use it directly
+        source_commits = [source_repo.get_commit(commit)]
     else:
-        # If we are on the default branch, we take the last commit
-        source_commits = [source_repo.get_last_commit()]
+        source_branch = source_repo.get_current_branch()
+        if source_branch != source_repo.default_branch:
+            # If we are not on the default branch, we take all commits ahead of the default branch
+            source_commits = source_repo.get_commits_ahead_of_default()
+        else:
+            # If we are on the default branch, we take the last commit
+            source_commits = [source_repo.get_last_commit()]
 
     # Load target repo
     config = json.load(open("docsy.json"))

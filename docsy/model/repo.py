@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import os
 import re
-from git import Repo
+from git import Repo, Commit as GitCommit
 
 from docsy.model.commit import Commit
 
@@ -23,6 +23,9 @@ class LocalGitRepository(GitRepository):
 
     def get_last_commit(self) -> Commit:
         return self.get_commits_between('HEAD~', 'HEAD')[0]
+
+    def get_commit(self, sha: str) -> Commit:
+        return self.format_commit(self._repo.commit(sha))
 
     def get_current_branch(self) -> str:
         return self._repo.active_branch.name
@@ -50,17 +53,17 @@ class LocalGitRepository(GitRepository):
         """
         commits = []
         for commit in self._repo.iter_commits(f'{from_sha}..{to_sha}'):
-            # Get diff with parent
-            diff = commit.parents[0].diff(commit, create_patch=True)
-            diff_text = '\n'.join(d.diff.decode('utf-8') for d in diff)
-            
-            commits.append(Commit(
-                sha=commit.hexsha,
-                message=commit.message.strip(),
-                diff=diff_text
-            ))
-        
+            commits.append(self.format_commit(commit))
         return commits
+
+    def format_commit(self, commit: GitCommit) -> Commit:
+        diff = commit.parents[0].diff(commit, create_patch=True)
+        diff_text = '\n'.join(d.diff.decode('utf-8') for d in diff)
+        return Commit(
+            sha=commit.hexsha,
+            message=commit.message.strip(),
+            diff=diff_text
+        )
 
     def get_md_files_with_headings(self) -> list[tuple[str, list[str]]]:
         files = self.list_files(filetype="md")
