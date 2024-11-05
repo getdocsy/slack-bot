@@ -66,7 +66,49 @@ class DocsyCoder:
             },
             {"role": "system", "content": 
                 "Are changes to the documentation needed?\n"
-                "If so, which files in the documentation need to be updated to reflect the changes? List the paths of the files."
+                "If so, which files in the documentation need to be updated to reflect the changes?"
             }
         ]
         return self._get_suggestion(prompt)
+
+    def get_file_paths_to_update(self, suggestion: str) -> list[str]:
+        prompt = [
+            {"role": "system", "content": 
+                f"Here is the suggestion for changes to the documentation:\n{suggestion}\n"
+            },
+            {"role": "system", "content": 
+                "Return the paths of the files that need to be updated. One path per line. No other characters. Do not fence them in quotes."
+            }
+        ]
+        return [path.strip() for path in self._get_suggestion(prompt).split("\n")]
+
+    def apply(self, suggestion: str, source_commits: list[Commit]):
+        # Check if documentation repo is dirty
+        if self.target_repo.is_dirty():
+            raise Exception("Documentation repo is dirty. Please commit your changes before applying the suggestion.")
+
+        # Go through files one by one
+        file_paths = self.get_file_paths_to_update(suggestion)
+        for file_path in file_paths:
+            # Get the file
+            file_content = self.target_repo.get_file_content(file_path)
+            
+            prompt = [
+                {"role": "system", "content": 
+                    f"Here is the current content of the file:\n{file_content}\n"
+                },
+                {"role": "system", "content": 
+                    f"Here is what changed in the code:\n{str(source_commits)}\n"
+                },
+                {"role": "system", "content": 
+                    "Now repeat the file line by line and only do the minimal edits mandated by the changes in the code. "
+                    "It's very important that you do not leave out any lines that were there before if not absolutely necessary. "
+                    "Use present tense for speaking what is possible in the product. "
+                    "We afterwards will open a Pull Request against the public docs and want only meaningful changes in our git history. "
+                    "Only answer with the new file content. "
+                    "Do not add a codefence at the first line of the file."
+                }
+            ]
+            new_file_content = self._get_suggestion(prompt)
+            self.target_repo.write_file(file_path, new_file_content)
+

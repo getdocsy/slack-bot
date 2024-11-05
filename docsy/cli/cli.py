@@ -34,5 +34,8 @@ def suggest() -> None:
     suggestion = coder.suggest(source_commits)
     print(suggestion)
 
+    # Apply changes
+    coder.apply(suggestion, source_commits)
+
 if __name__ == '__main__':
     cli()

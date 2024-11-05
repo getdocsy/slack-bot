@@ -18,6 +18,9 @@ class LocalGitRepository(GitRepository):
     def __post_init__(self):
         self._repo = Repo(self.local_path)
 
+    def is_dirty(self) -> bool:
+        return self._repo.is_dirty()
+
     def get_last_commit(self) -> Commit:
         return self.get_commits_between('HEAD~', 'HEAD')[0]
 
@@ -76,3 +79,7 @@ class LocalGitRepository(GitRepository):
 
     def get_file_content(self, file_path: str) -> str:
         return open(os.path.join(self.local_path, file_path)).read()
+
+    def write_file(self, file_path: str, file_content: str):
+        with open(os.path.join(self.local_path, file_path), 'w') as file:
+            file.write(file_content)
