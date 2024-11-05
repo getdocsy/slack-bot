@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Union, List
 
+
 @dataclass
 class Commit:
     sha: str
@@ -10,9 +11,11 @@ class Commit:
     def __str__(self):
         return f"{self.sha[:4]} - {self.message} - {self.diff}"
 
+
 @dataclass
-class GithubRepository():
+class GithubRepository:
     github_repo_full_name: str
+
 
 @dataclass
 class GithubRepositoryContext(GithubRepository):
@@ -22,6 +25,7 @@ class GithubRepositoryContext(GithubRepository):
         commits_str = "\n".join(str(c) for c in self.commits) if self.commits else ""
         return f"{self.github_repo_full_name}\n{commits_str}"
 
+
 @dataclass
 class FileSuggestion:
     path: str
@@ -29,8 +33,9 @@ class FileSuggestion:
     explanation: str
     content: str | None = None
 
+
 @dataclass
-class Suggestion():
+class Suggestion:
     files: list[FileSuggestion]
     target: GithubRepository = None
 
@@ -45,6 +50,4 @@ class Suggestion():
         return [file.path for file in self.files]
 
     def export_to_cli_format(self) -> dict:
-        return {
-            "files": self.files
-        }
+        return {"files": self.files}

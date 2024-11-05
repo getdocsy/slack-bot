@@ -2,7 +2,10 @@ from loguru import logger
 import os
 import requests
 import difflib
-from docsy.engine.github_manager import get_github_manager_for_team, GitHubManagerException
+from docsy.engine.github_manager import (
+    get_github_manager_for_team,
+    GitHubManagerException,
+)
 from docsy.engine import ai, db
 
 

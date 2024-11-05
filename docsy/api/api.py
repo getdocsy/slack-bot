@@ -9,13 +9,14 @@ from docsy.engine.coder import DocsyCoder
 
 app = Flask(__name__)
 
-@app.route('/engine/suggestion/structure', methods=['POST'])
+
+@app.route("/engine/suggestion/structure", methods=["POST"])
 def generate_structure_suggestion():
     logger.info("Generating structure suggestion")
     try:
         data = request.get_json()
-        context: GithubRepositoryContext = data['context']
-        target = GithubRepository(**data['target'])
+        context: GithubRepositoryContext = data["context"]
+        target = GithubRepository(**data["target"])
         ghm = get_github_manager_for_repo(51286673, target.github_repo_full_name)
         file_paths = ghm.list_md_files()
         file_suggestions = ai.get_structure_suggestions(context, file_paths)
@@ -25,13 +26,14 @@ def generate_structure_suggestion():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/engine/suggestion', methods=['POST'])
+
+@app.route("/engine/suggestion", methods=["POST"])
 def generate_suggestion():
     logger.info("Generating suggestion")
     try:
         data = request.get_json()
-        context: GithubRepositoryContext = data['context']
-        target = GithubRepository(**data['target'])
+        context: GithubRepositoryContext = data["context"]
+        target = GithubRepository(**data["target"])
         ghm = get_github_manager_for_repo(51286673, target.github_repo_full_name)
         coder = DocsyCoder(ghm)
         file_suggestions = coder.suggest(context, ghm.list_md_files())
@@ -41,14 +43,15 @@ def generate_suggestion():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/engine/apply', methods=['POST'])
+
+@app.route("/engine/apply", methods=["POST"])
 def apply_suggestion():
     # try:
-        # Load
+    # Load
     data = request.get_json()
-    target = GithubRepository(**data['target'])
-    context: GithubRepositoryContext = data['context']
-    suggestion = Suggestion(**data['suggestion'])
+    target = GithubRepository(**data["target"])
+    context: GithubRepositoryContext = data["context"]
+    suggestion = Suggestion(**data["suggestion"])
 
     logger.info(f"Preparing to apply suggestion for {target.github_repo_full_name}")
     # Prepare
@@ -62,13 +65,19 @@ def apply_suggestion():
     # except Exception as e:
     #     return jsonify({"error": str(e)}), 500
 
-@app.route('/engine/whoami', methods=['POST'])
-def whoami():
-    return jsonify({"email": "dev@felixzieger.de"}), 200 #TODO: check for AUTH! get user from auth
 
-@app.route('/engine/health', methods=['GET'])
+@app.route("/engine/whoami", methods=["POST"])
+def whoami():
+    return (
+        jsonify({"email": "dev@felixzieger.de"}),
+        200,
+    )  # TODO: check for AUTH! get user from auth
+
+
+@app.route("/engine/health", methods=["GET"])
 def health():
     return jsonify({"status": "ok"}), 200
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app.run(debug=True)

@@ -19,8 +19,9 @@ def app_home_opened_callback(client, event, context, logger: Logger):
             user_id=event["user"],
             view={
                 "type": "home",
-                "blocks":
-                get_config_blocks(team_id = context.team_id, user_id = event["user"])
+                "blocks": get_config_blocks(
+                    team_id=context.team_id, user_id=event["user"]
+                ),
             },
         )
     except Exception as e:

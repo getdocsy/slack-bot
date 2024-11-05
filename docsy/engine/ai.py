@@ -5,18 +5,25 @@ import base64
 import textwrap
 from openai import OpenAI
 from typing import TypedDict, Literal
-from docsy.api.model import GithubRepositoryContext, FileSuggestion, GithubRepository, Suggestion
+from docsy.api.model import (
+    GithubRepositoryContext,
+    FileSuggestion,
+    GithubRepository,
+    Suggestion,
+)
 
 AI_MODEL = "gpt-4o-mini"
+
 
 class Prompt(TypedDict):
     role: Literal["system", "user", "assistant"]
     content: str
     # name: str | None
 
+
 class AI:
     def __init__(self):
-        
+
         self.client = OpenAI()
         self.base_prompt = [
             {
@@ -30,7 +37,11 @@ class AI:
 
     def _log_prompt(self, prompt):
         for message in prompt:
-            content = message["role"] + ": " + textwrap.shorten(message["content"], width=90, placeholder="...")
+            content = (
+                message["role"]
+                + ": "
+                + textwrap.shorten(message["content"], width=90, placeholder="...")
+            )
             logger.debug(content)
 
     def _get_suggestion(self, prompt) -> str:
@@ -44,7 +55,6 @@ class AI:
         logger.debug(textwrap.shorten(suggestion, width=100, placeholder="..."))
         return suggestion
 
-
     # def _get_suggestion_prompts(self, context: Context) -> list[Prompt]:
     #     suggestions = [c.suggestion for c in context if isinstance(c, Suggestion)]
     #     if len(suggestions) == 0:
@@ -52,25 +62,35 @@ class AI:
     #     else:
     #         return [Prompt(role="system", content="The following suggestions were accepted by the user already:")] + [Prompt(role="user", content=s) for s in accepted_suggestions]
 
-    def get_structure_suggestions(self, github_repo_context: GithubRepositoryContext, file_paths: list[str]) -> list[FileSuggestion]:
+    def get_structure_suggestions(
+        self, github_repo_context: GithubRepositoryContext, file_paths: list[str]
+    ) -> list[FileSuggestion]:
         prompts = [
-            Prompt(role="system", content="The following changes are made to the code:"),
+            Prompt(
+                role="system", content="The following changes are made to the code:"
+            ),
             Prompt(role="system", content=str(github_repo_context)),
-            Prompt(role="system", content="The following is the current structure of the documentation:"),
+            Prompt(
+                role="system",
+                content="The following is the current structure of the documentation:",
+            ),
             Prompt(role="system", content="\n".join(file_paths)),
-            Prompt(role="system", content=(
-                "Which files in the documentation needs to be updated to reflect the changes? "
-                "Answer with a JSON object with the following format: "
-                "{\"files\": [{\"path\": \"path/to/file\", \"action\": \"+\", \"explanation\": \"explanation of why this file needs to be updated\"}]}"
-                "Where 'path' is the path to the file that needs to be updated, and 'action' is '+' if the file should be created, '-' if the file should be deleted, or '~' if the file should be modified."
-                "Explanation is optional, but if provided, it should be a short explanation of which of the code changes require a change to this file. Keep it short."
-                "Do not format your answer as markdown, just return the JSON object."
-            ))
+            Prompt(
+                role="system",
+                content=(
+                    "Which files in the documentation needs to be updated to reflect the changes? "
+                    "Answer with a JSON object with the following format: "
+                    '{"files": [{"path": "path/to/file", "action": "+", "explanation": "explanation of why this file needs to be updated"}]}'
+                    "Where 'path' is the path to the file that needs to be updated, and 'action' is '+' if the file should be created, '-' if the file should be deleted, or '~' if the file should be modified."
+                    "Explanation is optional, but if provided, it should be a short explanation of which of the code changes require a change to this file. Keep it short."
+                    "Do not format your answer as markdown, just return the JSON object."
+                ),
+            ),
         ]
         suggestion_str = self._get_suggestion(prompts)
-        file_suggestions : list[FileSuggestion] = json.loads(suggestion_str)["files"]
+        file_suggestions: list[FileSuggestion] = json.loads(suggestion_str)["files"]
         return file_suggestions
- 
+
     def _convert_slack_thread_to_prompt(self, messages):
         return [
             {

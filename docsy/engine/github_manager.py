@@ -6,6 +6,7 @@ from git import Repo, Actor
 from github import GithubIntegration, Auth
 from pathlib import Path
 
+
 def get_github_manager_for_team(db, team_id: str):
     customer = db.get_customer(team_id)
     github_app_installation_id = customer.github_app_installation_id
@@ -62,8 +63,10 @@ def _get_author():
         case _:
             raise ValueError("Unknown GitHub App ID")
 
+
 class GitHubManagerException(Exception):
     pass
+
 
 class GitHubManager:
     def __init__(
@@ -180,7 +183,9 @@ class GitHubManager:
         pull_request.create_issue_comment(comment)
 
     def _clone_repo(self):
-        repo_path = tempfile.mkdtemp()  # TODO better handling of temp directories. This one would need to be cleaned up.
+        repo_path = (
+            tempfile.mkdtemp()
+        )  # TODO better handling of temp directories. This one would need to be cleaned up.
         logger.debug(f"Cloning repository to {repo_path}...")
         repo_url = f"https://x-access-token:{self.token}@github.com/{self.repo_name}"
         repo = Repo.clone_from(repo_url, repo_path)
@@ -190,7 +195,7 @@ class GitHubManager:
     def get_commits(self, pull_request_number):
         pull_request = self.github_repo.get_pull(pull_request_number)
         return pull_request.get_commits()
-    
+
     def get_diff(self, base_commit, head_commit):
         return self.repo.git.diff(base_commit, head_commit)
 
@@ -207,6 +212,7 @@ class GitHubManager:
 
     def close(self):
         self.github.close()
+
 
 if __name__ == "__main__":
     GITHUB_APP_ID = os.environ.get("GITHUB_APP_ID")

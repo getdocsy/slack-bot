@@ -2,11 +2,13 @@ import pytest
 from docsy.api.api import app
 import json
 
+
 @pytest.fixture
 def client():
-    app.config['TESTING'] = True
+    app.config["TESTING"] = True
     with app.test_client() as client:
         yield client
+
 
 def test_generate_suggestion_valid_input(client):
     # Arrange
@@ -48,20 +50,21 @@ def test_generate_suggestion_valid_input(client):
                                  ] + [Prompt(role="user", content=event) for event in events] + [
                                      Prompt(role="system", content="Do you think the documentation needs to be updated to reflect the changes?")
                                  ]
-                        """
+                        """,
                     }
-                ]
-                },],
-            "target": {
-                "github_repo_full_name": "felixzieger/docsy-docs"
-            }
-        }
+                ],
+            },
+        ],
+        "target": {"github_repo_full_name": "felixzieger/docsy-docs"},
+    }
 
     # Act
-    response = client.post('/engine/suggestion', 
-                         data=json.dumps(test_data),
-                         content_type='application/json')
-    
+    response = client.post(
+        "/engine/suggestion",
+        data=json.dumps(test_data),
+        content_type="application/json",
+    )
+
     # Assert
     response_data = json.loads(response.data)
     print(response_data)

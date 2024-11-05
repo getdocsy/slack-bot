@@ -16,7 +16,9 @@ app = Dash(
 
 def serve_layout():
     def fetch_data(query):
-        conn = sqlite3.connect("file:data/db.sqlite?mode=ro", uri=True) # TODO: read path from config
+        conn = sqlite3.connect(
+            "file:data/db.sqlite?mode=ro", uri=True
+        )  # TODO: read path from config
         df = pd.read_sql_query(query, conn)
         conn.close()
         return df

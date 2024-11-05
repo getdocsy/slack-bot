@@ -4,6 +4,7 @@ import json
 from docsy.engine.coderv2 import DocsyCoder
 from docsy.model.repo import LocalGitRepository
 
+
 @click.group()
 def cli():
     pass
@@ -12,14 +13,25 @@ def cli():
 @cli.command()
 def init() -> None:
     with open("docsy.json", "w") as f:
-        json.dump({ "target": { "full_repo_name": "felixzieger/docsy-docs", "default_branch": "main", "local_path": "/Users/felix/Documents/docsy-docs" } }, f)
+        json.dump(
+            {
+                "target": {
+                    "full_repo_name": "felixzieger/docsy-docs",
+                    "default_branch": "main",
+                    "local_path": "/Users/felix/Documents/docsy-docs",
+                }
+            },
+            f,
+        )
 
 
 @cli.command()
-@click.option('--commit', help='Specific commit reference or hash to use as source')
+@click.option("--commit", help="Specific commit reference or hash to use as source")
 def suggest(commit: str | None) -> None:
     # Load source repo
-    source_repo = LocalGitRepository("felixzieger/docsy", "main", "/Users/felix/Documents/docsy/server")
+    source_repo = LocalGitRepository(
+        "felixzieger/docsy", "main", "/Users/felix/Documents/docsy/server"
+    )
     if commit:
         # If commit is specified, use it directly
         source_commits = [source_repo.get_commit(commit)]
@@ -34,7 +46,11 @@ def suggest(commit: str | None) -> None:
 
     # Load target repo
     config = json.load(open("docsy.json"))
-    target_repo = LocalGitRepository(config["target"]["full_repo_name"], config["target"]["default_branch"], config["target"]["local_path"])
+    target_repo = LocalGitRepository(
+        config["target"]["full_repo_name"],
+        config["target"]["default_branch"],
+        config["target"]["local_path"],
+    )
 
     # Suggest changes
     coder = DocsyCoder(target_repo)
@@ -44,5 +60,6 @@ def suggest(commit: str | None) -> None:
     # Apply changes
     coder.apply(suggestion, source_commits)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     cli()
