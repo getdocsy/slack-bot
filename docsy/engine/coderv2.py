@@ -94,21 +94,34 @@ class DocsyCoder:
             file_content = self.target_repo.get_file_content(file_path)
             
             prompt = [
-                {"role": "system", "content": 
-                    f"Here is the current content of the file:\n{file_content}\n"
+                {
+                    "role": "system",
+                    "content": "Here is what changed in the code:",
                 },
-                {"role": "system", "content": 
-                    f"Here is what changed in the code:\n{str(source_commits)}\n"
+                {
+                    "role": "system",
+                    "content": str(source_commits),
                 },
-                {"role": "system", "content": 
-                    "Now repeat the file line by line and only do the minimal edits mandated by the changes in the code. "
-                    "It's very important that you do not leave out any lines that were there before if not absolutely necessary. "
-                    "Use present tense for speaking what is possible in the product. "
-                    "We afterwards will open a Pull Request against the public docs and want only meaningful changes in our git history. "
-                    "Only answer with the new file content. "
-                    "Do not add a codefence at the first line of the file."
-                }
+                {
+                    "role": "system",
+                    "content": "Here is how the file currently looks like.",
+                },
+                {
+                    "role": "system",
+                    "content": file_content,
+                },
+                {
+                    "role": "system",
+                    "content": (
+                        "Now repeat the file line by line and only do the minimal edits mandated by the changes in the code. "
+                        "It's very important that you do not leave out any lines that were there before if not absolutely necessary. "
+                        "Use present tense for speaking what is possible in the product. "
+                        "We afterwards will open a Pull Request against the public docs and want only meaningful changes in our git history. "
+                        "Only answer with the new file content. "
+                        "Do not add a codefence at the first line of the file."
+                        "Do not include source code in your response. "
+                    ),
+                },
             ]
             new_file_content = self._get_suggestion(prompt)
             self.target_repo.write_file(file_path, new_file_content)
-
