@@ -1,12 +1,14 @@
 from dataclasses import dataclass
+import os
+import re
 from git import Repo
 
-from docsy.model.Commit import Commit
+from docsy.model.commit import Commit
 
 @dataclass
 class GitRepository():
     full_repo_name: str # Only works for github
-    branch: str
+    default_branch: str
 
 @dataclass
 class LocalGitRepository(GitRepository):
@@ -19,6 +21,9 @@ class LocalGitRepository(GitRepository):
     def get_last_commit(self) -> Commit:
         return self.get_commits_between('HEAD~', 'HEAD')[0]
 
+    def get_current_branch(self) -> str:
+        return self._repo.active_branch.name
+
     def get_commits_ahead_of_default(self) -> list[Commit]:
         """
         Gets commits that the current branch is ahead of the default branch
@@ -28,7 +33,7 @@ class LocalGitRepository(GitRepository):
             List of commits that are ahead of the default branch
         """
         # Get the merge base using GitPython
-        merge_base = self._repo.merge_base(self._repo.head.commit, self._repo.refs[self.branch].commit)
+        merge_base = self._repo.merge_base(self._repo.head.commit, self._repo.refs[self.default_branch].commit)
         return self.get_commits_between(merge_base[0].hexsha, 'HEAD')
 
     def get_commits_between(self, from_sha: str, to_sha: str) -> list[Commit]:
@@ -53,3 +58,21 @@ class LocalGitRepository(GitRepository):
             ))
         
         return commits
+
+    def get_md_files_with_headings(self) -> list[tuple[str, list[str]]]:
+        files = self.list_files(filetype="md")
+        return [(file, self.get_md_file_headings(file)) for file in files]
+
+    def list_files(self, filetype: str = None) -> list[str]:
+        files = []
+        for entry in self._repo.commit().tree.traverse():
+            if entry.type == 'blob' and (filetype is None or entry.path.endswith(f'.{filetype}')):
+                files.append(entry.path)
+        return files
+
+    def get_md_file_headings(self, file_path: str) -> list[str]:
+        file_content = self.get_file_content(file_path)
+        return re.findall(r'^#+\s+(.*)$', file_content, re.MULTILINE)
+
+    def get_file_content(self, file_path: str) -> str:
+        return open(os.path.join(self.local_path, file_path)).read()
