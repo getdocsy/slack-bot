@@ -3,7 +3,7 @@ import os
 import re
 from git import Repo, Commit as GitCommit
 
-from docsy.model.commit import Commit
+from docsy.cli.model.commit import Commit
 
 
 @dataclass
@@ -71,13 +71,15 @@ class LocalGitRepository(GitRepository):
 
     def list_files(self, filetype: str = None) -> list[str]:
         files = []
-        for entry in self._repo.commit().tree.traverse():
-            if entry.type == "blob" and (
-                filetype is None or entry.path.endswith(f".{filetype}")
-            ):
-                files.append(entry.path)
+        for root, _, filenames in os.walk(self.local_path):
+            for filename in filenames:
+                if filetype is None or filename.endswith(f".{filetype}"):
+                    # Get path relative to repo root
+                    rel_path = os.path.relpath(os.path.join(root, filename), self.local_path)
+                    # Check if file is ignored by git
+                    if not self._repo.ignored(rel_path):
+                        files.append(rel_path)
         return files
-
     def get_md_file_headings(self, file_path: str) -> list[str]:
         file_content = self.get_file_content(file_path)
         return re.findall(r"^#+\s+(.*)$", file_content, re.MULTILINE)

@@ -1,8 +1,9 @@
 import textwrap
 from openai import OpenAI
 from loguru import logger
-from docsy.model.prompt import Prompt
-from docsy.model.repo import Commit, LocalGitRepository
+from docsy.cli.model.prompt import Prompt
+from docsy.cli.model.repo import Commit, LocalGitRepository
+from docsy.cli.utils.error import DocsyCLIError
 
 AI_MODEL = "gpt-4o-mini"
 
@@ -22,7 +23,8 @@ class DocsyCoder:
             },
         ]
 
-    def _log_prompt(self, prompt):
+    def _log_prompt(self, prompt: list[Prompt]):
+        # Log shortened version to debug logs
         for message in prompt:
             content = (
                 message["role"]
@@ -31,8 +33,16 @@ class DocsyCoder:
             )
             logger.debug(content)
 
+        # Log full prompts to file
+        with open("prompts.log", "a") as f:
+            for message in prompt:
+                content = message["role"] + ": " + message["content"] + "\n"
+                f.write(content)
+            f.write("-" * 80 + "\n")
+
     def _get_suggestion(self, prompt: list[Prompt]) -> str:
         logger.info("Querying AI")
+        prompt = self.base_prompt + prompt
         self._log_prompt(prompt)
         completion = self.client.chat.completions.create(
             model=AI_MODEL, messages=prompt
@@ -96,8 +106,9 @@ class DocsyCoder:
     def apply(self, suggestion: str, source_commits: list[Commit]):
         # Check if documentation repo is dirty
         if self.target_repo.is_dirty():
-            raise Exception(
-                "Documentation repo is dirty. Please commit your changes before applying the suggestion."
+            raise DocsyCLIError(
+                "Documentation repo is dirty. Please commit your changes before applying the suggestion.",
+                "dirty_repo",
             )
 
         # Go through files one by one
