@@ -1,8 +1,10 @@
+from loguru import logger
 import click
 import json
 
 from docsy.engine.coderv2 import DocsyCoder
 from docsy.model.repo import LocalGitRepository
+from docsy.utils.error import DocsyCLIError
 
 
 @click.group()
@@ -58,7 +60,10 @@ def suggest(commit: str | None) -> None:
     print(suggestion)
 
     # Apply changes
-    coder.apply(suggestion, source_commits)
+    try:
+        coder.apply(suggestion, source_commits)
+    except DocsyCLIError as e:
+        print(e)
 
 
 if __name__ == "__main__":
