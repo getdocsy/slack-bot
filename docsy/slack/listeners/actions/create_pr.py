@@ -6,7 +6,7 @@ from docsy.engine.github_manager import (
     get_github_manager_for_team,
     GitHubManagerException,
 )
-from docsy.engine import ai, db
+from docsy.engine import slack_ai as ai, db
 
 
 # Downloads images and returns local file paths of the images

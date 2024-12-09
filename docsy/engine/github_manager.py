@@ -188,7 +188,7 @@ class GitHubManager:
         )  # TODO better handling of temp directories. This one would need to be cleaned up.
         logger.debug(f"Cloning repository to {repo_path}...")
         repo_url = f"https://x-access-token:{self.token}@github.com/{self.repo_name}"
-        repo = Repo.clone_from(repo_url, repo_path)
+        repo = Repo.clone_from(repo_url, repo_path, depth=1)
         logger.debug("Finished cloning repository")
         return repo, repo_path
 

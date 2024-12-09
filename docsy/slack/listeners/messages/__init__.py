@@ -4,7 +4,7 @@ from docsy.engine.github_manager import (
     get_github_manager_for_team,
     GitHubManagerException,
 )
-from docsy.engine import ai, db
+from docsy.engine import slack_ai as ai, db
 
 
 def message_im_callback(message, client, say):
