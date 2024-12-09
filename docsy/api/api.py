@@ -4,7 +4,7 @@ from flask import Flask, request, jsonify
 from docsy.api.model import GithubRepository, Suggestion, GithubRepositoryContext
 from docsy.engine.github_manager import get_github_manager_for_repo
 from docsy.engine.ai import Prompt
-from docsy.engine import ai
+from docsy.engine import slack_ai as ai
 from docsy.engine.coder import DocsyCoder
 from flask_cors import CORS
 
@@ -87,27 +87,25 @@ def analyze_docs():
     try:
         data = request.get_json()
         docs_url = data.get("url")
-        
+
         if not docs_url:
             return jsonify({"error": "Missing 'url' parameter in request body"}), 400
-            
+
         # TODO: Implement async analysis task
         # For now, return a mock response
         analysis_id = "mock-analysis-123"  # This should be a unique identifier
         results_url = f"/api/engine/analysis/{analysis_id}"
-        
-        return jsonify({
-            "status": "processing",
-            "results_url": results_url
-        }), 202
+
+        return jsonify({"status": "processing", "results_url": results_url}), 202
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @app.route("/engine/analyze", methods=["GET"])
 def get_analysis_results():
     logger.info("Fetching analysis results")
     try:
-        analysis_id = request.args.get('url')
+        analysis_id = request.args.get("url")
         if not analysis_id:
             return jsonify({"error": "Missing 'url' parameter"}), 400
 
@@ -115,17 +113,17 @@ def get_analysis_results():
         # Mock response for now
         mock_results = {
             "analysis_id": analysis_id,
-            "status": "completed", 
+            "status": "completed",
             "results": {
                 "readability_score": 8.5,
                 "coverage_score": 0.85,
                 "suggestions": [
                     "Consider adding more code examples",
-                    "API reference section needs more detail"
-                ]
-            }
+                    "API reference section needs more detail",
+                ],
+            },
         }
-        
+
         return jsonify(mock_results), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500

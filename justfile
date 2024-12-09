@@ -3,9 +3,6 @@ set dotenv-filename := "secrets.docsy-dev.docker.env"
 slack:
     poetry run python docsy/slack/slack.py
 
-github:
-    poetry run python docsy/github-bot/github-bot.py
-
 api:
     poetry run python docsy/api/api.py
 
