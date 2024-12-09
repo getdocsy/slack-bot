@@ -37,11 +37,14 @@ class AI:
 
     def _log_prompt(self, prompt):
         for message in prompt:
-            content = (
-                message["role"]
-                + ": "
-                + textwrap.shorten(message["content"], width=90, placeholder="...")
-            )
+            try:
+                content = (
+                    message["role"]
+                    + ": "
+                    + textwrap.shorten(message["content"], width=90, placeholder="...")
+                )
+            except Exception as e:
+                logger.warning(f"Prompt logging failed: {e}")
             logger.debug(content)
 
     def _get_suggestion(self, prompt) -> str:
@@ -54,13 +57,6 @@ class AI:
         logger.info("AI responsed")
         logger.debug(textwrap.shorten(suggestion, width=100, placeholder="..."))
         return suggestion
-
-    # def _get_suggestion_prompts(self, context: Context) -> list[Prompt]:
-    #     suggestions = [c.suggestion for c in context if isinstance(c, Suggestion)]
-    #     if len(suggestions) == 0:
-    #         return []
-    #     else:
-    #         return [Prompt(role="system", content="The following suggestions were accepted by the user already:")] + [Prompt(role="user", content=s) for s in accepted_suggestions]
 
     def get_structure_suggestions(
         self, github_repo_context: GithubRepositoryContext, file_paths: list[str]
@@ -110,7 +106,7 @@ class AI:
 
         return [
             {
-                "role": "system",
+                "role": "user",
                 "content": [
                     {
                         "type": "text",
