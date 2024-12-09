@@ -16,6 +16,9 @@ flask = "^3.0.3"
 gunicorn = "^23.0.0"
 loguru = "^0.7.2"
 playwright = "^1.48.0"
+xdg-base-dirs = "^6.0.2"
+flask-cors = "^5.0.0"
+pandoc = "^2.4"
 
 [tool.poetry.group.engine.dependencies]
 openai = "^1.47.0"

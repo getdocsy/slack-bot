@@ -1,1 +1,6 @@
-{"target": {"full_repo_name": "getdocsy/docs", "default_branch": "main", "local_path": "/Users/felix/Documents/docsy/docs"}}
+{
+    "target": {
+        "full_repo_name": "getdocsy/docs",
+        "default_branch": "main"
+    }
+}

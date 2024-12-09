@@ -8,17 +8,14 @@ from docsy.cli.model.commit import Commit
 
 @dataclass
 class GitRepository:
-    full_repo_name: str  # Only works for github
-    default_branch: str
-
+    pass
+    # full_repo_name: str  # Only works for github
+    # default_branch: str = "main"
 
 @dataclass
 class LocalGitRepository(GitRepository):
-    local_path: str
-    _repo: Repo = None
-
-    def __post_init__(self):
-        self._repo = Repo(self.local_path)
+    local_path: str = "./"
+    _repo = Repo(local_path)
 
     def is_dirty(self) -> bool:
         return self._repo.is_dirty()
@@ -90,3 +87,32 @@ class LocalGitRepository(GitRepository):
     def write_file(self, file_path: str, file_content: str):
         with open(os.path.join(self.local_path, file_path), "w") as file:
             file.write(file_content)
+
+    def get_remote_url(self) -> str:
+        """
+        Gets the URL of the remote repository (origin)
+        Returns:
+            String containing the remote repository URL
+        """
+        return self._repo.remotes.origin.url
+
+    def extract_full_repo_name_from_origin_url(self) -> str:
+        """
+        Extracts the owner/repo from the remote URL
+        Returns:
+            String in the format "owner/repo"
+        Raises:
+            ValueError: If the URL format is not recognized
+        """
+        url = self.get_remote_url()
+        # Handle HTTPS URLs (https://github.com/owner/repo.git)
+        https_match = re.match(r'https://github\.com/([^/]+/[^/.]+)(?:\.git)?$', url)
+        if https_match:
+            return https_match.group(1)
+        
+        # Handle SSH URLs (git@github.com:owner/repo.git)
+        ssh_match = re.match(r'git@github\.com:([^/]+/[^/.]+)(?:\.git)?$', url)
+        if ssh_match:
+            return ssh_match.group(1)
+        
+        raise ValueError(f"Unable to extract owner/repo from URL: {url}")
