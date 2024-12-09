@@ -1,7 +1,4 @@
-FROM python:3.12-alpine
-
-RUN apk fix && \
-    apk --no-cache --update add git
+FROM python:3.12
 
 RUN git config --global user.name "getdocsy[Bot]" # TODO remove hardcoded bot name and make it depend on environment
 RUN git config --global user.email "171265091+getdocsy[bot]@users.noreply.github.com"
