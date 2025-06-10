@@ -18,6 +18,10 @@ assert SLACK_CLIENT_ID is not None, "SLACK_CLIENT_ID is not set"
 assert SLACK_CLIENT_SECRET is not None, "SLACK_CLIENT_SECRET is not set"
 assert SLACK_SIGNING_SECRET is not None, "SLACK_SIGNING_SECRET is not set"
 
+# Ensure the data directory exists
+os.makedirs("./data/slack/installations", exist_ok=True)
+os.makedirs("./data/slack/states", exist_ok=True)
+
 # Docsy uses OAUTH for multi-workspace slack support
 oauth_settings = OAuthSettings(
     client_id=SLACK_CLIENT_ID,
@@ -35,7 +39,8 @@ oauth_settings = OAuthSettings(
     state_store=FileOAuthStateStore(
         expiration_seconds=600, base_dir="./data/slack/states"
     ),
-    install_page_rendering_enabled=False,
+    install_page_rendering_enabled=True,
+    redirect_uri_path="/api/slack/oauth_redirect",
 )
 
 app = App(signing_secret=SLACK_SIGNING_SECRET, oauth_settings=oauth_settings)
@@ -56,18 +61,21 @@ handler = SlackRequestHandler(app)
 @flask_app.route("/slack/events", methods=["POST"])
 @flask_app.route("/api/slack/events", methods=["POST"])
 def slack_events():
+    logger.info("Received Slack events request")
     return handler.handle(request)
 
 
 @flask_app.route("/slack/install", methods=["GET"])
 @flask_app.route("/api/slack/install", methods=["GET"])
 def slack_install():
+    logger.info("Received Slack install request")
     return handler.handle(request)
 
 
 @flask_app.route("/slack/oauth_redirect", methods=["GET"])
 @flask_app.route("/api/slack/oauth_redirect", methods=["GET"])
 def slack_oauth_redirect():
+    logger.info(f"Received OAuth redirect request: {request.url}")
     return handler.handle(request)
 
 
@@ -75,4 +83,5 @@ if __name__ == "__main__":
     log_level = os.environ.get("LOG_LEVEL", "INFO").upper()
     print(f"Log level set to {log_level}")
 
+    # Start the Bolt app's OAuth flow
     app.start(port=int(os.environ.get("PORT", 3000)))
