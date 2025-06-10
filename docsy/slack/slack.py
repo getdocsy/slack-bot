@@ -40,7 +40,7 @@ oauth_settings = OAuthSettings(
         expiration_seconds=600, base_dir="./data/slack/states"
     ),
     install_page_rendering_enabled=True,
-    redirect_uri_path="/api/slack/oauth_redirect",
+    redirect_uri_path="/slack/oauth_redirect",
 )
 
 app = App(signing_secret=SLACK_SIGNING_SECRET, oauth_settings=oauth_settings)
@@ -59,21 +59,18 @@ handler = SlackRequestHandler(app)
 
 
 @flask_app.route("/slack/events", methods=["POST"])
-@flask_app.route("/api/slack/events", methods=["POST"])
 def slack_events():
     logger.info("Received Slack events request")
     return handler.handle(request)
 
 
 @flask_app.route("/slack/install", methods=["GET"])
-@flask_app.route("/api/slack/install", methods=["GET"])
 def slack_install():
     logger.info("Received Slack install request")
     return handler.handle(request)
 
 
 @flask_app.route("/slack/oauth_redirect", methods=["GET"])
-@flask_app.route("/api/slack/oauth_redirect", methods=["GET"])
 def slack_oauth_redirect():
     logger.info(f"Received OAuth redirect request: {request.url}")
     return handler.handle(request)
