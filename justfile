@@ -1,18 +1,23 @@
 set dotenv-filename := "secrets.docsy-dev.docker.env"
+set shell := ["nix", "develop", "--command", "bash", "-c"]
 
 slack:
+    poetry install
     poetry run python docsy/slack/slack.py
 
 api:
+    poetry install
     poetry run python docsy/api/api.py
 
 dashboard:
+    poetry install
     poetry run python docsy/dashboard/dashboard.py
 
 ngrok:
     ngrok http --domain reasonably-firm-cricket.ngrok-free.app 3000
 
 cli:
+    poetry install
     poetry run python docsy/cli/cli.py
 
 # The format of the PEM key in the secrets file causes problems. Not sure where that comes from

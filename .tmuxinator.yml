@@ -1,0 +1,8 @@
+name: docsy-slack
+root: ~/code/docsy-slack
+
+startup_window: slack
+
+windows:
+  - slack: just slack
+  - ngrok: just ngrok
