@@ -5,6 +5,7 @@ from docsy.engine.github_manager import (
     GitHubManagerException,
 )
 from docsy.engine import slack_ai as ai, db
+from docsy.slack.listeners.views.app_home import is_configuration_complete
 
 
 def message_im_callback(message, client, say):
@@ -25,6 +26,14 @@ def message_im_callback(message, client, say):
     ]
 
     team_id = message["team"]
+    
+    if not is_configuration_complete(team_id):
+        say(
+            text="I need to be configured before I can help you. Please visit my app home to complete the setup.",
+            thread_ts=ts,
+        )
+        return
+
     try:
         gitHubManager = get_github_manager_for_team(db, team_id)
         file_paths = gitHubManager.list_md_files()

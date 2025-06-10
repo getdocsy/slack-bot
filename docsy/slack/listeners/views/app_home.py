@@ -2,6 +2,16 @@ from logging import Logger
 from docsy.engine import db
 
 
+def is_configuration_complete(team_id):
+    customer = db.get_customer(team_id)
+    required_fields = [
+        "github_app_installation_id",
+        "docs_repo",
+        "content_subdir"
+    ]
+    return all(getattr(customer, field) for field in required_fields)
+
+
 def create_input_block(label, block_id, hint, team_id, multiline=False):
 
     def get_attr_name(block_id):
@@ -31,7 +41,7 @@ def create_input_block(label, block_id, hint, team_id, multiline=False):
 
 
 def get_config_blocks(team_id, user_id):
-    return [
+    blocks = [
         {
             "type": "section",
             "text": {
@@ -39,7 +49,24 @@ def get_config_blocks(team_id, user_id):
                 "text": f"*Hey <@{user_id}>, I'm Docsy. Nice to meet you! :wave:*",
             },
         },
-        {"type": "divider"},
+    ]
+
+    if not is_configuration_complete(team_id):
+        blocks.extend([
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "I need to be configured before I can help you. Please fill out the configuration below.",
+                },
+            },
+        ])
+    
+    blocks.extend([
+            {"type": "divider"},
+    ])
+
+    blocks.extend([
         {
             "type": "header",
             "text": {"type": "plain_text", "text": "Configuration"},
@@ -115,4 +142,6 @@ def get_config_blocks(team_id, user_id):
                 }
             ],
         },
-    ]
+    ])
+
+    return blocks
