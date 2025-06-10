@@ -54,16 +54,19 @@ handler = SlackRequestHandler(app)
 
 
 @flask_app.route("/slack/events", methods=["POST"])
+@flask_app.route("/api/slack/events", methods=["POST"])
 def slack_events():
     return handler.handle(request)
 
 
 @flask_app.route("/slack/install", methods=["GET"])
+@flask_app.route("/api/slack/install", methods=["GET"])
 def slack_install():
     return handler.handle(request)
 
 
 @flask_app.route("/slack/oauth_redirect", methods=["GET"])
+@flask_app.route("/api/slack/oauth_redirect", methods=["GET"])
 def slack_oauth_redirect():
     return handler.handle(request)
 
