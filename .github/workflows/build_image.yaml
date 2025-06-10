@@ -7,7 +7,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: felixzieger/docsy
+  IMAGE_NAME: getdocsy/slack-bot
 
 jobs:
   build-and-push-image:
