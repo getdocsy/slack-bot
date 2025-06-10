@@ -1,4 +1,10 @@
-# Docsy Server
+# Docsy Slack Bot
+
+Docsy turns Slack threads into GitHub pull requests against your documentation repository.
+
+<div align="center">
+  <img src="assets/docsy-with-background.png" alt="Docsy Logo" width="400"/>
+</div>
 
 ## Local Development
 
