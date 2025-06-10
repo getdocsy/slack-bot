@@ -60,7 +60,7 @@ def get_config_blocks(team_id, user_id):
         create_input_block(
             label="GitHub App Installation ID",
             block_id="github_app_installation_id_input",
-            hint="This is the ID of the GitHub app installation. You can find it in the GitHub app settings.",
+            hint="This is the ID of the GitHub app installation. You can find it in the GitHub app settings. https://github.com/settings/installations",
             team_id=team_id,
         ),
         create_input_block(
